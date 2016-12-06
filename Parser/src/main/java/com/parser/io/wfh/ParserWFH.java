@@ -39,7 +39,7 @@ public class ParserWFH {
 
 
             // need http protocol
-            doc = Jsoup.connect(startLink).get();
+            doc = Jsoup.connect(startLink).userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36").timeout(5000).get();
 
 
             // get page title
@@ -73,7 +73,19 @@ public class ParserWFH {
             } catch (ParseException e) {
                 System.out.println(e.getMessage());
                 if(tables2.get(i).text().equals("Click for more Remote Software Development jobs")){
+                    Document doc1 = null;
+                    try {
+//                        System.out.println("text date : " + tables2.get(i).attr("abs:href"));
+//                        System.out.println("text date : " + tables2.get(i).select("a"));
+//                        System.out.println("text date : " + tables2.get(i).select("a").attr("abs:href"));
+                        doc1 = Jsoup.connect(tables2.get(i).select("a").attr("abs:href")).get();
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
                     runParse(tables2, i+1);
+                    if(doc1 != null) {
+                        runParse(doc1.select("tbody tr td"), 0);
+                    }
                     break;
                 }
             }
@@ -89,19 +101,29 @@ public class ParserWFH {
 //            System.out.println("text place : " + table3.text());
 //            System.out.println("text link : " + table2.getAllElements().get(2).attr("abs:href"));
             jobsInform.setPublishedDate(datePublished);
-            jobsInform.setHeadPublication(table2.text()+"     PLACE: "+table3.text());
+            jobsInform.setHeadPublication(table2.text());
+            jobsInform.setPlace(table3.text());
             jobsInform.setPublicationLink(table2.getAllElements().get(2).attr("abs:href"));
 
-            getDescription(table2.getAllElements().get(2).attr("abs:href"), jobsInform);
+            jobsInform = getDescription(table2.getAllElements().get(2).attr("abs:href"), jobsInform);
+            if(!jobsInforms.contains(jobsInform)) {
+                jobsInforms.add(jobsInform);
+            }
         }
     }
 
-    private void getDescription(String linkToDescription, JobsInform jobsInform){
+    public static JobsInform getDescription(String linkToDescription, JobsInform jobsInform){
         try {
-            Document document = Jsoup.connect(linkToDescription).get();
+            Document document = Jsoup.connect(linkToDescription).userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36").timeout(5000).get();
             Elements tables = document.select(".col-md-9 dd");
             Elements description = tables.get(2).children();
 
+            String company = document.select(".panel-body dd").get(1).text();
+            if(company.length()>0){
+                jobsInform.setCompanyName(company);
+            }
+
+            jobsInform.setCompanyName(document.select(".page-header small").text());
             List<ListImpl> list = new ArrayList<ListImpl>();
 //            list1.setListHeader(description.get(0).select("strong").text());
 //            int count = 0;
@@ -124,23 +146,24 @@ public class ParserWFH {
 
             list.add(null);
             jobsInform.setOrder(list);
-            jobsInforms.add(jobsInform);
+            return jobsInform;
 
         } catch (IOException e) {
             e.printStackTrace();
+            return jobsInform;
         }
     }
-    private ListImpl addHead(Element element){
+    private static ListImpl addHead(Element element){
         ListImpl list = new ListImpl();
         list.setListHeader(element.text());
         return list;
     }
-    private ListImpl addParagraph(Element element){
+    private static ListImpl addParagraph(Element element){
         ListImpl list = new ListImpl();
         list.setTextFieldImpl(element.text());
         return list;
     }
-    private ListImpl addList(Element element){
+    private static ListImpl addList(Element element){
         ListImpl list = new ListImpl();
         List<String> strings = new ArrayList<String>();
         for(Element e : element.getAllElements()) {

@@ -12,7 +12,7 @@
     <dependency>
         <groupId>org.jsoup</groupId>
         <artifactId>jsoup</artifactId>
-        <version>1.7.1</version>
+        <version>1.10.1</version>
     </dependency>
     <dependency>
         <groupId>jgoodies</groupId>
@@ -24,7 +24,14 @@
         <artifactId>forms_rt</artifactId>
         <version>7.0.3</version>
     </dependency>
-</dependencies>
+        <!-- https://mvnrepository.com/artifact/com.codeborne/phantomjsdriver -->
+        <dependency>
+            <groupId>com.codeborne</groupId>
+            <artifactId>phantomjsdriver</artifactId>
+            <version>1.2.1</version>
+        </dependency>
+
+    </dependencies>
     <build>
         <plugins>
             <plugin>

@@ -42,7 +42,7 @@
           <color color="-16777216"/>
         </border>
         <children>
-          <grid id="e414a" binding="label1Panel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+          <grid id="e414a" binding="wfhLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
             <constraints/>
             <properties>
               <alignmentX value="0.0"/>
@@ -57,7 +57,7 @@
               <title-color color="-16777216"/>
             </border>
             <children>
-              <component id="50743" class="javax.swing.JLabel" binding="linkLabel">
+              <component id="50743" class="javax.swing.JLabel" binding="wfhLink">
                 <constraints/>
                 <properties>
                   <autoscrolls value="false"/>
@@ -73,6 +73,123 @@
                   <preferredSize width="170" height="30"/>
                   <text value="wfh.io"/>
                   <toolTipText value="www.wfh.io/jobs/3353-devops-engineer-waldo"/>
+                  <verifyInputWhenFocusTarget value="false"/>
+                </properties>
+                <clientProperties>
+                  <html.disable class="java.lang.Boolean" value="true"/>
+                </clientProperties>
+              </component>
+            </children>
+          </grid>
+          <grid id="f7792" binding="remoteokLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+            <constraints/>
+            <properties>
+              <alignmentX value="0.0"/>
+              <alignmentY value="0.0"/>
+              <autoscrolls value="true"/>
+              <background color="-721665"/>
+              <maximumSize width="210" height="30"/>
+              <minimumSize width="180" height="30"/>
+              <preferredSize width="180" height="30"/>
+            </properties>
+            <border type="empty" title-position="1">
+              <title-color color="-16777216"/>
+            </border>
+            <children>
+              <component id="82537" class="javax.swing.JLabel" binding="remoteok">
+                <constraints/>
+                <properties>
+                  <autoscrolls value="false"/>
+                  <enabled value="true"/>
+                  <focusable value="false"/>
+                  <font name="Times New Roman" size="12"/>
+                  <foreground color="-16777216"/>
+                  <horizontalAlignment value="2"/>
+                  <horizontalTextPosition value="2"/>
+                  <maximumSize width="170" height="30"/>
+                  <minimumSize width="-1" height="-1"/>
+                  <opaque value="false"/>
+                  <preferredSize width="170" height="30"/>
+                  <text value="remoteok"/>
+                  <toolTipText value="www.remoteok.io"/>
+                  <verifyInputWhenFocusTarget value="false"/>
+                </properties>
+                <clientProperties>
+                  <html.disable class="java.lang.Boolean" value="true"/>
+                </clientProperties>
+              </component>
+            </children>
+          </grid>
+          <grid id="532b0" binding="landingJobsPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+            <constraints/>
+            <properties>
+              <alignmentX value="0.0"/>
+              <alignmentY value="0.0"/>
+              <autoscrolls value="true"/>
+              <background color="-721665"/>
+              <maximumSize width="210" height="30"/>
+              <minimumSize width="180" height="30"/>
+              <preferredSize width="180" height="30"/>
+            </properties>
+            <border type="empty" title-position="1">
+              <title-color color="-16777216"/>
+            </border>
+            <children>
+              <component id="178e6" class="javax.swing.JLabel" binding="landingJobsLabel">
+                <constraints/>
+                <properties>
+                  <autoscrolls value="false"/>
+                  <enabled value="true"/>
+                  <focusable value="false"/>
+                  <font name="Times New Roman" size="12"/>
+                  <foreground color="-16777216"/>
+                  <horizontalAlignment value="2"/>
+                  <horizontalTextPosition value="2"/>
+                  <maximumSize width="170" height="30"/>
+                  <minimumSize width="-1" height="-1"/>
+                  <opaque value="false"/>
+                  <preferredSize width="170" height="30"/>
+                  <text value="landing.jobs"/>
+                  <toolTipText value="https://landing.jobs"/>
+                  <verifyInputWhenFocusTarget value="false"/>
+                </properties>
+                <clientProperties>
+                  <html.disable class="java.lang.Boolean" value="true"/>
+                </clientProperties>
+              </component>
+            </children>
+          </grid>
+          <grid id="d1808" binding="startusLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+            <constraints/>
+            <properties>
+              <alignmentX value="0.0"/>
+              <alignmentY value="0.0"/>
+              <autoscrolls value="true"/>
+              <background color="-721665"/>
+              <maximumSize width="210" height="30"/>
+              <minimumSize width="180" height="30"/>
+              <preferredSize width="180" height="30"/>
+            </properties>
+            <border type="empty" title-position="1">
+              <title-color color="-16777216"/>
+            </border>
+            <children>
+              <component id="da52a" class="javax.swing.JLabel" binding="startusLabel">
+                <constraints/>
+                <properties>
+                  <autoscrolls value="false"/>
+                  <enabled value="true"/>
+                  <focusable value="false"/>
+                  <font name="Times New Roman" size="12"/>
+                  <foreground color="-16777216"/>
+                  <horizontalAlignment value="2"/>
+                  <horizontalTextPosition value="2"/>
+                  <maximumSize width="170" height="30"/>
+                  <minimumSize width="-1" height="-1"/>
+                  <opaque value="false"/>
+                  <preferredSize width="170" height="30"/>
+                  <text value="startus.cc"/>
+                  <toolTipText value="http://www.startus.cc/"/>
                   <verifyInputWhenFocusTarget value="false"/>
                 </properties>
                 <clientProperties>

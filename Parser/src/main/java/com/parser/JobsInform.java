@@ -11,12 +11,31 @@ import java.util.List;
 public class JobsInform implements Serializable{
     private Date publishedDate;
     private String headPublication;
+    private String place;
     private String headDescription;
     private List<ListImpl> order;
     private String publicationLink;
+    private String companyName;
     private boolean isSeen;
 
     public JobsInform() {
+        setSeen(false);
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public String getPlace() {
+        return place;
+    }
+
+    public void setPlace(String place) {
+        this.place = place;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
     }
 
     public Date getPublishedDate() {
@@ -65,5 +84,24 @@ public class JobsInform implements Serializable{
 
     public void setSeen(boolean seen) {
         isSeen = seen;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof JobsInform)) return false;
+
+        JobsInform that = (JobsInform) o;
+
+        if (!getPublishedDate().equals(that.getPublishedDate())) return false;
+        return getPublicationLink().equals(that.getPublicationLink());
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getPublishedDate().hashCode();
+        result = 31 * result + getPublicationLink().hashCode();
+        return result;
     }
 }
