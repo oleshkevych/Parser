@@ -198,6 +198,318 @@
               </component>
             </children>
           </grid>
+          <grid id="ed85a" binding="virtualvocationsLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+            <constraints/>
+            <properties>
+              <alignmentX value="0.0"/>
+              <alignmentY value="0.0"/>
+              <autoscrolls value="true"/>
+              <background color="-721665"/>
+              <maximumSize width="210" height="30"/>
+              <minimumSize width="180" height="30"/>
+              <preferredSize width="180" height="30"/>
+            </properties>
+            <border type="empty" title-position="1">
+              <title-color color="-16777216"/>
+            </border>
+            <children>
+              <component id="b7f54" class="javax.swing.JLabel" binding="virtualvocationsLabel">
+                <constraints/>
+                <properties>
+                  <autoscrolls value="false"/>
+                  <enabled value="true"/>
+                  <focusable value="false"/>
+                  <font name="Times New Roman" size="12"/>
+                  <foreground color="-16777216"/>
+                  <horizontalAlignment value="2"/>
+                  <horizontalTextPosition value="2"/>
+                  <maximumSize width="170" height="30"/>
+                  <minimumSize width="-1" height="-1"/>
+                  <opaque value="false"/>
+                  <preferredSize width="170" height="30"/>
+                  <text value="virtualvocations.com"/>
+                  <toolTipText value="http://www.virtualvocations.com/job"/>
+                  <verifyInputWhenFocusTarget value="false"/>
+                </properties>
+                <clientProperties>
+                  <html.disable class="java.lang.Boolean" value="true"/>
+                </clientProperties>
+              </component>
+            </children>
+          </grid>
+          <grid id="62718" binding="simplyhiredLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+            <constraints/>
+            <properties>
+              <alignmentX value="0.0"/>
+              <alignmentY value="0.0"/>
+              <autoscrolls value="true"/>
+              <background color="-721665"/>
+              <maximumSize width="210" height="30"/>
+              <minimumSize width="180" height="30"/>
+              <preferredSize width="180" height="30"/>
+            </properties>
+            <border type="empty" title-position="1">
+              <title-color color="-16777216"/>
+            </border>
+            <children>
+              <component id="925e7" class="javax.swing.JLabel" binding="simplyhiredLabel">
+                <constraints/>
+                <properties>
+                  <autoscrolls value="false"/>
+                  <enabled value="true"/>
+                  <focusable value="false"/>
+                  <font name="Times New Roman" size="12"/>
+                  <foreground color="-16777216"/>
+                  <horizontalAlignment value="2"/>
+                  <horizontalTextPosition value="2"/>
+                  <maximumSize width="170" height="30"/>
+                  <minimumSize width="-1" height="-1"/>
+                  <opaque value="false"/>
+                  <preferredSize width="170" height="30"/>
+                  <text value="simplyhired.com"/>
+                  <toolTipText value="http://www.simplyhired.com/"/>
+                  <verifyInputWhenFocusTarget value="false"/>
+                </properties>
+                <clientProperties>
+                  <html.disable class="java.lang.Boolean" value="true"/>
+                </clientProperties>
+              </component>
+            </children>
+          </grid>
+          <grid id="7fcbf" binding="stackoverflowLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+            <constraints/>
+            <properties>
+              <alignmentX value="0.0"/>
+              <alignmentY value="0.0"/>
+              <autoscrolls value="true"/>
+              <background color="-721665"/>
+              <maximumSize width="210" height="30"/>
+              <minimumSize width="180" height="30"/>
+              <preferredSize width="180" height="30"/>
+            </properties>
+            <border type="empty" title-position="1">
+              <title-color color="-16777216"/>
+            </border>
+            <children>
+              <component id="e050d" class="javax.swing.JLabel" binding="stackoverflowLabel">
+                <constraints/>
+                <properties>
+                  <autoscrolls value="false"/>
+                  <enabled value="true"/>
+                  <focusable value="false"/>
+                  <font name="Times New Roman" size="12"/>
+                  <foreground color="-16777216"/>
+                  <horizontalAlignment value="2"/>
+                  <horizontalTextPosition value="2"/>
+                  <maximumSize width="170" height="30"/>
+                  <minimumSize width="-1" height="-1"/>
+                  <opaque value="false"/>
+                  <preferredSize width="170" height="30"/>
+                  <text value="stackoverflow.com"/>
+                  <toolTipText value="http://www.stackoverflow.com"/>
+                  <verifyInputWhenFocusTarget value="false"/>
+                </properties>
+                <clientProperties>
+                  <html.disable class="java.lang.Boolean" value="true"/>
+                </clientProperties>
+              </component>
+            </children>
+          </grid>
+          <grid id="a8dc7" binding="jujuLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+            <constraints/>
+            <properties>
+              <alignmentX value="0.0"/>
+              <alignmentY value="0.0"/>
+              <autoscrolls value="true"/>
+              <background color="-721665"/>
+              <maximumSize width="210" height="30"/>
+              <minimumSize width="180" height="30"/>
+              <preferredSize width="180" height="30"/>
+            </properties>
+            <border type="empty" title-position="1">
+              <title-color color="-16777216"/>
+            </border>
+            <children>
+              <component id="6ce35" class="javax.swing.JLabel" binding="jujuLabel">
+                <constraints/>
+                <properties>
+                  <autoscrolls value="false"/>
+                  <enabled value="true"/>
+                  <focusable value="false"/>
+                  <font name="Times New Roman" size="12"/>
+                  <foreground color="-16777216"/>
+                  <horizontalAlignment value="2"/>
+                  <horizontalTextPosition value="2"/>
+                  <maximumSize width="170" height="30"/>
+                  <minimumSize width="-1" height="-1"/>
+                  <opaque value="false"/>
+                  <preferredSize width="170" height="30"/>
+                  <text value="juju.com"/>
+                  <toolTipText value="http://www.juju.com"/>
+                  <verifyInputWhenFocusTarget value="false"/>
+                </properties>
+                <clientProperties>
+                  <html.disable class="java.lang.Boolean" value="true"/>
+                </clientProperties>
+              </component>
+            </children>
+          </grid>
+          <grid id="252af" binding="drupalLubelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+            <constraints/>
+            <properties>
+              <alignmentX value="0.0"/>
+              <alignmentY value="0.0"/>
+              <autoscrolls value="true"/>
+              <background color="-721665"/>
+              <maximumSize width="210" height="30"/>
+              <minimumSize width="180" height="30"/>
+              <preferredSize width="180" height="30"/>
+            </properties>
+            <border type="empty" title-position="1">
+              <title-color color="-16777216"/>
+            </border>
+            <children>
+              <component id="bdf28" class="javax.swing.JLabel" binding="drupalLabel">
+                <constraints/>
+                <properties>
+                  <autoscrolls value="false"/>
+                  <enabled value="true"/>
+                  <focusable value="false"/>
+                  <font name="Times New Roman" size="12"/>
+                  <foreground color="-16777216"/>
+                  <horizontalAlignment value="2"/>
+                  <horizontalTextPosition value="2"/>
+                  <maximumSize width="170" height="30"/>
+                  <minimumSize width="-1" height="-1"/>
+                  <opaque value="false"/>
+                  <preferredSize width="170" height="30"/>
+                  <text value="jobs.drupal.org"/>
+                  <toolTipText value="http://jobs.drupal.org"/>
+                  <verifyInputWhenFocusTarget value="false"/>
+                </properties>
+                <clientProperties>
+                  <html.disable class="java.lang.Boolean" value="true"/>
+                </clientProperties>
+              </component>
+            </children>
+          </grid>
+          <grid id="73e6e" binding="dutchstartupjobsLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+            <constraints/>
+            <properties>
+              <alignmentX value="0.0"/>
+              <alignmentY value="0.0"/>
+              <autoscrolls value="true"/>
+              <background color="-721665"/>
+              <maximumSize width="210" height="30"/>
+              <minimumSize width="180" height="30"/>
+              <preferredSize width="180" height="30"/>
+            </properties>
+            <border type="empty" title-position="1">
+              <title-color color="-16777216"/>
+            </border>
+            <children>
+              <component id="f90b5" class="javax.swing.JLabel" binding="dutchstartupjobsLabel">
+                <constraints/>
+                <properties>
+                  <autoscrolls value="false"/>
+                  <enabled value="true"/>
+                  <focusable value="false"/>
+                  <font name="Times New Roman" size="12"/>
+                  <foreground color="-16777216"/>
+                  <horizontalAlignment value="2"/>
+                  <horizontalTextPosition value="2"/>
+                  <maximumSize width="170" height="30"/>
+                  <minimumSize width="-1" height="-1"/>
+                  <opaque value="false"/>
+                  <preferredSize width="170" height="30"/>
+                  <text value="dutchstartupjobs.com"/>
+                  <toolTipText value="http://dutchstartupjobs.com"/>
+                  <verifyInputWhenFocusTarget value="false"/>
+                </properties>
+                <clientProperties>
+                  <html.disable class="java.lang.Boolean" value="true"/>
+                </clientProperties>
+              </component>
+            </children>
+          </grid>
+          <grid id="54313" binding="monsterDeLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+            <constraints/>
+            <properties>
+              <alignmentX value="0.0"/>
+              <alignmentY value="0.0"/>
+              <autoscrolls value="true"/>
+              <background color="-721665"/>
+              <maximumSize width="210" height="30"/>
+              <minimumSize width="180" height="30"/>
+              <preferredSize width="180" height="30"/>
+            </properties>
+            <border type="empty" title-position="1">
+              <title-color color="-16777216"/>
+            </border>
+            <children>
+              <component id="20f4e" class="javax.swing.JLabel" binding="monsterDeLabel">
+                <constraints/>
+                <properties>
+                  <autoscrolls value="false"/>
+                  <enabled value="true"/>
+                  <focusable value="false"/>
+                  <font name="Times New Roman" size="12"/>
+                  <foreground color="-16777216"/>
+                  <horizontalAlignment value="2"/>
+                  <horizontalTextPosition value="2"/>
+                  <maximumSize width="170" height="30"/>
+                  <minimumSize width="-1" height="-1"/>
+                  <opaque value="false"/>
+                  <preferredSize width="170" height="30"/>
+                  <text value="monster.de"/>
+                  <toolTipText value="http://www.monster.de"/>
+                  <verifyInputWhenFocusTarget value="false"/>
+                </properties>
+                <clientProperties>
+                  <html.disable class="java.lang.Boolean" value="true"/>
+                </clientProperties>
+              </component>
+            </children>
+          </grid>
+          <grid id="aaf92" binding="weloveangularLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+            <constraints/>
+            <properties>
+              <alignmentX value="0.0"/>
+              <alignmentY value="0.0"/>
+              <autoscrolls value="true"/>
+              <background color="-721665"/>
+              <maximumSize width="210" height="30"/>
+              <minimumSize width="180" height="30"/>
+              <preferredSize width="180" height="30"/>
+            </properties>
+            <border type="empty" title-position="1">
+              <title-color color="-16777216"/>
+            </border>
+            <children>
+              <component id="ac1b0" class="javax.swing.JLabel" binding="weloveangularLabel">
+                <constraints/>
+                <properties>
+                  <autoscrolls value="false"/>
+                  <enabled value="true"/>
+                  <focusable value="false"/>
+                  <font name="Times New Roman" size="12"/>
+                  <foreground color="-16777216"/>
+                  <horizontalAlignment value="2"/>
+                  <horizontalTextPosition value="2"/>
+                  <maximumSize width="170" height="30"/>
+                  <minimumSize width="-1" height="-1"/>
+                  <opaque value="false"/>
+                  <preferredSize width="170" height="30"/>
+                  <text value="weloveangular.com"/>
+                  <toolTipText value="http://www.weloveangular.com"/>
+                  <verifyInputWhenFocusTarget value="false"/>
+                </properties>
+                <clientProperties>
+                  <html.disable class="java.lang.Boolean" value="true"/>
+                </clientProperties>
+              </component>
+            </children>
+          </grid>
         </children>
       </grid>
       <grid id="52ecf" binding="jobPanel" layout-manager="FlowLayout" hgap="10" vgap="5" flow-align="0">

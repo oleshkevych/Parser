@@ -54,7 +54,7 @@ public class ParserStartus {
             do {
                 try {
 
-
+                    datePublished = null;
                     // need http protocol
                     doc = Jsoup.connect(startLink + "&page=" + count)
                             .validateTLSCertificates(false).userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36").timeout(5000).get();

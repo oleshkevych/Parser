@@ -1,4 +1,4 @@
-package com.parser.com.virtualvocations;
+package com.parser.com.simplyhired;
 
 import com.parser.DateGenerator;
 import com.parser.JobsInform;
@@ -16,17 +16,16 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by rolique_pc on 12/6/2016.
+ * Created by rolique_pc on 12/7/2016.
  */
-public class ParserVirtualvocations {
+public class ParserSimplyhired {
 
-
-    private String startLink = "https://www.virtualvocations.com/jobs";
+    private String startLink = "http://www.simplyhired.com/search?q=software+engineer&fdb=1&sb=dd";
     private List<JobsInform> jobsInforms = new ArrayList<JobsInform>();
     private Document doc;
     private DateGenerator dateClass;
 
-    public ParserVirtualvocations(){
+    public ParserSimplyhired(){
         dateClass = new DateGenerator();
         parser();
         System.out.println("FINISH ");
@@ -48,35 +47,31 @@ public class ParserVirtualvocations {
                     .timeout(5000)
                     .get();
 
-            Elements tables2 = doc.select(".col-sm-6 .list-unstyled li");
+            Elements tables2 = doc.select(".jobs .card");
 //            System.out.println("text : " + tables2);
             runParse(tables2, 0);
-
             Date datePublished = null;
-            int count = 1;
+
+            int count = 2;
             do {
                 try {
-
                     datePublished = null;
+
                     // need http protocol
-                    doc = Jsoup.connect(startLink + "/p-" + count)
-                            .validateTLSCertificates(false)
-                            .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-                            .timeout(5000)
-                            .get();
+                    doc = Jsoup.connect(startLink + "&pn=" + count)
+                            .validateTLSCertificates(false).userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36").timeout(5000).get();
 
-                    Elements tables1 = doc.select(".col-sm-6 .list-unstyled li");
-
+                    Elements tables1 = doc.select(".jobs .card");
 //            System.out.println("text : " + tables2);
                     datePublished = runParse(tables1, 0);
-                    count+=10;
+                    count++;
 
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
 
             }while(dateClass.dateChecker(datePublished));
-//
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -84,11 +79,12 @@ public class ParserVirtualvocations {
     }
 
     private Date runParse(Elements tables2, int counter) {
-        System.out.println("text size : " + tables2.size());
+        System.out.println("text date : " + tables2.size());
         Date datePublished = null;
-        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
+//        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
         for (int i = counter; i<tables2.size(); i+=1) {
-            String stringDate = tables2.get(i).select(".default-orange").text();
+//                 for (int i = counter; i<tables2.size(); i+=1) {
+            String stringDate = tables2.get(i).select(".serp-timestamp").text();
 //            System.out.println("text date : " + stringDate);
 //            System.out.println("text date : " + stringDate.contains("hour"));
 //            System.out.println("text date : " + stringDate.split(" ").contains("hour"));
@@ -107,15 +103,13 @@ public class ParserVirtualvocations {
             }else if(stringDate.contains("6 day")){
                 datePublished = new Date(new Date().getTime() - 6*24*3600*1000);
             }
-//
-//                System.out.println("text date : " + datePublished);
 
 //            Date datePublished = null;
 //            try {
 //                datePublished = formatter.parse(tables2.get(i).select(".date").text());
 //                    System.out.println("text date : " + datePublished);
-                objectGenerator(tables2.get(i).select("h2 a").first(), tables2.get(i).select("h2 a").first(),
-                        tables2.get(i).select(".recruiter-company-profile-job-organization").first(), datePublished, tables2.get(i).select("h2 a").first());
+                objectGenerator(tables2.get(i).select(".serp-location").first(), tables2.get(i).select(".serp-title").first(),
+                        tables2.get(i).select(".serp-company").first(), datePublished, tables2.get(i).select(".card-link").first());
 //            } catch (ParseException e) {
 //                System.out.println(e.getMessage());
 //            }
@@ -127,16 +121,16 @@ public class ParserVirtualvocations {
     private void objectGenerator(Element place, Element headPost, Element company, Date datePublished, Element linkDescription){
         if(dateClass.dateChecker(datePublished)) {
             JobsInform jobsInform = new JobsInform();
-//                System.out.println("text place : " + (place.text().replaceFirst(headPost.attr("title"), "")));
-//                System.out.println("text headPost : " + headPost.attr("title"));
+//                System.out.println("text place : " + place.text());
+//                System.out.println("text headPost : " + headPost.text());
 //                System.out.println("text company : " + company.text());
-//                System.out.println("text link1 : " + linkDescription.attr("href"));
+//                System.out.println("text link1 : " + linkDescription.attr("abs:href"));
             jobsInform.setPublishedDate(datePublished);
-            jobsInform.setHeadPublication(headPost.attr("title"));
-            jobsInform.setCompanyName("");
-            jobsInform.setPlace(place.text().replaceFirst(headPost.attr("title"), ""));
-            jobsInform.setPublicationLink(linkDescription.attr("href"));
-            jobsInform = getDescription(linkDescription.attr("href"), jobsInform);
+            jobsInform.setHeadPublication(headPost.text());
+            jobsInform.setCompanyName(company.text());
+            jobsInform.setPlace(place.text());
+            jobsInform.setPublicationLink(linkDescription.attr("abs:href"));
+//            jobsInform = getDescription(linkDescription.attr("abs:href"), jobsInform);
             if(!jobsInforms.contains(jobsInform)) {
                 jobsInforms.add(jobsInform);
             }
@@ -153,39 +147,30 @@ public class ParserVirtualvocations {
                     .get();
 
 
-            Element tablesDescription = document.select("#job_details").first();
-            String place = tablesDescription.select(".row").first().text();
+            Elements tablesDescription = document.select("body");
+//            Elements tablesDescription1 = document.select(".field__item ");
             List<ListImpl> list = new ArrayList<ListImpl>();
 //            System.out.println("text link1 : " + tablesDescription);
 
-            if(place.length() > 0){
-                jobsInform.setPlace(place.substring(place.indexOf("Location:"), place.indexOf("Compensation:"))
-                        .replaceFirst("Location:", ""));
-//                System.out.println("text place : " + tablesDescription);
-
-            }
-
-
 //            for (int i = 0; i<tablesDescription.size(); i++) {
-//                list.add(null);
-            list.add(addHead(tablesDescription.select("h1").first()));
-//            System.out.println("text head : " + tablesDescription.select("h1").first());
+
 
                 Elements ps = tablesDescription.select("p");
-                Elements uls = tablesDescription.select("ul");
-
-
+//                Elements uls = tablesDescription.select("ul");
+            ListImpl list1 = new ListImpl();
+            list1.setListHeader(jobsInform.getHeadPublication());
+            list.add(list1);
 
                 if (ps.size() > 0) {
                     for(Element p: ps) {
                         list.add(addParagraph(p));
                     }
                 }
-                if (uls.size() > 0) {
-                    for(Element ul: uls) {
-                        list.add(addList(ul));
-                    }
-                }
+//                if (uls.size() > 0) {
+//                    for(Element ul: uls) {
+//                        list.add(addList(ul));
+//                    }
+//                }
 //            }
 
             list.add(null);
@@ -206,12 +191,15 @@ public class ParserVirtualvocations {
         return list;
     }
     private static ListImpl addParagraph(Element element){
+        if(element.select("strong").size()>0){
+            return addHead(element.select("strong").first());
+        }else {
 
 
             ListImpl list = new ListImpl();
             list.setTextFieldImpl(element.text());
             return list;
-
+        }
     }
     private static ListImpl addList(Element element){
         ListImpl list = new ListImpl();
@@ -222,4 +210,5 @@ public class ParserVirtualvocations {
         list.setListItem(strings);
         return list;
     }
+
 }

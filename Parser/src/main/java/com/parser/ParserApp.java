@@ -3,9 +3,17 @@ package com.parser;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.parser.cc.startus.ParserStartus;
+import com.parser.com.dutchstartupjobs.ParserDutchstartupjobs;
+import com.parser.com.juju.ParserJuju;
+import com.parser.com.simplyhired.ParserSimplyhired;
+import com.parser.com.stackoverflow.ParserStackoverflow;
+import com.parser.com.virtualvocations.ParserVirtualvocations;
+import com.parser.com.weloveangular.ParserWeloveangular;
+import com.parser.de.monster.ParserMonsterDe;
 import com.parser.io.remoteok.ParserRemoteok;
 import com.parser.io.wfh.ParserWFH;
 import com.parser.jobs.landing.ParserLandingJobs;
+import com.parser.org.drupal.jobs.ParserDrupal;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -34,6 +42,22 @@ public class ParserApp {
     private JLabel landingJobsLabel;
     private JPanel startusLabelPanel;
     private JLabel startusLabel;
+    private JPanel virtualvocationsLabelPanel;
+    private JLabel virtualvocationsLabel;
+    private JPanel simplyhiredLabelPanel;
+    private JLabel simplyhiredLabel;
+    private JLabel stackoverflowLabel;
+    private JPanel stackoverflowLabelPanel;
+    private JPanel jujuLabelPanel;
+    private JLabel jujuLabel;
+    private JPanel drupalLubelPanel;
+    private JLabel drupalLabel;
+    private JPanel dutchstartupjobsLabelPanel;
+    private JLabel dutchstartupjobsLabel;
+    private JPanel monsterDeLabelPanel;
+    private JLabel monsterDeLabel;
+    private JPanel weloveangularLabelPanel;
+    private JLabel weloveangularLabel;
     private JFrame jFrame = new JFrame();
 
 
@@ -77,11 +101,91 @@ public class ParserApp {
         startusLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                System.out.println("text speciality :333 ");
+                System.out.println("text speciality :444 ");
                 jobPanel.removeAll();
                 panelFiller(new ParserStartus().getJobsInforms());
 //                super.mouseClicked(e);
-                System.out.println("text speciality :333 ");
+                System.out.println("text speciality :444 ");
+            }
+        });
+        virtualvocationsLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                System.out.println("text speciality :555 ");
+                jobPanel.removeAll();
+                panelFiller(new ParserVirtualvocations().getJobsInforms());
+//                super.mouseClicked(e);
+                System.out.println("text speciality :555 ");
+            }
+        });
+        simplyhiredLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                System.out.println("text speciality :666 ");
+                jobPanel.removeAll();
+                panelFiller(new ParserSimplyhired().getJobsInforms());
+//                super.mouseClicked(e);
+                System.out.println("text speciality :666 ");
+            }
+        });
+        stackoverflowLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                System.out.println("text speciality :777 ");
+                jobPanel.removeAll();
+                panelFiller(new ParserStackoverflow().getJobsInforms());
+//                super.mouseClicked(e);
+                System.out.println("text speciality :777 ");
+            }
+        });
+        jujuLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                System.out.println("text speciality :888 ");
+                jobPanel.removeAll();
+                panelFiller(new ParserJuju().getJobsInforms());
+//                super.mouseClicked(e);
+                System.out.println("text speciality :888 ");
+            }
+        });
+        drupalLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                System.out.println("text speciality :999 ");
+                jobPanel.removeAll();
+                panelFiller(new ParserDrupal().getJobsInforms());
+//                super.mouseClicked(e);
+                System.out.println("text speciality :999 ");
+            }
+        });
+        dutchstartupjobsLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                System.out.println("text speciality :10 ");
+                jobPanel.removeAll();
+                panelFiller(new ParserDutchstartupjobs().getJobsInforms());
+//                super.mouseClicked(e);
+                System.out.println("text speciality :10 ");
+            }
+        });
+        monsterDeLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                System.out.println("text speciality :11 ");
+                jobPanel.removeAll();
+                panelFiller(new ParserMonsterDe().getJobsInforms());
+//                super.mouseClicked(e);
+                System.out.println("text speciality :11 ");
+            }
+        });
+        weloveangularLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                System.out.println("text speciality :12 ");
+                jobPanel.removeAll();
+                panelFiller(new ParserWeloveangular().getJobsInforms());
+//                super.mouseClicked(e);
+                System.out.println("text speciality :12 ");
             }
         });
     }
@@ -94,13 +198,18 @@ public class ParserApp {
             JobsInform ji = jobsInformList.get(i);
             JPanel label1Panel = new JPanel();
             String stringDate = new SimpleDateFormat("dd-MM-yyyy").format(ji.getPublishedDate());
-            JLabel label1 = new JLabel(ji.getHeadPublication() + "      PLACE: " + ji.getPlace());
+            JLabel label1 = new JLabel("VOCATION: " + ji.getHeadPublication());
             label1.setMaximumSize(new Dimension(540, 20));
             label1.setMinimumSize(new Dimension(540, 20));
             label1.setPreferredSize(new Dimension(540, 20));
-            JLabel label2 = new JLabel("COMPANY: " + ji.getCompanyName() + "     " + stringDate);
+            JLabel label2 = new JLabel("PLACE: " + ji.getPlace());
+            label2.setMaximumSize(new Dimension(540, 20));
+            label2.setMinimumSize(new Dimension(540, 20));
+            label2.setPreferredSize(new Dimension(540, 20));
+            JLabel label3 = new JLabel("COMPANY: " + ji.getCompanyName() + "     " + stringDate);
             label1.setHorizontalAlignment(SwingConstants.LEFT);
             label2.setHorizontalAlignment(SwingConstants.LEFT);
+            label3.setHorizontalAlignment(SwingConstants.LEFT);
 
             label1Panel.setVisible(true);
             label1Panel.setName("" + i);
@@ -225,27 +334,28 @@ public class ParserApp {
             });
             label1Panel.add(label1);
             label1Panel.add(label2);
+            label1Panel.add(label3);
             label1Panel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
             label1Panel.setAlignmentX(0.0f);
             label1Panel.setAlignmentY(0.0f);
             label1Panel.setAutoscrolls(true);
             label1Panel.setBackground(new Color(-721665));
-            label1Panel.setMaximumSize(new Dimension(540, 40));
-            label1Panel.setMinimumSize(new Dimension(540, 40));
-            label1Panel.setPreferredSize(new Dimension(540, 40));
+            label1Panel.setMaximumSize(new Dimension(540, 60));
+            label1Panel.setMinimumSize(new Dimension(540, 60));
+            label1Panel.setPreferredSize(new Dimension(540, 60));
             mainJobPanel.add(label1Panel);
             label1Panel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
 
         }
         mainJobPanel.setMinimumSize(new
 
-                Dimension(580, 45 * jobsInformList.size()));
+                Dimension(580, 65 * jobsInformList.size()));
         mainJobPanel.setPreferredSize(new
 
-                Dimension(580, 45 * jobsInformList.size()));
+                Dimension(580, 65 * jobsInformList.size()));
         mainJobPanel.setMaximumSize(new
 
-                Dimension(510, 45 * jobsInformList.size()));
+                Dimension(510, 65 * jobsInformList.size()));
         JScrollPane pane = new JScrollPane(mainJobPanel,
                 ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -427,6 +537,230 @@ public class ParserApp {
         startusLabel.setVerifyInputWhenFocusTarget(false);
         startusLabel.putClientProperty("html.disable", Boolean.TRUE);
         startusLabelPanel.add(startusLabel);
+        virtualvocationsLabelPanel = new JPanel();
+        virtualvocationsLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        virtualvocationsLabelPanel.setAlignmentX(0.0f);
+        virtualvocationsLabelPanel.setAlignmentY(0.0f);
+        virtualvocationsLabelPanel.setAutoscrolls(true);
+        virtualvocationsLabelPanel.setBackground(new Color(-721665));
+        virtualvocationsLabelPanel.setMaximumSize(new Dimension(210, 30));
+        virtualvocationsLabelPanel.setMinimumSize(new Dimension(180, 30));
+        virtualvocationsLabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(virtualvocationsLabelPanel);
+        virtualvocationsLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        virtualvocationsLabel = new JLabel();
+        virtualvocationsLabel.setAutoscrolls(false);
+        virtualvocationsLabel.setEnabled(true);
+        virtualvocationsLabel.setFocusable(false);
+        virtualvocationsLabel.setFont(new Font("Times New Roman", virtualvocationsLabel.getFont().getStyle(), 12));
+        virtualvocationsLabel.setForeground(new Color(-16777216));
+        virtualvocationsLabel.setHorizontalAlignment(2);
+        virtualvocationsLabel.setHorizontalTextPosition(2);
+        virtualvocationsLabel.setMaximumSize(new Dimension(170, 30));
+        virtualvocationsLabel.setMinimumSize(new Dimension(-1, -1));
+        virtualvocationsLabel.setOpaque(false);
+        virtualvocationsLabel.setPreferredSize(new Dimension(170, 30));
+        virtualvocationsLabel.setText("virtualvocations.com");
+        virtualvocationsLabel.setToolTipText("http://www.virtualvocations.com/job");
+        virtualvocationsLabel.setVerifyInputWhenFocusTarget(false);
+        virtualvocationsLabel.putClientProperty("html.disable", Boolean.TRUE);
+        virtualvocationsLabelPanel.add(virtualvocationsLabel);
+        simplyhiredLabelPanel = new JPanel();
+        simplyhiredLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        simplyhiredLabelPanel.setAlignmentX(0.0f);
+        simplyhiredLabelPanel.setAlignmentY(0.0f);
+        simplyhiredLabelPanel.setAutoscrolls(true);
+        simplyhiredLabelPanel.setBackground(new Color(-721665));
+        simplyhiredLabelPanel.setMaximumSize(new Dimension(210, 30));
+        simplyhiredLabelPanel.setMinimumSize(new Dimension(180, 30));
+        simplyhiredLabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(simplyhiredLabelPanel);
+        simplyhiredLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        simplyhiredLabel = new JLabel();
+        simplyhiredLabel.setAutoscrolls(false);
+        simplyhiredLabel.setEnabled(true);
+        simplyhiredLabel.setFocusable(false);
+        simplyhiredLabel.setFont(new Font("Times New Roman", simplyhiredLabel.getFont().getStyle(), 12));
+        simplyhiredLabel.setForeground(new Color(-16777216));
+        simplyhiredLabel.setHorizontalAlignment(2);
+        simplyhiredLabel.setHorizontalTextPosition(2);
+        simplyhiredLabel.setMaximumSize(new Dimension(170, 30));
+        simplyhiredLabel.setMinimumSize(new Dimension(-1, -1));
+        simplyhiredLabel.setOpaque(false);
+        simplyhiredLabel.setPreferredSize(new Dimension(170, 30));
+        simplyhiredLabel.setText("simplyhired.com");
+        simplyhiredLabel.setToolTipText("http://www.simplyhired.com/");
+        simplyhiredLabel.setVerifyInputWhenFocusTarget(false);
+        simplyhiredLabel.putClientProperty("html.disable", Boolean.TRUE);
+        simplyhiredLabelPanel.add(simplyhiredLabel);
+        stackoverflowLabelPanel = new JPanel();
+        stackoverflowLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        stackoverflowLabelPanel.setAlignmentX(0.0f);
+        stackoverflowLabelPanel.setAlignmentY(0.0f);
+        stackoverflowLabelPanel.setAutoscrolls(true);
+        stackoverflowLabelPanel.setBackground(new Color(-721665));
+        stackoverflowLabelPanel.setMaximumSize(new Dimension(210, 30));
+        stackoverflowLabelPanel.setMinimumSize(new Dimension(180, 30));
+        stackoverflowLabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(stackoverflowLabelPanel);
+        stackoverflowLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        stackoverflowLabel = new JLabel();
+        stackoverflowLabel.setAutoscrolls(false);
+        stackoverflowLabel.setEnabled(true);
+        stackoverflowLabel.setFocusable(false);
+        stackoverflowLabel.setFont(new Font("Times New Roman", stackoverflowLabel.getFont().getStyle(), 12));
+        stackoverflowLabel.setForeground(new Color(-16777216));
+        stackoverflowLabel.setHorizontalAlignment(2);
+        stackoverflowLabel.setHorizontalTextPosition(2);
+        stackoverflowLabel.setMaximumSize(new Dimension(170, 30));
+        stackoverflowLabel.setMinimumSize(new Dimension(-1, -1));
+        stackoverflowLabel.setOpaque(false);
+        stackoverflowLabel.setPreferredSize(new Dimension(170, 30));
+        stackoverflowLabel.setText("stackoverflow.com");
+        stackoverflowLabel.setToolTipText("http://www.stackoverflow.com");
+        stackoverflowLabel.setVerifyInputWhenFocusTarget(false);
+        stackoverflowLabel.putClientProperty("html.disable", Boolean.TRUE);
+        stackoverflowLabelPanel.add(stackoverflowLabel);
+        jujuLabelPanel = new JPanel();
+        jujuLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        jujuLabelPanel.setAlignmentX(0.0f);
+        jujuLabelPanel.setAlignmentY(0.0f);
+        jujuLabelPanel.setAutoscrolls(true);
+        jujuLabelPanel.setBackground(new Color(-721665));
+        jujuLabelPanel.setMaximumSize(new Dimension(210, 30));
+        jujuLabelPanel.setMinimumSize(new Dimension(180, 30));
+        jujuLabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(jujuLabelPanel);
+        jujuLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        jujuLabel = new JLabel();
+        jujuLabel.setAutoscrolls(false);
+        jujuLabel.setEnabled(true);
+        jujuLabel.setFocusable(false);
+        jujuLabel.setFont(new Font("Times New Roman", jujuLabel.getFont().getStyle(), 12));
+        jujuLabel.setForeground(new Color(-16777216));
+        jujuLabel.setHorizontalAlignment(2);
+        jujuLabel.setHorizontalTextPosition(2);
+        jujuLabel.setMaximumSize(new Dimension(170, 30));
+        jujuLabel.setMinimumSize(new Dimension(-1, -1));
+        jujuLabel.setOpaque(false);
+        jujuLabel.setPreferredSize(new Dimension(170, 30));
+        jujuLabel.setText("juju.com");
+        jujuLabel.setToolTipText("http://www.juju.com");
+        jujuLabel.setVerifyInputWhenFocusTarget(false);
+        jujuLabel.putClientProperty("html.disable", Boolean.TRUE);
+        jujuLabelPanel.add(jujuLabel);
+        drupalLubelPanel = new JPanel();
+        drupalLubelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        drupalLubelPanel.setAlignmentX(0.0f);
+        drupalLubelPanel.setAlignmentY(0.0f);
+        drupalLubelPanel.setAutoscrolls(true);
+        drupalLubelPanel.setBackground(new Color(-721665));
+        drupalLubelPanel.setMaximumSize(new Dimension(210, 30));
+        drupalLubelPanel.setMinimumSize(new Dimension(180, 30));
+        drupalLubelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(drupalLubelPanel);
+        drupalLubelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        drupalLabel = new JLabel();
+        drupalLabel.setAutoscrolls(false);
+        drupalLabel.setEnabled(true);
+        drupalLabel.setFocusable(false);
+        drupalLabel.setFont(new Font("Times New Roman", drupalLabel.getFont().getStyle(), 12));
+        drupalLabel.setForeground(new Color(-16777216));
+        drupalLabel.setHorizontalAlignment(2);
+        drupalLabel.setHorizontalTextPosition(2);
+        drupalLabel.setMaximumSize(new Dimension(170, 30));
+        drupalLabel.setMinimumSize(new Dimension(-1, -1));
+        drupalLabel.setOpaque(false);
+        drupalLabel.setPreferredSize(new Dimension(170, 30));
+        drupalLabel.setText("jobs.drupal.org");
+        drupalLabel.setToolTipText("http://jobs.drupal.org");
+        drupalLabel.setVerifyInputWhenFocusTarget(false);
+        drupalLabel.putClientProperty("html.disable", Boolean.TRUE);
+        drupalLubelPanel.add(drupalLabel);
+        dutchstartupjobsLabelPanel = new JPanel();
+        dutchstartupjobsLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        dutchstartupjobsLabelPanel.setAlignmentX(0.0f);
+        dutchstartupjobsLabelPanel.setAlignmentY(0.0f);
+        dutchstartupjobsLabelPanel.setAutoscrolls(true);
+        dutchstartupjobsLabelPanel.setBackground(new Color(-721665));
+        dutchstartupjobsLabelPanel.setMaximumSize(new Dimension(210, 30));
+        dutchstartupjobsLabelPanel.setMinimumSize(new Dimension(180, 30));
+        dutchstartupjobsLabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(dutchstartupjobsLabelPanel);
+        dutchstartupjobsLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        dutchstartupjobsLabel = new JLabel();
+        dutchstartupjobsLabel.setAutoscrolls(false);
+        dutchstartupjobsLabel.setEnabled(true);
+        dutchstartupjobsLabel.setFocusable(false);
+        dutchstartupjobsLabel.setFont(new Font("Times New Roman", dutchstartupjobsLabel.getFont().getStyle(), 12));
+        dutchstartupjobsLabel.setForeground(new Color(-16777216));
+        dutchstartupjobsLabel.setHorizontalAlignment(2);
+        dutchstartupjobsLabel.setHorizontalTextPosition(2);
+        dutchstartupjobsLabel.setMaximumSize(new Dimension(170, 30));
+        dutchstartupjobsLabel.setMinimumSize(new Dimension(-1, -1));
+        dutchstartupjobsLabel.setOpaque(false);
+        dutchstartupjobsLabel.setPreferredSize(new Dimension(170, 30));
+        dutchstartupjobsLabel.setText("dutchstartupjobs.com");
+        dutchstartupjobsLabel.setToolTipText("http://dutchstartupjobs.com");
+        dutchstartupjobsLabel.setVerifyInputWhenFocusTarget(false);
+        dutchstartupjobsLabel.putClientProperty("html.disable", Boolean.TRUE);
+        dutchstartupjobsLabelPanel.add(dutchstartupjobsLabel);
+        monsterDeLabelPanel = new JPanel();
+        monsterDeLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        monsterDeLabelPanel.setAlignmentX(0.0f);
+        monsterDeLabelPanel.setAlignmentY(0.0f);
+        monsterDeLabelPanel.setAutoscrolls(true);
+        monsterDeLabelPanel.setBackground(new Color(-721665));
+        monsterDeLabelPanel.setMaximumSize(new Dimension(210, 30));
+        monsterDeLabelPanel.setMinimumSize(new Dimension(180, 30));
+        monsterDeLabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(monsterDeLabelPanel);
+        monsterDeLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        monsterDeLabel = new JLabel();
+        monsterDeLabel.setAutoscrolls(false);
+        monsterDeLabel.setEnabled(true);
+        monsterDeLabel.setFocusable(false);
+        monsterDeLabel.setFont(new Font("Times New Roman", monsterDeLabel.getFont().getStyle(), 12));
+        monsterDeLabel.setForeground(new Color(-16777216));
+        monsterDeLabel.setHorizontalAlignment(2);
+        monsterDeLabel.setHorizontalTextPosition(2);
+        monsterDeLabel.setMaximumSize(new Dimension(170, 30));
+        monsterDeLabel.setMinimumSize(new Dimension(-1, -1));
+        monsterDeLabel.setOpaque(false);
+        monsterDeLabel.setPreferredSize(new Dimension(170, 30));
+        monsterDeLabel.setText("monster.de");
+        monsterDeLabel.setToolTipText("http://www.monster.de");
+        monsterDeLabel.setVerifyInputWhenFocusTarget(false);
+        monsterDeLabel.putClientProperty("html.disable", Boolean.TRUE);
+        monsterDeLabelPanel.add(monsterDeLabel);
+        weloveangularLabelPanel = new JPanel();
+        weloveangularLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        weloveangularLabelPanel.setAlignmentX(0.0f);
+        weloveangularLabelPanel.setAlignmentY(0.0f);
+        weloveangularLabelPanel.setAutoscrolls(true);
+        weloveangularLabelPanel.setBackground(new Color(-721665));
+        weloveangularLabelPanel.setMaximumSize(new Dimension(210, 30));
+        weloveangularLabelPanel.setMinimumSize(new Dimension(180, 30));
+        weloveangularLabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(weloveangularLabelPanel);
+        weloveangularLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        weloveangularLabel = new JLabel();
+        weloveangularLabel.setAutoscrolls(false);
+        weloveangularLabel.setEnabled(true);
+        weloveangularLabel.setFocusable(false);
+        weloveangularLabel.setFont(new Font("Times New Roman", weloveangularLabel.getFont().getStyle(), 12));
+        weloveangularLabel.setForeground(new Color(-16777216));
+        weloveangularLabel.setHorizontalAlignment(2);
+        weloveangularLabel.setHorizontalTextPosition(2);
+        weloveangularLabel.setMaximumSize(new Dimension(170, 30));
+        weloveangularLabel.setMinimumSize(new Dimension(-1, -1));
+        weloveangularLabel.setOpaque(false);
+        weloveangularLabel.setPreferredSize(new Dimension(170, 30));
+        weloveangularLabel.setText("weloveangular.com");
+        weloveangularLabel.setToolTipText("http://www.weloveangular.com");
+        weloveangularLabel.setVerifyInputWhenFocusTarget(false);
+        weloveangularLabel.putClientProperty("html.disable", Boolean.TRUE);
+        weloveangularLabelPanel.add(weloveangularLabel);
         jobPanel = new JPanel();
         jobPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5));
         jobPanel.setAutoscrolls(false);
