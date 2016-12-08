@@ -3,17 +3,21 @@ package com.parser;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.parser.cc.startus.ParserStartus;
+import com.parser.ch.jobs.ParserJobs;
+import com.parser.com.berlinstartupjobs.ParserBerlinstartupjobs;
 import com.parser.com.dutchstartupjobs.ParserDutchstartupjobs;
 import com.parser.com.juju.ParserJuju;
 import com.parser.com.simplyhired.ParserSimplyhired;
 import com.parser.com.stackoverflow.ParserStackoverflow;
 import com.parser.com.virtualvocations.ParserVirtualvocations;
 import com.parser.com.weloveangular.ParserWeloveangular;
+import com.parser.com.weworkremotely.ParserWeworkremotely;
 import com.parser.de.monster.ParserMonsterDe;
 import com.parser.io.remoteok.ParserRemoteok;
 import com.parser.io.wfh.ParserWFH;
 import com.parser.jobs.landing.ParserLandingJobs;
 import com.parser.org.drupal.jobs.ParserDrupal;
+import com.parser.se.startupjobs.ParserStartupjobsSe;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -58,21 +62,35 @@ public class ParserApp {
     private JLabel monsterDeLabel;
     private JPanel weloveangularLabelPanel;
     private JLabel weloveangularLabel;
+    private JPanel weworkremotelyLabelPanel;
+    private JLabel weworkremotelyLabel;
+    private JPanel startupjobsLabelPanel;
+    private JLabel startupjobsLabel;
+    private JPanel berlinstartupjobsLabelPanel;
+    private JLabel berlinstartupjobsLabel;
+    private JPanel jobsChLabelPanel;
+    private JLabel jobsChLabel;
     private JFrame jFrame = new JFrame();
-
+    private Component c;
 
     public JPanel getPanelMain() {
         return panelMain;
     }
 
     public ParserApp() {
+
+        c = wfhLink;
         wfhLink.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 System.out.println("text speciality :111 ");
+                linkPanel.setVisible(false);
+                c.setForeground(new Color(-16777216));
+                c = e.getComponent();
+                c.setForeground(new Color(0x696969));
+                linkPanel.setVisible(true);
                 jobPanel.removeAll();
                 panelFiller(new ParserWFH().getJobsInforms());
-//                super.mouseClicked(e);
 
                 System.out.println("text speciality :111 ");
 
@@ -82,6 +100,11 @@ public class ParserApp {
             @Override
             public void mouseClicked(MouseEvent e) {
                 System.out.println("text speciality :222 ");
+                linkPanel.setVisible(false);
+                c.setForeground(new Color(-16777216));
+                c = e.getComponent();
+                c.setForeground(new Color(0x696969));
+                linkPanel.setVisible(true);
                 jobPanel.removeAll();
                 panelFiller(new ParserRemoteok().getJobsInforms());
 //                super.mouseClicked(e);
@@ -92,6 +115,11 @@ public class ParserApp {
             @Override
             public void mouseClicked(MouseEvent e) {
                 System.out.println("text speciality :333 ");
+                linkPanel.setVisible(false);
+                c.setForeground(new Color(-16777216));
+                c = e.getComponent();
+                c.setForeground(new Color(0x696969));
+                linkPanel.setVisible(true);
                 jobPanel.removeAll();
                 panelFiller(new ParserLandingJobs().getJobsInforms());
 //                super.mouseClicked(e);
@@ -102,6 +130,11 @@ public class ParserApp {
             @Override
             public void mouseClicked(MouseEvent e) {
                 System.out.println("text speciality :444 ");
+                linkPanel.setVisible(false);
+                c.setForeground(new Color(-16777216));
+                c = e.getComponent();
+                c.setForeground(new Color(0x696969));
+                linkPanel.setVisible(true);
                 jobPanel.removeAll();
                 panelFiller(new ParserStartus().getJobsInforms());
 //                super.mouseClicked(e);
@@ -112,6 +145,11 @@ public class ParserApp {
             @Override
             public void mouseClicked(MouseEvent e) {
                 System.out.println("text speciality :555 ");
+                linkPanel.setVisible(false);
+                c.setForeground(new Color(-16777216));
+                c = e.getComponent();
+                c.setForeground(new Color(0x696969));
+                linkPanel.setVisible(true);
                 jobPanel.removeAll();
                 panelFiller(new ParserVirtualvocations().getJobsInforms());
 //                super.mouseClicked(e);
@@ -122,6 +160,11 @@ public class ParserApp {
             @Override
             public void mouseClicked(MouseEvent e) {
                 System.out.println("text speciality :666 ");
+                linkPanel.setVisible(false);
+                c.setForeground(new Color(-16777216));
+                c = e.getComponent();
+                c.setForeground(new Color(0x696969));
+                linkPanel.setVisible(true);
                 jobPanel.removeAll();
                 panelFiller(new ParserSimplyhired().getJobsInforms());
 //                super.mouseClicked(e);
@@ -132,6 +175,11 @@ public class ParserApp {
             @Override
             public void mouseClicked(MouseEvent e) {
                 System.out.println("text speciality :777 ");
+                linkPanel.setVisible(false);
+                c.setForeground(new Color(-16777216));
+                c = e.getComponent();
+                c.setForeground(new Color(0x696969));
+                linkPanel.setVisible(true);
                 jobPanel.removeAll();
                 panelFiller(new ParserStackoverflow().getJobsInforms());
 //                super.mouseClicked(e);
@@ -142,6 +190,11 @@ public class ParserApp {
             @Override
             public void mouseClicked(MouseEvent e) {
                 System.out.println("text speciality :888 ");
+                linkPanel.setVisible(false);
+                c.setForeground(new Color(-16777216));
+                c = e.getComponent();
+                c.setForeground(new Color(0x696969));
+                linkPanel.setVisible(true);
                 jobPanel.removeAll();
                 panelFiller(new ParserJuju().getJobsInforms());
 //                super.mouseClicked(e);
@@ -152,6 +205,11 @@ public class ParserApp {
             @Override
             public void mouseClicked(MouseEvent e) {
                 System.out.println("text speciality :999 ");
+                linkPanel.setVisible(false);
+                c.setForeground(new Color(-16777216));
+                c = e.getComponent();
+                c.setForeground(new Color(0x696969));
+                linkPanel.setVisible(true);
                 jobPanel.removeAll();
                 panelFiller(new ParserDrupal().getJobsInforms());
 //                super.mouseClicked(e);
@@ -162,6 +220,11 @@ public class ParserApp {
             @Override
             public void mouseClicked(MouseEvent e) {
                 System.out.println("text speciality :10 ");
+                linkPanel.setVisible(false);
+                c.setForeground(new Color(-16777216));
+                c = e.getComponent();
+                c.setForeground(new Color(0x696969));
+                linkPanel.setVisible(true);
                 jobPanel.removeAll();
                 panelFiller(new ParserDutchstartupjobs().getJobsInforms());
 //                super.mouseClicked(e);
@@ -172,6 +235,11 @@ public class ParserApp {
             @Override
             public void mouseClicked(MouseEvent e) {
                 System.out.println("text speciality :11 ");
+                linkPanel.setVisible(false);
+                c.setForeground(new Color(-16777216));
+                c = e.getComponent();
+                c.setForeground(new Color(0x696969));
+                linkPanel.setVisible(true);
                 jobPanel.removeAll();
                 panelFiller(new ParserMonsterDe().getJobsInforms());
 //                super.mouseClicked(e);
@@ -182,8 +250,73 @@ public class ParserApp {
             @Override
             public void mouseClicked(MouseEvent e) {
                 System.out.println("text speciality :12 ");
+                linkPanel.setVisible(false);
+                c.setForeground(new Color(-16777216));
+                c = e.getComponent();
+                c.setForeground(new Color(0x696969));
+                linkPanel.setVisible(true);
                 jobPanel.removeAll();
                 panelFiller(new ParserWeloveangular().getJobsInforms());
+//                super.mouseClicked(e);
+                System.out.println("text speciality :12 ");
+            }
+        });
+        weworkremotelyLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                System.out.println("text speciality :12 ");
+                linkPanel.setVisible(false);
+                c.setForeground(new Color(-16777216));
+                c = e.getComponent();
+                c.setForeground(new Color(0x696969));
+                linkPanel.setVisible(true);
+                jobPanel.removeAll();
+                panelFiller(new ParserWeworkremotely().getJobsInforms());
+//                super.mouseClicked(e);
+                System.out.println("text speciality :12 ");
+            }
+        });
+        startupjobsLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                System.out.println("text speciality :12 ");
+                linkPanel.setVisible(false);
+                c.setForeground(new Color(-16777216));
+                c = e.getComponent();
+                c.setForeground(new Color(0x696969));
+                linkPanel.setVisible(true);
+                jobPanel.removeAll();
+                panelFiller(new ParserStartupjobsSe().getJobsInforms());
+//                super.mouseClicked(e);
+                System.out.println("text speciality :12 ");
+            }
+        });
+        berlinstartupjobsLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                System.out.println("text speciality :12 ");
+                linkPanel.setVisible(false);
+                c.setForeground(new Color(-16777216));
+                c = e.getComponent();
+                c.setForeground(new Color(0x696969));
+                linkPanel.setVisible(true);
+                jobPanel.removeAll();
+                panelFiller(new ParserBerlinstartupjobs().getJobsInforms());
+//                super.mouseClicked(e);
+                System.out.println("text speciality :12 ");
+            }
+        });
+        jobsChLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                System.out.println("text speciality :12 ");
+                linkPanel.setVisible(false);
+                c.setForeground(new Color(-16777216));
+                c = e.getComponent();
+                c.setForeground(new Color(0x696969));
+                linkPanel.setVisible(true);
+                jobPanel.removeAll();
+                panelFiller(new ParserJobs().getJobsInforms());
 //                super.mouseClicked(e);
                 System.out.println("text speciality :12 ");
             }
@@ -761,6 +894,118 @@ public class ParserApp {
         weloveangularLabel.setVerifyInputWhenFocusTarget(false);
         weloveangularLabel.putClientProperty("html.disable", Boolean.TRUE);
         weloveangularLabelPanel.add(weloveangularLabel);
+        weworkremotelyLabelPanel = new JPanel();
+        weworkremotelyLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        weworkremotelyLabelPanel.setAlignmentX(0.0f);
+        weworkremotelyLabelPanel.setAlignmentY(0.0f);
+        weworkremotelyLabelPanel.setAutoscrolls(true);
+        weworkremotelyLabelPanel.setBackground(new Color(-721665));
+        weworkremotelyLabelPanel.setMaximumSize(new Dimension(210, 30));
+        weworkremotelyLabelPanel.setMinimumSize(new Dimension(180, 30));
+        weworkremotelyLabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(weworkremotelyLabelPanel);
+        weworkremotelyLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        weworkremotelyLabel = new JLabel();
+        weworkremotelyLabel.setAutoscrolls(false);
+        weworkremotelyLabel.setEnabled(true);
+        weworkremotelyLabel.setFocusable(false);
+        weworkremotelyLabel.setFont(new Font("Times New Roman", weworkremotelyLabel.getFont().getStyle(), 12));
+        weworkremotelyLabel.setForeground(new Color(-16777216));
+        weworkremotelyLabel.setHorizontalAlignment(2);
+        weworkremotelyLabel.setHorizontalTextPosition(2);
+        weworkremotelyLabel.setMaximumSize(new Dimension(170, 30));
+        weworkremotelyLabel.setMinimumSize(new Dimension(-1, -1));
+        weworkremotelyLabel.setOpaque(false);
+        weworkremotelyLabel.setPreferredSize(new Dimension(170, 30));
+        weworkremotelyLabel.setText("weworkremotely.com");
+        weworkremotelyLabel.setToolTipText("http://www.weworkremotely.com");
+        weworkremotelyLabel.setVerifyInputWhenFocusTarget(false);
+        weworkremotelyLabel.putClientProperty("html.disable", Boolean.TRUE);
+        weworkremotelyLabelPanel.add(weworkremotelyLabel);
+        startupjobsLabelPanel = new JPanel();
+        startupjobsLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        startupjobsLabelPanel.setAlignmentX(0.0f);
+        startupjobsLabelPanel.setAlignmentY(0.0f);
+        startupjobsLabelPanel.setAutoscrolls(true);
+        startupjobsLabelPanel.setBackground(new Color(-721665));
+        startupjobsLabelPanel.setMaximumSize(new Dimension(210, 30));
+        startupjobsLabelPanel.setMinimumSize(new Dimension(180, 30));
+        startupjobsLabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(startupjobsLabelPanel);
+        startupjobsLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        startupjobsLabel = new JLabel();
+        startupjobsLabel.setAutoscrolls(false);
+        startupjobsLabel.setEnabled(true);
+        startupjobsLabel.setFocusable(false);
+        startupjobsLabel.setFont(new Font("Times New Roman", startupjobsLabel.getFont().getStyle(), 12));
+        startupjobsLabel.setForeground(new Color(-16777216));
+        startupjobsLabel.setHorizontalAlignment(2);
+        startupjobsLabel.setHorizontalTextPosition(2);
+        startupjobsLabel.setMaximumSize(new Dimension(170, 30));
+        startupjobsLabel.setMinimumSize(new Dimension(-1, -1));
+        startupjobsLabel.setOpaque(false);
+        startupjobsLabel.setPreferredSize(new Dimension(170, 30));
+        startupjobsLabel.setText("startupjobs.se");
+        startupjobsLabel.setToolTipText("http://startupjobs.se/");
+        startupjobsLabel.setVerifyInputWhenFocusTarget(false);
+        startupjobsLabel.putClientProperty("html.disable", Boolean.TRUE);
+        startupjobsLabelPanel.add(startupjobsLabel);
+        berlinstartupjobsLabelPanel = new JPanel();
+        berlinstartupjobsLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        berlinstartupjobsLabelPanel.setAlignmentX(0.0f);
+        berlinstartupjobsLabelPanel.setAlignmentY(0.0f);
+        berlinstartupjobsLabelPanel.setAutoscrolls(true);
+        berlinstartupjobsLabelPanel.setBackground(new Color(-721665));
+        berlinstartupjobsLabelPanel.setMaximumSize(new Dimension(210, 30));
+        berlinstartupjobsLabelPanel.setMinimumSize(new Dimension(180, 30));
+        berlinstartupjobsLabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(berlinstartupjobsLabelPanel);
+        berlinstartupjobsLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        berlinstartupjobsLabel = new JLabel();
+        berlinstartupjobsLabel.setAutoscrolls(false);
+        berlinstartupjobsLabel.setEnabled(true);
+        berlinstartupjobsLabel.setFocusable(false);
+        berlinstartupjobsLabel.setFont(new Font("Times New Roman", berlinstartupjobsLabel.getFont().getStyle(), 12));
+        berlinstartupjobsLabel.setForeground(new Color(-16777216));
+        berlinstartupjobsLabel.setHorizontalAlignment(2);
+        berlinstartupjobsLabel.setHorizontalTextPosition(2);
+        berlinstartupjobsLabel.setMaximumSize(new Dimension(170, 30));
+        berlinstartupjobsLabel.setMinimumSize(new Dimension(-1, -1));
+        berlinstartupjobsLabel.setOpaque(false);
+        berlinstartupjobsLabel.setPreferredSize(new Dimension(170, 30));
+        berlinstartupjobsLabel.setText("berlinstartupjobs.com");
+        berlinstartupjobsLabel.setToolTipText("http://berlinstartupjobs.com/");
+        berlinstartupjobsLabel.setVerifyInputWhenFocusTarget(false);
+        berlinstartupjobsLabel.putClientProperty("html.disable", Boolean.TRUE);
+        berlinstartupjobsLabelPanel.add(berlinstartupjobsLabel);
+        jobsChLabelPanel = new JPanel();
+        jobsChLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        jobsChLabelPanel.setAlignmentX(0.0f);
+        jobsChLabelPanel.setAlignmentY(0.0f);
+        jobsChLabelPanel.setAutoscrolls(true);
+        jobsChLabelPanel.setBackground(new Color(-721665));
+        jobsChLabelPanel.setMaximumSize(new Dimension(210, 30));
+        jobsChLabelPanel.setMinimumSize(new Dimension(180, 30));
+        jobsChLabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(jobsChLabelPanel);
+        jobsChLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        jobsChLabel = new JLabel();
+        jobsChLabel.setAutoscrolls(false);
+        jobsChLabel.setEnabled(true);
+        jobsChLabel.setFocusable(false);
+        jobsChLabel.setFont(new Font("Times New Roman", jobsChLabel.getFont().getStyle(), 12));
+        jobsChLabel.setForeground(new Color(-16777216));
+        jobsChLabel.setHorizontalAlignment(2);
+        jobsChLabel.setHorizontalTextPosition(2);
+        jobsChLabel.setMaximumSize(new Dimension(170, 30));
+        jobsChLabel.setMinimumSize(new Dimension(-1, -1));
+        jobsChLabel.setOpaque(false);
+        jobsChLabel.setPreferredSize(new Dimension(170, 30));
+        jobsChLabel.setText("jobs.ch");
+        jobsChLabel.setToolTipText("http://www.jobs.ch/");
+        jobsChLabel.setVerifyInputWhenFocusTarget(false);
+        jobsChLabel.putClientProperty("html.disable", Boolean.TRUE);
+        jobsChLabelPanel.add(jobsChLabel);
         jobPanel = new JPanel();
         jobPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5));
         jobPanel.setAutoscrolls(false);

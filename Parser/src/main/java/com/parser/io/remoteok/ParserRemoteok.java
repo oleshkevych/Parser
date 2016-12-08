@@ -3,7 +3,9 @@ package com.parser.io.remoteok;
 import com.parser.DateGenerator;
 import com.parser.JobsInform;
 import com.parser.ListImpl;
+import com.parser.com.weworkremotely.ParserWeworkremotely;
 import com.parser.io.wfh.ParserWFH;
+import com.parser.jobs.landing.ParserLandingJobs;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -70,6 +72,9 @@ public class ParserRemoteok {
                     objectGenerator(tables2.get(i).child(2), tables2.get(i+2).child(0), tables2.get(i+2).child(2), datePublished, tables2.get(i+7));
                 } catch (ParseException e) {
                     System.out.println(e.getMessage());
+                } catch (IndexOutOfBoundsException e){
+                    System.out.println(e.getMessage());
+                    System.out.println(tables2.get(i));
                 }
 
             }
@@ -98,11 +103,17 @@ public class ParserRemoteok {
 
             try {
                 Document document = Jsoup.connect(linkToDescription).userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36").timeout(5000).get();
-                if(document.select(".navbar-brand").attr("alt").equals("Logo white")){
+                if(document.select(".navbar-brand img").attr("alt").contains("white")){
                     return ParserWFH.getDescription(linkToDescription, jobsInform);
                 }
 
-                //TODO: Add parser weworkremotely.com
+                if(document.select(".perma-logo img").attr("alt").contains("Work Remotely")){
+                    return ParserWeworkremotely.getDescription(linkToDescription, jobsInform);
+                }
+
+                if(document.select(".ld-navbar-brand-link .ld-logo-standard").size()>0){
+                    return ParserLandingJobs.getDescription(linkToDescription, jobsInform);
+                }
                 String locate = document.select(".location").text();
                 if(locate.length()>0){
                     jobsInform.setPlace(locate);
