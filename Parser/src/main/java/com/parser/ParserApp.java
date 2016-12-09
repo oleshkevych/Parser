@@ -5,14 +5,19 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.parser.cc.startus.ParserStartus;
 import com.parser.ch.jobs.ParserJobs;
 import com.parser.com.berlinstartupjobs.ParserBerlinstartupjobs;
+import com.parser.com.builtinnode.ParserBuiltinnode;
 import com.parser.com.dutchstartupjobs.ParserDutchstartupjobs;
+import com.parser.com.f6s.ParserF6s;
+import com.parser.com.flexjobs.ParserFlexjobs;
 import com.parser.com.juju.ParserJuju;
 import com.parser.com.simplyhired.ParserSimplyhired;
 import com.parser.com.stackoverflow.ParserStackoverflow;
 import com.parser.com.virtualvocations.ParserVirtualvocations;
 import com.parser.com.weloveangular.ParserWeloveangular;
+import com.parser.com.weworkmeteor.ParserWeworkmeteor;
 import com.parser.com.weworkremotely.ParserWeworkremotely;
 import com.parser.de.monster.ParserMonsterDe;
+import com.parser.dk.jobbank.ParserJobbank;
 import com.parser.io.remoteok.ParserRemoteok;
 import com.parser.io.wfh.ParserWFH;
 import com.parser.jobs.landing.ParserLandingJobs;
@@ -70,6 +75,16 @@ public class ParserApp {
     private JLabel berlinstartupjobsLabel;
     private JPanel jobsChLabelPanel;
     private JLabel jobsChLabel;
+    private JPanel flexjobslabelPanel;
+    private JLabel flexjobsLabel;
+    private JPanel builtinnodeLabelPanel;
+    private JLabel builtinnodeLabel;
+    private JPanel weworkmeteorLabelPanel;
+    private JLabel weworkmeteorLabel;
+    private JPanel jobbankLabelPanel;
+    private JLabel jobbankLabel;
+    private JPanel f6sLabelPanel;
+    private JLabel f6sLabel;
     private JFrame jFrame = new JFrame();
     private Component c;
 
@@ -319,6 +334,81 @@ public class ParserApp {
                 panelFiller(new ParserJobs().getJobsInforms());
 //                super.mouseClicked(e);
                 System.out.println("text speciality :12 ");
+            }
+        });
+        flexjobsLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                System.out.println("text speciality :13 ");
+                linkPanel.setVisible(false);
+                c.setForeground(new Color(-16777216));
+                c = e.getComponent();
+                c.setForeground(new Color(0x696969));
+                linkPanel.setVisible(true);
+                jobPanel.removeAll();
+                panelFiller(new ParserFlexjobs().getJobsInforms());
+//                super.mouseClicked(e);
+                System.out.println("text speciality :13 ");
+            }
+        });
+        builtinnodeLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                System.out.println("text speciality :13 ");
+                linkPanel.setVisible(false);
+                c.setForeground(new Color(-16777216));
+                c = e.getComponent();
+                c.setForeground(new Color(0x696969));
+                linkPanel.setVisible(true);
+                jobPanel.removeAll();
+                panelFiller(new ParserBuiltinnode().getJobsInforms());
+//                super.mouseClicked(e);
+                System.out.println("text speciality :13 ");
+            }
+        });
+        weworkmeteorLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                System.out.println("text speciality :13 ");
+                linkPanel.setVisible(false);
+                c.setForeground(new Color(-16777216));
+                c = e.getComponent();
+                c.setForeground(new Color(0x696969));
+                linkPanel.setVisible(true);
+                jobPanel.removeAll();
+                panelFiller(new ParserWeworkmeteor().getJobsInforms());
+//                super.mouseClicked(e);
+                System.out.println("text speciality :13 ");
+            }
+        });
+        jobbankLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                System.out.println("text speciality :13 ");
+                linkPanel.setVisible(false);
+                c.setForeground(new Color(-16777216));
+                c = e.getComponent();
+                c.setForeground(new Color(0x696969));
+                linkPanel.setVisible(true);
+                jobPanel.removeAll();
+                panelFiller(new ParserJobbank().getJobsInforms());
+//                super.mouseClicked(e);
+                System.out.println("text speciality :13 ");
+            }
+        });
+        f6sLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                System.out.println("text speciality :13 ");
+                linkPanel.setVisible(false);
+                c.setForeground(new Color(-16777216));
+                c = e.getComponent();
+                c.setForeground(new Color(0x696969));
+                linkPanel.setVisible(true);
+                jobPanel.removeAll();
+                panelFiller(new ParserF6s().getJobsInforms());
+//                super.mouseClicked(e);
+                System.out.println("text speciality :13 ");
             }
         });
     }
@@ -1006,6 +1096,146 @@ public class ParserApp {
         jobsChLabel.setVerifyInputWhenFocusTarget(false);
         jobsChLabel.putClientProperty("html.disable", Boolean.TRUE);
         jobsChLabelPanel.add(jobsChLabel);
+        flexjobslabelPanel = new JPanel();
+        flexjobslabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        flexjobslabelPanel.setAlignmentX(0.0f);
+        flexjobslabelPanel.setAlignmentY(0.0f);
+        flexjobslabelPanel.setAutoscrolls(true);
+        flexjobslabelPanel.setBackground(new Color(-721665));
+        flexjobslabelPanel.setMaximumSize(new Dimension(210, 30));
+        flexjobslabelPanel.setMinimumSize(new Dimension(180, 30));
+        flexjobslabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(flexjobslabelPanel);
+        flexjobslabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        flexjobsLabel = new JLabel();
+        flexjobsLabel.setAutoscrolls(false);
+        flexjobsLabel.setEnabled(true);
+        flexjobsLabel.setFocusable(false);
+        flexjobsLabel.setFont(new Font("Times New Roman", flexjobsLabel.getFont().getStyle(), 12));
+        flexjobsLabel.setForeground(new Color(-16777216));
+        flexjobsLabel.setHorizontalAlignment(2);
+        flexjobsLabel.setHorizontalTextPosition(2);
+        flexjobsLabel.setMaximumSize(new Dimension(170, 30));
+        flexjobsLabel.setMinimumSize(new Dimension(-1, -1));
+        flexjobsLabel.setOpaque(false);
+        flexjobsLabel.setPreferredSize(new Dimension(170, 30));
+        flexjobsLabel.setText("flexjobs.com");
+        flexjobsLabel.setToolTipText("http://www.flexjobs.com");
+        flexjobsLabel.setVerifyInputWhenFocusTarget(false);
+        flexjobsLabel.putClientProperty("html.disable", Boolean.TRUE);
+        flexjobslabelPanel.add(flexjobsLabel);
+        builtinnodeLabelPanel = new JPanel();
+        builtinnodeLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        builtinnodeLabelPanel.setAlignmentX(0.0f);
+        builtinnodeLabelPanel.setAlignmentY(0.0f);
+        builtinnodeLabelPanel.setAutoscrolls(true);
+        builtinnodeLabelPanel.setBackground(new Color(-721665));
+        builtinnodeLabelPanel.setMaximumSize(new Dimension(210, 30));
+        builtinnodeLabelPanel.setMinimumSize(new Dimension(180, 30));
+        builtinnodeLabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(builtinnodeLabelPanel);
+        builtinnodeLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        builtinnodeLabel = new JLabel();
+        builtinnodeLabel.setAutoscrolls(false);
+        builtinnodeLabel.setEnabled(true);
+        builtinnodeLabel.setFocusable(false);
+        builtinnodeLabel.setFont(new Font("Times New Roman", builtinnodeLabel.getFont().getStyle(), 12));
+        builtinnodeLabel.setForeground(new Color(-16777216));
+        builtinnodeLabel.setHorizontalAlignment(2);
+        builtinnodeLabel.setHorizontalTextPosition(2);
+        builtinnodeLabel.setMaximumSize(new Dimension(170, 30));
+        builtinnodeLabel.setMinimumSize(new Dimension(-1, -1));
+        builtinnodeLabel.setOpaque(false);
+        builtinnodeLabel.setPreferredSize(new Dimension(170, 30));
+        builtinnodeLabel.setText("builtinnode.com");
+        builtinnodeLabel.setToolTipText("http://builtinnode.com/");
+        builtinnodeLabel.setVerifyInputWhenFocusTarget(false);
+        builtinnodeLabel.putClientProperty("html.disable", Boolean.TRUE);
+        builtinnodeLabelPanel.add(builtinnodeLabel);
+        weworkmeteorLabelPanel = new JPanel();
+        weworkmeteorLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        weworkmeteorLabelPanel.setAlignmentX(0.0f);
+        weworkmeteorLabelPanel.setAlignmentY(0.0f);
+        weworkmeteorLabelPanel.setAutoscrolls(true);
+        weworkmeteorLabelPanel.setBackground(new Color(-721665));
+        weworkmeteorLabelPanel.setMaximumSize(new Dimension(210, 30));
+        weworkmeteorLabelPanel.setMinimumSize(new Dimension(180, 30));
+        weworkmeteorLabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(weworkmeteorLabelPanel);
+        weworkmeteorLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        weworkmeteorLabel = new JLabel();
+        weworkmeteorLabel.setAutoscrolls(false);
+        weworkmeteorLabel.setEnabled(true);
+        weworkmeteorLabel.setFocusable(false);
+        weworkmeteorLabel.setFont(new Font("Times New Roman", weworkmeteorLabel.getFont().getStyle(), 12));
+        weworkmeteorLabel.setForeground(new Color(-16777216));
+        weworkmeteorLabel.setHorizontalAlignment(2);
+        weworkmeteorLabel.setHorizontalTextPosition(2);
+        weworkmeteorLabel.setMaximumSize(new Dimension(170, 30));
+        weworkmeteorLabel.setMinimumSize(new Dimension(-1, -1));
+        weworkmeteorLabel.setOpaque(false);
+        weworkmeteorLabel.setPreferredSize(new Dimension(170, 30));
+        weworkmeteorLabel.setText("weworkmeteor.com");
+        weworkmeteorLabel.setToolTipText("http://www.weworkmeteor.com");
+        weworkmeteorLabel.setVerifyInputWhenFocusTarget(false);
+        weworkmeteorLabel.putClientProperty("html.disable", Boolean.TRUE);
+        weworkmeteorLabelPanel.add(weworkmeteorLabel);
+        jobbankLabelPanel = new JPanel();
+        jobbankLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        jobbankLabelPanel.setAlignmentX(0.0f);
+        jobbankLabelPanel.setAlignmentY(0.0f);
+        jobbankLabelPanel.setAutoscrolls(true);
+        jobbankLabelPanel.setBackground(new Color(-721665));
+        jobbankLabelPanel.setMaximumSize(new Dimension(210, 30));
+        jobbankLabelPanel.setMinimumSize(new Dimension(180, 30));
+        jobbankLabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(jobbankLabelPanel);
+        jobbankLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        jobbankLabel = new JLabel();
+        jobbankLabel.setAutoscrolls(false);
+        jobbankLabel.setEnabled(true);
+        jobbankLabel.setFocusable(false);
+        jobbankLabel.setFont(new Font("Times New Roman", jobbankLabel.getFont().getStyle(), 12));
+        jobbankLabel.setForeground(new Color(-16777216));
+        jobbankLabel.setHorizontalAlignment(2);
+        jobbankLabel.setHorizontalTextPosition(2);
+        jobbankLabel.setMaximumSize(new Dimension(170, 30));
+        jobbankLabel.setMinimumSize(new Dimension(-1, -1));
+        jobbankLabel.setOpaque(false);
+        jobbankLabel.setPreferredSize(new Dimension(170, 30));
+        jobbankLabel.setText("jobbank.dk");
+        jobbankLabel.setToolTipText("http://jobbank.dk");
+        jobbankLabel.setVerifyInputWhenFocusTarget(false);
+        jobbankLabel.putClientProperty("html.disable", Boolean.TRUE);
+        jobbankLabelPanel.add(jobbankLabel);
+        f6sLabelPanel = new JPanel();
+        f6sLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        f6sLabelPanel.setAlignmentX(0.0f);
+        f6sLabelPanel.setAlignmentY(0.0f);
+        f6sLabelPanel.setAutoscrolls(true);
+        f6sLabelPanel.setBackground(new Color(-721665));
+        f6sLabelPanel.setMaximumSize(new Dimension(210, 30));
+        f6sLabelPanel.setMinimumSize(new Dimension(180, 30));
+        f6sLabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(f6sLabelPanel);
+        f6sLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        f6sLabel = new JLabel();
+        f6sLabel.setAutoscrolls(false);
+        f6sLabel.setEnabled(true);
+        f6sLabel.setFocusable(false);
+        f6sLabel.setFont(new Font("Times New Roman", f6sLabel.getFont().getStyle(), 12));
+        f6sLabel.setForeground(new Color(-16777216));
+        f6sLabel.setHorizontalAlignment(2);
+        f6sLabel.setHorizontalTextPosition(2);
+        f6sLabel.setMaximumSize(new Dimension(170, 30));
+        f6sLabel.setMinimumSize(new Dimension(-1, -1));
+        f6sLabel.setOpaque(false);
+        f6sLabel.setPreferredSize(new Dimension(170, 30));
+        f6sLabel.setText("f6s.com");
+        f6sLabel.setToolTipText("http://www.f6s.com");
+        f6sLabel.setVerifyInputWhenFocusTarget(false);
+        f6sLabel.putClientProperty("html.disable", Boolean.TRUE);
+        f6sLabelPanel.add(f6sLabel);
         jobPanel = new JPanel();
         jobPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5));
         jobPanel.setAutoscrolls(false);

@@ -666,6 +666,201 @@
               </component>
             </children>
           </grid>
+          <grid id="7c6ac" binding="flexjobslabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+            <constraints/>
+            <properties>
+              <alignmentX value="0.0"/>
+              <alignmentY value="0.0"/>
+              <autoscrolls value="true"/>
+              <background color="-721665"/>
+              <maximumSize width="210" height="30"/>
+              <minimumSize width="180" height="30"/>
+              <preferredSize width="180" height="30"/>
+            </properties>
+            <border type="empty" title-position="1">
+              <title-color color="-16777216"/>
+            </border>
+            <children>
+              <component id="53dd1" class="javax.swing.JLabel" binding="flexjobsLabel">
+                <constraints/>
+                <properties>
+                  <autoscrolls value="false"/>
+                  <enabled value="true"/>
+                  <focusable value="false"/>
+                  <font name="Times New Roman" size="12"/>
+                  <foreground color="-16777216"/>
+                  <horizontalAlignment value="2"/>
+                  <horizontalTextPosition value="2"/>
+                  <maximumSize width="170" height="30"/>
+                  <minimumSize width="-1" height="-1"/>
+                  <opaque value="false"/>
+                  <preferredSize width="170" height="30"/>
+                  <text value="flexjobs.com"/>
+                  <toolTipText value="http://www.flexjobs.com"/>
+                  <verifyInputWhenFocusTarget value="false"/>
+                </properties>
+                <clientProperties>
+                  <html.disable class="java.lang.Boolean" value="true"/>
+                </clientProperties>
+              </component>
+            </children>
+          </grid>
+          <grid id="c18c8" binding="builtinnodeLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+            <constraints/>
+            <properties>
+              <alignmentX value="0.0"/>
+              <alignmentY value="0.0"/>
+              <autoscrolls value="true"/>
+              <background color="-721665"/>
+              <maximumSize width="210" height="30"/>
+              <minimumSize width="180" height="30"/>
+              <preferredSize width="180" height="30"/>
+            </properties>
+            <border type="empty" title-position="1">
+              <title-color color="-16777216"/>
+            </border>
+            <children>
+              <component id="fc5cf" class="javax.swing.JLabel" binding="builtinnodeLabel">
+                <constraints/>
+                <properties>
+                  <autoscrolls value="false"/>
+                  <enabled value="true"/>
+                  <focusable value="false"/>
+                  <font name="Times New Roman" size="12"/>
+                  <foreground color="-16777216"/>
+                  <horizontalAlignment value="2"/>
+                  <horizontalTextPosition value="2"/>
+                  <maximumSize width="170" height="30"/>
+                  <minimumSize width="-1" height="-1"/>
+                  <opaque value="false"/>
+                  <preferredSize width="170" height="30"/>
+                  <text value="builtinnode.com"/>
+                  <toolTipText value="http://builtinnode.com/"/>
+                  <verifyInputWhenFocusTarget value="false"/>
+                </properties>
+                <clientProperties>
+                  <html.disable class="java.lang.Boolean" value="true"/>
+                </clientProperties>
+              </component>
+            </children>
+          </grid>
+          <grid id="522f7" binding="weworkmeteorLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+            <constraints/>
+            <properties>
+              <alignmentX value="0.0"/>
+              <alignmentY value="0.0"/>
+              <autoscrolls value="true"/>
+              <background color="-721665"/>
+              <maximumSize width="210" height="30"/>
+              <minimumSize width="180" height="30"/>
+              <preferredSize width="180" height="30"/>
+            </properties>
+            <border type="empty" title-position="1">
+              <title-color color="-16777216"/>
+            </border>
+            <children>
+              <component id="f449e" class="javax.swing.JLabel" binding="weworkmeteorLabel">
+                <constraints/>
+                <properties>
+                  <autoscrolls value="false"/>
+                  <enabled value="true"/>
+                  <focusable value="false"/>
+                  <font name="Times New Roman" size="12"/>
+                  <foreground color="-16777216"/>
+                  <horizontalAlignment value="2"/>
+                  <horizontalTextPosition value="2"/>
+                  <maximumSize width="170" height="30"/>
+                  <minimumSize width="-1" height="-1"/>
+                  <opaque value="false"/>
+                  <preferredSize width="170" height="30"/>
+                  <text value="weworkmeteor.com"/>
+                  <toolTipText value="http://www.weworkmeteor.com"/>
+                  <verifyInputWhenFocusTarget value="false"/>
+                </properties>
+                <clientProperties>
+                  <html.disable class="java.lang.Boolean" value="true"/>
+                </clientProperties>
+              </component>
+            </children>
+          </grid>
+          <grid id="303d" binding="jobbankLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+            <constraints/>
+            <properties>
+              <alignmentX value="0.0"/>
+              <alignmentY value="0.0"/>
+              <autoscrolls value="true"/>
+              <background color="-721665"/>
+              <maximumSize width="210" height="30"/>
+              <minimumSize width="180" height="30"/>
+              <preferredSize width="180" height="30"/>
+            </properties>
+            <border type="empty" title-position="1">
+              <title-color color="-16777216"/>
+            </border>
+            <children>
+              <component id="2dbd" class="javax.swing.JLabel" binding="jobbankLabel">
+                <constraints/>
+                <properties>
+                  <autoscrolls value="false"/>
+                  <enabled value="true"/>
+                  <focusable value="false"/>
+                  <font name="Times New Roman" size="12"/>
+                  <foreground color="-16777216"/>
+                  <horizontalAlignment value="2"/>
+                  <horizontalTextPosition value="2"/>
+                  <maximumSize width="170" height="30"/>
+                  <minimumSize width="-1" height="-1"/>
+                  <opaque value="false"/>
+                  <preferredSize width="170" height="30"/>
+                  <text value="jobbank.dk"/>
+                  <toolTipText value="http://jobbank.dk"/>
+                  <verifyInputWhenFocusTarget value="false"/>
+                </properties>
+                <clientProperties>
+                  <html.disable class="java.lang.Boolean" value="true"/>
+                </clientProperties>
+              </component>
+            </children>
+          </grid>
+          <grid id="9076c" binding="f6sLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+            <constraints/>
+            <properties>
+              <alignmentX value="0.0"/>
+              <alignmentY value="0.0"/>
+              <autoscrolls value="true"/>
+              <background color="-721665"/>
+              <maximumSize width="210" height="30"/>
+              <minimumSize width="180" height="30"/>
+              <preferredSize width="180" height="30"/>
+            </properties>
+            <border type="empty" title-position="1">
+              <title-color color="-16777216"/>
+            </border>
+            <children>
+              <component id="7486" class="javax.swing.JLabel" binding="f6sLabel">
+                <constraints/>
+                <properties>
+                  <autoscrolls value="false"/>
+                  <enabled value="true"/>
+                  <focusable value="false"/>
+                  <font name="Times New Roman" size="12"/>
+                  <foreground color="-16777216"/>
+                  <horizontalAlignment value="2"/>
+                  <horizontalTextPosition value="2"/>
+                  <maximumSize width="170" height="30"/>
+                  <minimumSize width="-1" height="-1"/>
+                  <opaque value="false"/>
+                  <preferredSize width="170" height="30"/>
+                  <text value="f6s.com"/>
+                  <toolTipText value="http://www.f6s.com"/>
+                  <verifyInputWhenFocusTarget value="false"/>
+                </properties>
+                <clientProperties>
+                  <html.disable class="java.lang.Boolean" value="true"/>
+                </clientProperties>
+              </component>
+            </children>
+          </grid>
         </children>
       </grid>
       <grid id="52ecf" binding="jobPanel" layout-manager="FlowLayout" hgap="10" vgap="5" flow-align="0">
