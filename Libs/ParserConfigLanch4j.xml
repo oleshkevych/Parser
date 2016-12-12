@@ -2,8 +2,8 @@
 <launch4jConfig>
   <dontWrapJar>false</dontWrapJar>
   <headerType>gui</headerType>
-  <jar>C:\Users\vov4ik\Desktop\parser1\target\parser-1.0-SNAPSHOT.jar</jar>
-  <outfile>C:\Users\vov4ik\Desktop\desktop1.exe</outfile>
+  <jar>C:\Users\rolique_pc\Desktop\ParserApp\Parser\Parser\target\parser-1.0-SNAPSHOT.jar</jar>
+  <outfile>C:\Users\rolique_pc\Desktop\desktop.exe</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>
   <chdir>.</chdir>
