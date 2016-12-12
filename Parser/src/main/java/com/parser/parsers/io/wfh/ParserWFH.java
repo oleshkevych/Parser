@@ -33,15 +33,12 @@ public class ParserWFH {
     }
 
     public List<JobsInform> getJobsInforms() {
-        for(JobsInform jobsInform: jobsInforms) {
-            try {
-                new DbHelper().writeDB("wfh.io",jobsInform);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-        }
+//        for(JobsInform jobsInform: jobsInforms) {
+
+//                new DbHelper().writeDB("wfh.io",jobsInforms);
+
+//        }
+//        return new DbHelper().getJobsInformFromDb("wfh.io");
         return jobsInforms;
     }
 

@@ -6,12 +6,15 @@ import com.parser.entity.JobsInform;
 import com.parser.entity.ListImpl;
 import com.parser.parsers.cc.startus.ParserStartus;
 import com.parser.parsers.ch.jobs.ParserJobs;
+import com.parser.parsers.co.remote.ParserRemote;
+import com.parser.parsers.co.workingnomads.ParserWorkingnomads;
 import com.parser.parsers.com.berlinstartupjobs.ParserBerlinstartupjobs;
 import com.parser.parsers.com.builtinnode.ParserBuiltinnode;
 import com.parser.parsers.com.dutchstartupjobs.ParserDutchstartupjobs;
 import com.parser.parsers.com.f6s.ParserF6s;
 import com.parser.parsers.com.flexjobs.ParserFlexjobs;
 import com.parser.parsers.com.juju.ParserJuju;
+import com.parser.parsers.com.randstad.ParserRandstad;
 import com.parser.parsers.com.simplyhired.ParserSimplyhired;
 import com.parser.parsers.com.stackoverflow.ParserStackoverflow;
 import com.parser.parsers.com.virtualvocations.ParserVirtualvocations;
@@ -85,8 +88,12 @@ public class ParserApp {
     private JLabel weworkmeteorLabel;
     private JPanel jobbankLabelPanel;
     private JLabel jobbankLabel;
-    private JPanel f6sLabelPanel;
-    private JLabel f6sLabel;
+    private JPanel workingnomadsLabelPanel;
+    private JLabel workingnomadsLabel;
+    private JPanel remoteLabelPanel;
+    private JLabel remoteLabel;
+    private JPanel randstadLabelPanel;
+    private JLabel randstadLabel;
     private JFrame jFrame = new JFrame();
     private Component c;
 
@@ -398,7 +405,7 @@ public class ParserApp {
                 System.out.println("text speciality :13 ");
             }
         });
-        f6sLabel.addMouseListener(new MouseAdapter() {
+        workingnomadsLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 System.out.println("text speciality :13 ");
@@ -408,7 +415,37 @@ public class ParserApp {
                 c.setForeground(new Color(0x696969));
                 linkPanel.setVisible(true);
                 jobPanel.removeAll();
-                panelFiller(new ParserF6s().getJobsInforms());
+                panelFiller(new ParserWorkingnomads().getJobsInforms());
+//                super.mouseClicked(e);
+                System.out.println("text speciality :13 ");
+            }
+        });
+        remoteLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                System.out.println("text speciality :13 ");
+                linkPanel.setVisible(false);
+                c.setForeground(new Color(-16777216));
+                c = e.getComponent();
+                c.setForeground(new Color(0x696969));
+                linkPanel.setVisible(true);
+                jobPanel.removeAll();
+                panelFiller(new ParserRemote().getJobsInforms());
+//                super.mouseClicked(e);
+                System.out.println("text speciality :13 ");
+            }
+        });
+        randstadLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                System.out.println("text speciality :13 ");
+                linkPanel.setVisible(false);
+                c.setForeground(new Color(-16777216));
+                c = e.getComponent();
+                c.setForeground(new Color(0x696969));
+                linkPanel.setVisible(true);
+                jobPanel.removeAll();
+                panelFiller(new ParserRandstad().getJobsInforms());
 //                super.mouseClicked(e);
                 System.out.println("text speciality :13 ");
             }
@@ -637,8 +674,8 @@ public class ParserApp {
         panelMain.setFocusable(false);
         panelMain.setInheritsPopupMenu(false);
         panelMain.setMaximumSize(new Dimension(1600, 1000));
-        panelMain.setMinimumSize(new Dimension(872, 832));
-        panelMain.setPreferredSize(new Dimension(872, 832));
+        panelMain.setMinimumSize(new Dimension(872, 1032));
+        panelMain.setPreferredSize(new Dimension(872, 1032));
         panelMain.setVisible(true);
         panelMain.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), "ParserApp", TitledBorder.CENTER, TitledBorder.DEFAULT_POSITION, new Font(panelMain.getFont().getName(), panelMain.getFont().getStyle(), 16), new Color(-16777216)));
         linkPanel = new JPanel();
@@ -648,7 +685,7 @@ public class ParserApp {
         linkPanel.setEnabled(true);
         linkPanel.setFocusable(false);
         linkPanel.setFont(new Font("Times New Roman", linkPanel.getFont().getStyle(), 12));
-        panelMain.add(linkPanel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, new Dimension(220, 500), new Dimension(220, 780), new Dimension(220, 780), 2, false));
+        panelMain.add(linkPanel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, new Dimension(220, 500), new Dimension(220, 1080), new Dimension(220, 1080), 2, false));
         linkPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), "Links", TitledBorder.CENTER, TitledBorder.ABOVE_TOP, new Font("DialogInput", Font.BOLD, 18), new Color(-16777216)));
         wfhLabelPanel = new JPanel();
         wfhLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
@@ -1210,34 +1247,90 @@ public class ParserApp {
         jobbankLabel.setVerifyInputWhenFocusTarget(false);
         jobbankLabel.putClientProperty("html.disable", Boolean.TRUE);
         jobbankLabelPanel.add(jobbankLabel);
-        f6sLabelPanel = new JPanel();
-        f6sLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
-        f6sLabelPanel.setAlignmentX(0.0f);
-        f6sLabelPanel.setAlignmentY(0.0f);
-        f6sLabelPanel.setAutoscrolls(true);
-        f6sLabelPanel.setBackground(new Color(-721665));
-        f6sLabelPanel.setMaximumSize(new Dimension(210, 30));
-        f6sLabelPanel.setMinimumSize(new Dimension(180, 30));
-        f6sLabelPanel.setPreferredSize(new Dimension(180, 30));
-        linkPanel.add(f6sLabelPanel);
-        f6sLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
-        f6sLabel = new JLabel();
-        f6sLabel.setAutoscrolls(false);
-        f6sLabel.setEnabled(true);
-        f6sLabel.setFocusable(false);
-        f6sLabel.setFont(new Font("Times New Roman", f6sLabel.getFont().getStyle(), 12));
-        f6sLabel.setForeground(new Color(-16777216));
-        f6sLabel.setHorizontalAlignment(2);
-        f6sLabel.setHorizontalTextPosition(2);
-        f6sLabel.setMaximumSize(new Dimension(170, 30));
-        f6sLabel.setMinimumSize(new Dimension(-1, -1));
-        f6sLabel.setOpaque(false);
-        f6sLabel.setPreferredSize(new Dimension(170, 30));
-        f6sLabel.setText("f6s.com");
-        f6sLabel.setToolTipText("http://www.f6s.com");
-        f6sLabel.setVerifyInputWhenFocusTarget(false);
-        f6sLabel.putClientProperty("html.disable", Boolean.TRUE);
-        f6sLabelPanel.add(f6sLabel);
+        workingnomadsLabelPanel = new JPanel();
+        workingnomadsLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        workingnomadsLabelPanel.setAlignmentX(0.0f);
+        workingnomadsLabelPanel.setAlignmentY(0.0f);
+        workingnomadsLabelPanel.setAutoscrolls(true);
+        workingnomadsLabelPanel.setBackground(new Color(-721665));
+        workingnomadsLabelPanel.setMaximumSize(new Dimension(210, 30));
+        workingnomadsLabelPanel.setMinimumSize(new Dimension(180, 30));
+        workingnomadsLabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(workingnomadsLabelPanel);
+        workingnomadsLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        workingnomadsLabel = new JLabel();
+        workingnomadsLabel.setAutoscrolls(false);
+        workingnomadsLabel.setEnabled(true);
+        workingnomadsLabel.setFocusable(false);
+        workingnomadsLabel.setFont(new Font("Times New Roman", workingnomadsLabel.getFont().getStyle(), 12));
+        workingnomadsLabel.setForeground(new Color(-16777216));
+        workingnomadsLabel.setHorizontalAlignment(2);
+        workingnomadsLabel.setHorizontalTextPosition(2);
+        workingnomadsLabel.setMaximumSize(new Dimension(170, 30));
+        workingnomadsLabel.setMinimumSize(new Dimension(-1, -1));
+        workingnomadsLabel.setOpaque(false);
+        workingnomadsLabel.setPreferredSize(new Dimension(170, 30));
+        workingnomadsLabel.setText("workingnomads.co");
+        workingnomadsLabel.setToolTipText("http://www.workingnomads.co");
+        workingnomadsLabel.setVerifyInputWhenFocusTarget(false);
+        workingnomadsLabel.putClientProperty("html.disable", Boolean.TRUE);
+        workingnomadsLabelPanel.add(workingnomadsLabel);
+        remoteLabelPanel = new JPanel();
+        remoteLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        remoteLabelPanel.setAlignmentX(0.0f);
+        remoteLabelPanel.setAlignmentY(0.0f);
+        remoteLabelPanel.setAutoscrolls(true);
+        remoteLabelPanel.setBackground(new Color(-721665));
+        remoteLabelPanel.setMaximumSize(new Dimension(210, 30));
+        remoteLabelPanel.setMinimumSize(new Dimension(180, 30));
+        remoteLabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(remoteLabelPanel);
+        remoteLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        remoteLabel = new JLabel();
+        remoteLabel.setAutoscrolls(false);
+        remoteLabel.setEnabled(true);
+        remoteLabel.setFocusable(false);
+        remoteLabel.setFont(new Font("Times New Roman", remoteLabel.getFont().getStyle(), 12));
+        remoteLabel.setForeground(new Color(-16777216));
+        remoteLabel.setHorizontalAlignment(2);
+        remoteLabel.setHorizontalTextPosition(2);
+        remoteLabel.setMaximumSize(new Dimension(170, 30));
+        remoteLabel.setMinimumSize(new Dimension(-1, -1));
+        remoteLabel.setOpaque(false);
+        remoteLabel.setPreferredSize(new Dimension(170, 30));
+        remoteLabel.setText("remote.co");
+        remoteLabel.setToolTipText("http://www.remote.co");
+        remoteLabel.setVerifyInputWhenFocusTarget(false);
+        remoteLabel.putClientProperty("html.disable", Boolean.TRUE);
+        remoteLabelPanel.add(remoteLabel);
+        randstadLabelPanel = new JPanel();
+        randstadLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        randstadLabelPanel.setAlignmentX(0.0f);
+        randstadLabelPanel.setAlignmentY(0.0f);
+        randstadLabelPanel.setAutoscrolls(true);
+        randstadLabelPanel.setBackground(new Color(-721665));
+        randstadLabelPanel.setMaximumSize(new Dimension(210, 30));
+        randstadLabelPanel.setMinimumSize(new Dimension(180, 30));
+        randstadLabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(randstadLabelPanel);
+        randstadLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        randstadLabel = new JLabel();
+        randstadLabel.setAutoscrolls(false);
+        randstadLabel.setEnabled(true);
+        randstadLabel.setFocusable(false);
+        randstadLabel.setFont(new Font("Times New Roman", randstadLabel.getFont().getStyle(), 12));
+        randstadLabel.setForeground(new Color(-16777216));
+        randstadLabel.setHorizontalAlignment(2);
+        randstadLabel.setHorizontalTextPosition(2);
+        randstadLabel.setMaximumSize(new Dimension(170, 30));
+        randstadLabel.setMinimumSize(new Dimension(-1, -1));
+        randstadLabel.setOpaque(false);
+        randstadLabel.setPreferredSize(new Dimension(170, 30));
+        randstadLabel.setText("randstad.com");
+        randstadLabel.setToolTipText("http://www.randstad.com");
+        randstadLabel.setVerifyInputWhenFocusTarget(false);
+        randstadLabel.putClientProperty("html.disable", Boolean.TRUE);
+        randstadLabelPanel.add(randstadLabel);
         jobPanel = new JPanel();
         jobPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5));
         jobPanel.setAutoscrolls(false);

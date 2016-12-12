@@ -12,8 +12,8 @@
       <focusable value="false"/>
       <inheritsPopupMenu value="false"/>
       <maximumSize width="1600" height="1000"/>
-      <minimumSize width="872" height="832"/>
-      <preferredSize width="872" height="832"/>
+      <minimumSize width="872" height="1032"/>
+      <preferredSize width="872" height="1032"/>
       <visible value="true"/>
     </properties>
     <border type="empty" title="ParserApp" title-justification="2">
@@ -25,8 +25,8 @@
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="8" fill="0" indent="2" use-parent-layout="false">
             <minimum-size width="220" height="500"/>
-            <preferred-size width="220" height="780"/>
-            <maximum-size width="220" height="780"/>
+            <preferred-size width="220" height="1080"/>
+            <maximum-size width="220" height="1080"/>
           </grid>
         </constraints>
         <properties>
@@ -822,7 +822,7 @@
               </component>
             </children>
           </grid>
-          <grid id="9076c" binding="f6sLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+          <grid id="9076c" binding="workingnomadsLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
             <constraints/>
             <properties>
               <alignmentX value="0.0"/>
@@ -837,7 +837,7 @@
               <title-color color="-16777216"/>
             </border>
             <children>
-              <component id="7486" class="javax.swing.JLabel" binding="f6sLabel">
+              <component id="7486" class="javax.swing.JLabel" binding="workingnomadsLabel">
                 <constraints/>
                 <properties>
                   <autoscrolls value="false"/>
@@ -851,8 +851,86 @@
                   <minimumSize width="-1" height="-1"/>
                   <opaque value="false"/>
                   <preferredSize width="170" height="30"/>
-                  <text value="f6s.com"/>
-                  <toolTipText value="http://www.f6s.com"/>
+                  <text value="workingnomads.co"/>
+                  <toolTipText value="http://www.workingnomads.co"/>
+                  <verifyInputWhenFocusTarget value="false"/>
+                </properties>
+                <clientProperties>
+                  <html.disable class="java.lang.Boolean" value="true"/>
+                </clientProperties>
+              </component>
+            </children>
+          </grid>
+          <grid id="102f8" binding="remoteLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+            <constraints/>
+            <properties>
+              <alignmentX value="0.0"/>
+              <alignmentY value="0.0"/>
+              <autoscrolls value="true"/>
+              <background color="-721665"/>
+              <maximumSize width="210" height="30"/>
+              <minimumSize width="180" height="30"/>
+              <preferredSize width="180" height="30"/>
+            </properties>
+            <border type="empty" title-position="1">
+              <title-color color="-16777216"/>
+            </border>
+            <children>
+              <component id="de220" class="javax.swing.JLabel" binding="remoteLabel">
+                <constraints/>
+                <properties>
+                  <autoscrolls value="false"/>
+                  <enabled value="true"/>
+                  <focusable value="false"/>
+                  <font name="Times New Roman" size="12"/>
+                  <foreground color="-16777216"/>
+                  <horizontalAlignment value="2"/>
+                  <horizontalTextPosition value="2"/>
+                  <maximumSize width="170" height="30"/>
+                  <minimumSize width="-1" height="-1"/>
+                  <opaque value="false"/>
+                  <preferredSize width="170" height="30"/>
+                  <text value="remote.co"/>
+                  <toolTipText value="http://www.remote.co"/>
+                  <verifyInputWhenFocusTarget value="false"/>
+                </properties>
+                <clientProperties>
+                  <html.disable class="java.lang.Boolean" value="true"/>
+                </clientProperties>
+              </component>
+            </children>
+          </grid>
+          <grid id="a69a5" binding="randstadLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+            <constraints/>
+            <properties>
+              <alignmentX value="0.0"/>
+              <alignmentY value="0.0"/>
+              <autoscrolls value="true"/>
+              <background color="-721665"/>
+              <maximumSize width="210" height="30"/>
+              <minimumSize width="180" height="30"/>
+              <preferredSize width="180" height="30"/>
+            </properties>
+            <border type="empty" title-position="1">
+              <title-color color="-16777216"/>
+            </border>
+            <children>
+              <component id="10ea" class="javax.swing.JLabel" binding="randstadLabel">
+                <constraints/>
+                <properties>
+                  <autoscrolls value="false"/>
+                  <enabled value="true"/>
+                  <focusable value="false"/>
+                  <font name="Times New Roman" size="12"/>
+                  <foreground color="-16777216"/>
+                  <horizontalAlignment value="2"/>
+                  <horizontalTextPosition value="2"/>
+                  <maximumSize width="170" height="30"/>
+                  <minimumSize width="-1" height="-1"/>
+                  <opaque value="false"/>
+                  <preferredSize width="170" height="30"/>
+                  <text value="randstad.com"/>
+                  <toolTipText value="http://www.randstad.com"/>
                   <verifyInputWhenFocusTarget value="false"/>
                 </properties>
                 <clientProperties>
