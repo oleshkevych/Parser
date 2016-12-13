@@ -4,6 +4,7 @@ package com.parser.parsers.com.builtinnode;
 import com.parser.entity.DateGenerator;
 import com.parser.entity.JobsInform;
 import com.parser.entity.ListImpl;
+import com.parser.entity.ParserMain;
 import com.parser.parsers.jobs.landing.ParserLandingJobs;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -20,20 +21,18 @@ import java.util.List;
 /**
  * Created by rolique_pc on 12/9/2016.
  */
-public class ParserBuiltinnode {
+public class ParserBuiltinnode implements ParserMain {
     private String startLink = "http://builtinnode.com/node-jobs";
     private List<JobsInform> jobsInforms = new ArrayList<JobsInform>();
     private Document doc;
     private DateGenerator dateClass;
 
-    public ParserBuiltinnode(){
-        dateClass = new DateGenerator();
-        parser();
-        System.out.println("FINISH ");
-
+    public ParserBuiltinnode() {
     }
 
-    public List<JobsInform> getJobsInforms() {
+    public List<JobsInform> startParse() {
+        dateClass = new DateGenerator();
+        parser();
         return jobsInforms;
     }
 
@@ -41,8 +40,8 @@ public class ParserBuiltinnode {
 //        try {
 
 
-            doc = ParserLandingJobs.renderPage(startLink);
-            // need http protocol
+        doc = ParserLandingJobs.renderPage(startLink);
+        // need http protocol
 //            doc = Jsoup.connect(startLink)
 //                    .validateTLSCertificates(false)
 //                    .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
@@ -50,9 +49,9 @@ public class ParserBuiltinnode {
 //                    .get();
 //            System.out.println("text 0: " + doc);
 
-            Elements tables2 = doc.select(".template-perl-job-board");
+        Elements tables2 = doc.select(".template-perl-job-board");
 //            System.out.println("text : " + tables2);
-            runParse(tables2, 0);
+        runParse(tables2, 0);
 //
 //            Date datePublished = null;
 //            int count = 2;
@@ -88,7 +87,7 @@ public class ParserBuiltinnode {
         System.out.println("text date : " + tables2.size());
         Date datePublished = null;
         SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yyyy");
-        for (int i = counter; i<tables2.size(); i+=1) {
+        for (int i = counter; i < tables2.size(); i += 1) {
 //            System.out.println("text date : " + tables2.get(i));
 
 //                 for (int i = counter; i<tables2.size(); i+=1) {
@@ -127,29 +126,29 @@ public class ParserBuiltinnode {
     }
 
     private void objectGenerator(Element place, Element headPost, Element company, Date datePublished, Element linkDescription) {
-        if(dateClass.dateChecker(datePublished)) {
-        JobsInform jobsInform = new JobsInform();
+        if (dateClass.dateChecker(datePublished)) {
+            JobsInform jobsInform = new JobsInform();
 //                System.out.println("text place : " + place.text());
 //                System.out.println("text headPost : " + headPost.text());
 //                System.out.println("text company : " + company.text());
 //                System.out.println("text link1 : " + linkDescription.attr("abs:href"));
-        jobsInform.setPublishedDate(datePublished);
-        jobsInform.setHeadPublication(headPost.text());
-        if (!company.text().contains("Read more")){
-            jobsInform.setCompanyName(company.text());
-        }else{
-            jobsInform.setCompanyName("");
-        }
+            jobsInform.setPublishedDate(datePublished);
+            jobsInform.setHeadPublication(headPost.text());
+            if (!company.text().contains("Read more")) {
+                jobsInform.setCompanyName(company.text());
+            } else {
+                jobsInform.setCompanyName("");
+            }
             jobsInform.setPlace(place.text());
             jobsInform.setPublicationLink(linkDescription.attr("abs:href"));
             jobsInform = getDescription(linkDescription.attr("abs:href"), jobsInform);
-            if(!jobsInforms.contains(jobsInform)) {
+            if (!jobsInforms.contains(jobsInform)) {
                 jobsInforms.add(jobsInform);
             }
         }
     }
 
-    public static JobsInform getDescription(String linkToDescription, JobsInform jobsInform){
+    public static JobsInform getDescription(String linkToDescription, JobsInform jobsInform) {
 
         try {
             Document document = Jsoup.connect(linkToDescription)
@@ -160,7 +159,7 @@ public class ParserBuiltinnode {
 
 
             Elements tablesDescription = document.select("p");
-            Element tablesHead  = document.select(".heading").first();
+            Element tablesHead = document.select(".heading").first();
 //            Elements tablesPlace = document.select("#job-description").get(1).select("tr");
             List<ListImpl> list = new ArrayList<ListImpl>();
 //            System.out.println("text link1 : " + tablesDescription);
@@ -169,7 +168,7 @@ public class ParserBuiltinnode {
 //                jobsInform.setPlace(e.select("td").first().ownText());
 //            });
 
-            for (int i = 0; i<tablesDescription.size(); i++) {
+            for (int i = 0; i < tablesDescription.size(); i++) {
 
 
 //                Elements ps = tablesDescription.get(i).select("p");
@@ -199,15 +198,17 @@ public class ParserBuiltinnode {
         }
 
     }
-    private static ListImpl addHead(Element element){
+
+    private static ListImpl addHead(Element element) {
         ListImpl list = new ListImpl();
         list.setListHeader(element.ownText());
         return list;
     }
-    private static ListImpl addParagraph(Element element){
-        if(element.select("strong").size()>0){
+
+    private static ListImpl addParagraph(Element element) {
+        if (element.select("strong").size() > 0) {
             return addHead(element.select("strong").first());
-        }else {
+        } else {
 
 
             ListImpl list = new ListImpl();
@@ -215,10 +216,11 @@ public class ParserBuiltinnode {
             return list;
         }
     }
-    private static ListImpl addList(Element element){
+
+    private static ListImpl addList(Element element) {
         ListImpl list = new ListImpl();
         List<String> strings = new ArrayList<String>();
-        for(Element e : element.getAllElements()) {
+        for (Element e : element.getAllElements()) {
             strings.add(e.text());
         }
         list.setListItem(strings);

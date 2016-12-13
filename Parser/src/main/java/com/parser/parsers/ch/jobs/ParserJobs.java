@@ -3,6 +3,7 @@ package com.parser.parsers.ch.jobs;
 import com.parser.entity.DateGenerator;
 import com.parser.entity.JobsInform;
 import com.parser.entity.ListImpl;
+import com.parser.entity.ParserMain;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
 /**
  * Created by rolique_pc on 12/8/2016.
  */
-public class ParserJobs {
+public class ParserJobs implements ParserMain{
 
     private static String startLink = "http://www.jobs.ch/en/vacancies/?page=1&sort-by=date&term=";
     private List<JobsInform> jobsInforms = new ArrayList<JobsInform>();
@@ -27,13 +28,12 @@ public class ParserJobs {
     private DateGenerator dateClass;
 
     public ParserJobs(){
-        dateClass = new DateGenerator();
-        parser();
-        System.out.println("FINISH ");
 
     }
 
-    public List<JobsInform> getJobsInforms() {
+    public List<JobsInform> startParse(){
+        dateClass = new DateGenerator();
+        parser();
         return jobsInforms;
     }
 

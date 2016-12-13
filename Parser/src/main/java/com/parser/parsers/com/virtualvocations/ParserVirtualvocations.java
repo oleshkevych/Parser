@@ -3,6 +3,7 @@ package com.parser.parsers.com.virtualvocations;
 import com.parser.entity.DateGenerator;
 import com.parser.entity.JobsInform;
 import com.parser.entity.ListImpl;
+import com.parser.entity.ParserMain;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -18,7 +19,7 @@ import java.util.List;
 /**
  * Created by rolique_pc on 12/6/2016.
  */
-public class ParserVirtualvocations {
+public class ParserVirtualvocations implements ParserMain {
 
 
     private String startLink = "https://www.virtualvocations.com/jobs";
@@ -27,12 +28,12 @@ public class ParserVirtualvocations {
     private DateGenerator dateClass;
 
     public ParserVirtualvocations(){
+    }
+    public List<JobsInform> startParse(){
         dateClass = new DateGenerator();
         parser();
-        System.out.println("FINISH ");
-
+        return jobsInforms;
     }
-
     public List<JobsInform> getJobsInforms() {
         return jobsInforms;
     }

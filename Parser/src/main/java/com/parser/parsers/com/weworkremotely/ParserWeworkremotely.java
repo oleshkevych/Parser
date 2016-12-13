@@ -3,6 +3,7 @@ package com.parser.parsers.com.weworkremotely;
 import com.parser.entity.DateGenerator;
 import com.parser.entity.JobsInform;
 import com.parser.entity.ListImpl;
+import com.parser.entity.ParserMain;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -18,7 +19,7 @@ import java.util.List;
 /**
  * Created by rolique_pc on 12/8/2016.
  */
-public class ParserWeworkremotely {
+public class ParserWeworkremotely implements ParserMain {
 
     private String startLink1 = "https://weworkremotely.com/categories/6-devops-sysadmin/jobs#intro";
     private String startLink2 = "https://weworkremotely.com/categories/2-programming/jobs#intro";
@@ -27,13 +28,11 @@ public class ParserWeworkremotely {
     private DateGenerator dateClass;
 
     public ParserWeworkremotely(){
-        dateClass = new DateGenerator();
-        parser();
-        System.out.println("FINISH ");
-
     }
 
-    public List<JobsInform> getJobsInforms() {
+    public List<JobsInform> startParse(){
+        dateClass = new DateGenerator();
+        parser();
         return jobsInforms;
     }
 

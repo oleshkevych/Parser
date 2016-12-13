@@ -3,6 +3,7 @@ package com.parser.parsers.com.dutchstartupjobs;
 import com.parser.entity.DateGenerator;
 import com.parser.entity.JobsInform;
 import com.parser.entity.ListImpl;
+import com.parser.entity.ParserMain;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -18,21 +19,19 @@ import java.util.List;
 /**
  * Created by rolique_pc on 12/7/2016.
  */
-public class ParserDutchstartupjobs {
+public class ParserDutchstartupjobs implements ParserMain {
 
     private String startLink = "https://dutchstartupjobs.com/open-jobs/";
     private List<JobsInform> jobsInforms = new ArrayList<JobsInform>();
     private Document doc;
     private DateGenerator dateClass;
 
-    public ParserDutchstartupjobs(){
-        dateClass = new DateGenerator();
-        parser();
-        System.out.println("FINISH ");
-
+    public ParserDutchstartupjobs() {
     }
 
-    public List<JobsInform> getJobsInforms() {
+    public List<JobsInform> startParse() {
+        dateClass = new DateGenerator();
+        parser();
         return jobsInforms;
     }
 
@@ -82,7 +81,7 @@ public class ParserDutchstartupjobs {
         System.out.println("text date : " + tables2.size());
         Date datePublished = null;
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        for (int i = counter; i<tables2.size(); i+=1) {
+        for (int i = counter; i < tables2.size(); i += 1) {
 //            System.out.println("text date : " + tables2.get(i));
 
 //                 for (int i = counter; i<tables2.size(); i+=1) {
@@ -114,7 +113,7 @@ public class ParserDutchstartupjobs {
 //                System.out.println("text date : " + tables2.get(i).select("time").first());
 
                 objectGenerator(tables2.get(i).select(".job-location").first(), tables2.get(i).select(".loop-item-title").first(),
-                    tables2.get(i).select(".job-company").first(), datePublished, tables2.get(i).select(".loop-item-title a").first());
+                        tables2.get(i).select(".job-company").first(), datePublished, tables2.get(i).select(".loop-item-title a").first());
             } catch (ParseException e) {
                 System.out.println(e.getMessage());
             }
@@ -123,8 +122,8 @@ public class ParserDutchstartupjobs {
         return datePublished;
     }
 
-    private void objectGenerator(Element place, Element headPost, Element company, Date datePublished, Element linkDescription){
-        if(dateClass.dateChecker(datePublished)) {
+    private void objectGenerator(Element place, Element headPost, Element company, Date datePublished, Element linkDescription) {
+        if (dateClass.dateChecker(datePublished)) {
             JobsInform jobsInform = new JobsInform();
 //                System.out.println("text place : " + place.text());
 //                System.out.println("text headPost : " + headPost.text());
@@ -136,13 +135,13 @@ public class ParserDutchstartupjobs {
             jobsInform.setPlace(place.text());
             jobsInform.setPublicationLink(linkDescription.attr("abs:href"));
             jobsInform = getDescription(linkDescription.attr("abs:href"), jobsInform);
-            if(!jobsInforms.contains(jobsInform)) {
+            if (!jobsInforms.contains(jobsInform)) {
                 jobsInforms.add(jobsInform);
             }
         }
     }
 
-    public static JobsInform getDescription(String linkToDescription, JobsInform jobsInform){
+    public static JobsInform getDescription(String linkToDescription, JobsInform jobsInform) {
 
         try {
             Document document = Jsoup.connect(linkToDescription)
@@ -157,18 +156,17 @@ public class ParserDutchstartupjobs {
             List<ListImpl> list = new ArrayList<ListImpl>();
 //            System.out.println("text link1 : " + tablesDescription);
 
-            for (int i = 0; i<tablesDescription.size(); i++) {
+            for (int i = 0; i < tablesDescription.size(); i++) {
                 System.out.println("text place all: " + tablesDescription.get(i));
                 System.out.println("text place tag: " + tablesDescription.get(i).tagName());
 
 
-
-                if(tablesDescription.get(i).tagName().contains("h")){
+                if (tablesDescription.get(i).tagName().contains("h")) {
                     list.add(null);
                     list.add(addHead(tablesDescription.get(i)));
-                }else if(tablesDescription.get(i).tagName().equals("p")){
+                } else if (tablesDescription.get(i).tagName().equals("p")) {
                     list.add(addParagraph(tablesDescription.get(i)));
-                }else if(tablesDescription.get(i).tagName().equals("ul")){
+                } else if (tablesDescription.get(i).tagName().equals("ul")) {
                     list.add(addList(tablesDescription.get(i)));
                 }
 
@@ -200,20 +198,23 @@ public class ParserDutchstartupjobs {
         }
 
     }
-    private static ListImpl addHead(Element element){
+
+    private static ListImpl addHead(Element element) {
         ListImpl list = new ListImpl();
         list.setListHeader(element.text());
         return list;
     }
-    private static ListImpl addParagraph(Element element){
-            ListImpl list = new ListImpl();
-            list.setTextFieldImpl(element.text());
-            return list;
+
+    private static ListImpl addParagraph(Element element) {
+        ListImpl list = new ListImpl();
+        list.setTextFieldImpl(element.text());
+        return list;
     }
-    private static ListImpl addList(Element element){
+
+    private static ListImpl addList(Element element) {
         ListImpl list = new ListImpl();
         List<String> strings = new ArrayList<String>();
-        for(Element e : element.getAllElements()) {
+        for (Element e : element.getAllElements()) {
             strings.add(e.text());
         }
         list.setListItem(strings);

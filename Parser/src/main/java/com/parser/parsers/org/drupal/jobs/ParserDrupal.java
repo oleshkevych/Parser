@@ -3,6 +3,7 @@ package com.parser.parsers.org.drupal.jobs;
 import com.parser.entity.DateGenerator;
 import com.parser.entity.JobsInform;
 import com.parser.entity.ListImpl;
+import com.parser.entity.ParserMain;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -18,21 +19,19 @@ import java.util.List;
 /**
  * Created by rolique_pc on 12/7/2016.
  */
-public class ParserDrupal {
+public class ParserDrupal implements ParserMain {
 
     private String startLink = "https://jobs.drupal.org/home?search_api_views_fulltext=&search_api_views_fulltext_1=";
     private List<JobsInform> jobsInforms = new ArrayList<JobsInform>();
     private Document doc;
     private DateGenerator dateClass;
 
-    public ParserDrupal(){
-        dateClass = new DateGenerator();
-        parser();
-        System.out.println("FINISH ");
-
+    public ParserDrupal() {
     }
 
-    public List<JobsInform> getJobsInforms() {
+    public List<JobsInform> startParse() {
+        dateClass = new DateGenerator();
+        parser();
         return jobsInforms;
     }
 
@@ -73,7 +72,7 @@ public class ParserDrupal {
                     e.printStackTrace();
                 }
 
-            }while(dateClass.dateChecker(datePublished));
+            } while (dateClass.dateChecker(datePublished));
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -85,7 +84,7 @@ public class ParserDrupal {
         System.out.println("text date : " + tables2.size());
         Date datePublished = null;
         SimpleDateFormat formatter = new SimpleDateFormat("EEE, MM/dd/yyyy - HH:mm");
-        for (int i = counter; i<tables2.size(); i+=1) {
+        for (int i = counter; i < tables2.size(); i += 1) {
             String stringDate = tables2.get(i).select(".timeago").text();
 
 //            System.out.println("text date : " + stringDate);
@@ -121,8 +120,8 @@ public class ParserDrupal {
         return datePublished;
     }
 
-    private void objectGenerator(Element place, Element headPost, Element company, Date datePublished, Element linkDescription){
-        if(dateClass.dateChecker(datePublished)) {
+    private void objectGenerator(Element place, Element headPost, Element company, Date datePublished, Element linkDescription) {
+        if (dateClass.dateChecker(datePublished)) {
             JobsInform jobsInform = new JobsInform();
             System.out.println("text place : " + place.text());
             System.out.println("text headPost : " + headPost.text());
@@ -134,13 +133,13 @@ public class ParserDrupal {
             jobsInform.setPlace(place.text());
             jobsInform.setPublicationLink(linkDescription.attr("abs:href"));
             jobsInform = getDescription(linkDescription.attr("abs:href"), jobsInform);
-            if(!jobsInforms.contains(jobsInform)) {
+            if (!jobsInforms.contains(jobsInform)) {
                 jobsInforms.add(jobsInform);
             }
         }
     }
 
-    public static JobsInform getDescription(String linkToDescription, JobsInform jobsInform){
+    public static JobsInform getDescription(String linkToDescription, JobsInform jobsInform) {
 
         try {
             Document document = Jsoup.connect(linkToDescription)
@@ -159,14 +158,14 @@ public class ParserDrupal {
             List<ListImpl> list = new ArrayList<ListImpl>();
 //            System.out.println("text link1 : " + tablesDescription);
 
-            for (int i = count; i<tablesDescription.size(); i++) {
+            for (int i = count; i < tablesDescription.size(); i++) {
                 list.add(addHead(document.select("#page-title").first()));
 
 
                 Elements ps = tablesDescription.get(i).select("p");
 //                Elements uls = tablesDescription.get(i).select("ul");
                 if (ps.size() > 0) {
-                    for(Element p: ps) {
+                    for (Element p : ps) {
                         list.add(addParagraph(p));
                     }
                 }
@@ -189,15 +188,17 @@ public class ParserDrupal {
         }
 
     }
-    private static ListImpl addHead(Element element){
+
+    private static ListImpl addHead(Element element) {
         ListImpl list = new ListImpl();
         list.setListHeader(element.text());
         return list;
     }
-    private static ListImpl addParagraph(Element element){
-        if(element.select("strong").size()>0){
+
+    private static ListImpl addParagraph(Element element) {
+        if (element.select("strong").size() > 0) {
             return addHead(element.select("strong").first());
-        }else {
+        } else {
 
 
             ListImpl list = new ListImpl();
@@ -205,10 +206,11 @@ public class ParserDrupal {
             return list;
         }
     }
-    private static ListImpl addList(Element element){
+
+    private static ListImpl addList(Element element) {
         ListImpl list = new ListImpl();
         List<String> strings = new ArrayList<String>();
-        for(Element e : element.getAllElements()) {
+        for (Element e : element.getAllElements()) {
             strings.add(e.text());
         }
         list.setListItem(strings);

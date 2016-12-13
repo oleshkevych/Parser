@@ -4,6 +4,7 @@ package com.parser.parsers.com.stackoverflow;
 import com.parser.entity.DateGenerator;
 import com.parser.entity.JobsInform;
 import com.parser.entity.ListImpl;
+import com.parser.entity.ParserMain;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -17,21 +18,19 @@ import java.util.List;
 /**
  * Created by rolique_pc on 12/7/2016.
  */
-public class ParserStackoverflow {
+public class ParserStackoverflow implements ParserMain {
 
     private String startLink = "https://stackoverflow.com/jobs?sort=p";
     private List<JobsInform> jobsInforms = new ArrayList<JobsInform>();
     private Document doc;
     private DateGenerator dateClass;
 
-    public ParserStackoverflow(){
-        dateClass = new DateGenerator();
-        parser();
-        System.out.println("FINISH ");
-
+    public ParserStackoverflow() {
     }
 
-    public List<JobsInform> getJobsInforms() {
+    public List<JobsInform> startParse() {
+        dateClass = new DateGenerator();
+        parser();
         return jobsInforms;
     }
 
@@ -69,7 +68,7 @@ public class ParserStackoverflow {
                     e.printStackTrace();
                 }
 
-            }while(dateClass.dateChecker(datePublished));
+            } while (dateClass.dateChecker(datePublished));
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -81,7 +80,7 @@ public class ParserStackoverflow {
         System.out.println("text date : " + tables2.size());
         Date datePublished = null;
 //        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
-        for (int i = counter; i<tables2.size(); i+=1) {
+        for (int i = counter; i < tables2.size(); i += 1) {
 //            System.out.println("text date : " + tables2.get(i));
 
 //                 for (int i = counter; i<tables2.size(); i+=1) {
@@ -89,20 +88,20 @@ public class ParserStackoverflow {
 //            System.out.println("text date : " + stringDate);
 //            System.out.println("text date : " + stringDate.contains("hour"));
 //            System.out.println("text date : " + stringDate.split(" ").contains("hour"));
-            if(stringDate.contains("minut")||stringDate.contains("hour")){
+            if (stringDate.contains("minut") || stringDate.contains("hour")) {
                 datePublished = new Date();
-            }else if(stringDate.contains("yesterday")){
-                datePublished = new Date(new Date().getTime() - 1*24*3600*1000);
-            }else if(stringDate.contains("2 day")){
-                datePublished = new Date(new Date().getTime() - 2*24*3600*1000);
-            }else if(stringDate.contains("3 day")){
-                datePublished = new Date(new Date().getTime() - 3*24*3600*1000);
-            }else if(stringDate.contains("4 day")){
-                datePublished = new Date(new Date().getTime() - 4*24*3600*1000);
-            }else if(stringDate.contains("5 day")){
-                datePublished = new Date(new Date().getTime() - 5*24*3600*1000);
-            }else if(stringDate.contains("6 day")){
-                datePublished = new Date(new Date().getTime() - 6*24*3600*1000);
+            } else if (stringDate.contains("yesterday")) {
+                datePublished = new Date(new Date().getTime() - 1 * 24 * 3600 * 1000);
+            } else if (stringDate.contains("2 day")) {
+                datePublished = new Date(new Date().getTime() - 2 * 24 * 3600 * 1000);
+            } else if (stringDate.contains("3 day")) {
+                datePublished = new Date(new Date().getTime() - 3 * 24 * 3600 * 1000);
+            } else if (stringDate.contains("4 day")) {
+                datePublished = new Date(new Date().getTime() - 4 * 24 * 3600 * 1000);
+            } else if (stringDate.contains("5 day")) {
+                datePublished = new Date(new Date().getTime() - 5 * 24 * 3600 * 1000);
+            } else if (stringDate.contains("6 day")) {
+                datePublished = new Date(new Date().getTime() - 6 * 24 * 3600 * 1000);
             }
 
 //            Date datePublished = null;
@@ -119,8 +118,8 @@ public class ParserStackoverflow {
         return datePublished;
     }
 
-    private void objectGenerator(Element place, Element headPost, Element company, Date datePublished, Element linkDescription){
-        if(dateClass.dateChecker(datePublished)) {
+    private void objectGenerator(Element place, Element headPost, Element company, Date datePublished, Element linkDescription) {
+        if (dateClass.dateChecker(datePublished)) {
             JobsInform jobsInform = new JobsInform();
 //                System.out.println("text place : " + place.text());
 //                System.out.println("text headPost : " + headPost.text());
@@ -132,13 +131,13 @@ public class ParserStackoverflow {
             jobsInform.setPlace(place.text());
             jobsInform.setPublicationLink(linkDescription.attr("abs:href"));
             jobsInform = getDescription(linkDescription.attr("abs:href"), jobsInform);
-            if(!jobsInforms.contains(jobsInform)) {
+            if (!jobsInforms.contains(jobsInform)) {
                 jobsInforms.add(jobsInform);
             }
         }
     }
 
-    public static JobsInform getDescription(String linkToDescription, JobsInform jobsInform){
+    public static JobsInform getDescription(String linkToDescription, JobsInform jobsInform) {
 
         try {
             Document document = Jsoup.connect(linkToDescription)
@@ -153,7 +152,7 @@ public class ParserStackoverflow {
             List<ListImpl> list = new ArrayList<ListImpl>();
 //            System.out.println("text link1 : " + tablesDescription);
 
-            for (int i = 0; i<tablesDescription.size(); i++) {
+            for (int i = 0; i < tablesDescription.size(); i++) {
 
 
                 Elements ps = tablesDescription.get(i).select("p");
@@ -166,7 +165,7 @@ public class ParserStackoverflow {
                     }
                 }
                 if (uls.size() > 0) {
-                    for(Element ul: uls) {
+                    for (Element ul : uls) {
                         list.add(addList(ul));
                     }
                 }
@@ -184,15 +183,17 @@ public class ParserStackoverflow {
         }
 
     }
-    private static ListImpl addHead(Element element){
+
+    private static ListImpl addHead(Element element) {
         ListImpl list = new ListImpl();
         list.setListHeader(element.text());
         return list;
     }
-    private static ListImpl addParagraph(Element element){
-        if(element.select("strong").size()>0){
+
+    private static ListImpl addParagraph(Element element) {
+        if (element.select("strong").size() > 0) {
             return addHead(element.select("strong").first());
-        }else {
+        } else {
 
 
             ListImpl list = new ListImpl();
@@ -200,10 +201,11 @@ public class ParserStackoverflow {
             return list;
         }
     }
-    private static ListImpl addList(Element element){
+
+    private static ListImpl addList(Element element) {
         ListImpl list = new ListImpl();
         List<String> strings = new ArrayList<String>();
-        for(Element e : element.getAllElements()) {
+        for (Element e : element.getAllElements()) {
             strings.add(e.text());
         }
         list.setListItem(strings);

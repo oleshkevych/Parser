@@ -4,6 +4,7 @@ package com.parser.parsers.jobs.landing;
 import com.parser.entity.DateGenerator;
 import com.parser.entity.JobsInform;
 import com.parser.entity.ListImpl;
+import com.parser.entity.ParserMain;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -24,7 +25,7 @@ import java.util.List;
 /**
  * Created by rolique_pc on 12/6/2016.
  */
-public class ParserLandingJobs {
+public class ParserLandingJobs implements ParserMain {
 
 
     private String startLink = "https://landing.jobs/offers/?page=1&s=date&s_l=0&s_h=100&t_co=false&t_st=false";
@@ -33,13 +34,13 @@ public class ParserLandingJobs {
     private DateGenerator dateClass;
 
     public ParserLandingJobs(){
+    }
+    public List<JobsInform> startParse(){
         dateClass = new DateGenerator();
         parser();
-        System.out.println(" FINISH" );
-
+        return jobsInforms;
     }
 
-    private static String filePath = "data/temp/";
 
     public static Document renderPage(String url) {
         DesiredCapabilities caps = new DesiredCapabilities();

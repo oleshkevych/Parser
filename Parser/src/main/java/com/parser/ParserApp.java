@@ -2,16 +2,19 @@ package com.parser;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
+import com.parser.dbmanager.DbHelper;
 import com.parser.entity.JobsInform;
 import com.parser.entity.ListImpl;
+import com.parser.entity.ParserMain;
+import com.parser.parsers.ca.eluta.ParserEluta;
 import com.parser.parsers.cc.startus.ParserStartus;
 import com.parser.parsers.ch.jobs.ParserJobs;
+import com.parser.parsers.co.jobspresso.ParserJobspresso;
 import com.parser.parsers.co.remote.ParserRemote;
 import com.parser.parsers.co.workingnomads.ParserWorkingnomads;
 import com.parser.parsers.com.berlinstartupjobs.ParserBerlinstartupjobs;
 import com.parser.parsers.com.builtinnode.ParserBuiltinnode;
 import com.parser.parsers.com.dutchstartupjobs.ParserDutchstartupjobs;
-import com.parser.parsers.com.f6s.ParserF6s;
 import com.parser.parsers.com.flexjobs.ParserFlexjobs;
 import com.parser.parsers.com.juju.ParserJuju;
 import com.parser.parsers.com.randstad.ParserRandstad;
@@ -21,9 +24,11 @@ import com.parser.parsers.com.virtualvocations.ParserVirtualvocations;
 import com.parser.parsers.com.weloveangular.ParserWeloveangular;
 import com.parser.parsers.com.weworkmeteor.ParserWeworkmeteor;
 import com.parser.parsers.com.weworkremotely.ParserWeworkremotely;
+import com.parser.parsers.com.workopolis.ParserWorkopolis;
 import com.parser.parsers.de.monster.ParserMonsterDe;
 import com.parser.parsers.dk.jobbank.ParserJobbank;
 import com.parser.parsers.io.remoteok.ParserRemoteok;
+import com.parser.parsers.io.webbjobb.ParserWebbjobb;
 import com.parser.parsers.io.wfh.ParserWFH;
 import com.parser.parsers.jobs.landing.ParserLandingJobs;
 import com.parser.parsers.org.drupal.jobs.ParserDrupal;
@@ -38,9 +43,14 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
-public class ParserApp {
+public class ParserApp implements MouseListener {
 
     private JPanel panelMain;
     private JPanel descriptionPanel;
@@ -51,7 +61,7 @@ public class ParserApp {
     private JLabel descriptionLabel;
     private JPanel wfhLabelPanel;
     private JPanel remoteokLabelPanel;
-    private JLabel remoteok;
+    private JLabel remoteokLabel;
     private JPanel landingJobsPanel;
     private JLabel landingJobsLabel;
     private JPanel startusLabelPanel;
@@ -94,365 +104,93 @@ public class ParserApp {
     private JLabel remoteLabel;
     private JPanel randstadLabelPanel;
     private JLabel randstadLabel;
+    private JPanel workopolisLabelPanel;
+    private JLabel workopolisLabel;
+    private JPanel elutaLabelPanel;
+    private JLabel elutaLabel;
+    private JPanel jobspressoLabelPanel;
+    private JLabel jobspressoLabel;
+    private JPanel webbjobbLabelPrser;
+    private JLabel webbjobbLabel;
     private JFrame jFrame = new JFrame();
     private Component c;
+    private ExecutorService executorDB = Executors.newFixedThreadPool(1);
+
 
     public JPanel getPanelMain() {
         return panelMain;
     }
 
     public ParserApp() {
+        Map<String, ParserMain> mapParsers = new HashMap<>();
+        mapParsers.put("wfh.io", new ParserWFH());
+        mapParsers.put("remoteok.io", new ParserRemoteok());
+        mapParsers.put("landing.jobs", new ParserLandingJobs());
+        mapParsers.put("startus.cc", new ParserStartus());
+        mapParsers.put("virtualvocations.com", new ParserVirtualvocations());
+        mapParsers.put("simplyhired.com", new ParserSimplyhired());
+        mapParsers.put("stackoverflow.com", new ParserStackoverflow());
+        mapParsers.put("juju.com", new ParserJuju());
+        mapParsers.put("jobs.drupal.org", new ParserDrupal());
+        mapParsers.put("dutchstartupjobs.com", new ParserDutchstartupjobs());
+        mapParsers.put("monster.de", new ParserMonsterDe());
+        mapParsers.put("weloveangular.com", new ParserWeloveangular());
+        mapParsers.put("weworkremotely.com", new ParserWeworkremotely());
+        mapParsers.put("startupjobs.se", new ParserStartupjobsSe());
+        mapParsers.put("berlinstartupjobs.com", new ParserBerlinstartupjobs());
+        mapParsers.put("jobs.ch", new ParserJobs());
+        mapParsers.put("flexjobs.com", new ParserFlexjobs());
+        mapParsers.put("builtinnode.com", new ParserBuiltinnode());
+        mapParsers.put("weworkmeteor.com", new ParserWeworkmeteor());
+        mapParsers.put("jobbank.dk", new ParserJobbank());
+        mapParsers.put("workingnomads.co", new ParserWorkingnomads());
+        mapParsers.put("remote.co", new ParserRemote());
+        mapParsers.put("randstad.com", new ParserRandstad());
+        mapParsers.put("workopolis.com", new ParserWorkopolis());
+        mapParsers.put("eluta.ca", new ParserEluta());
+        mapParsers.put("jobspresso.co", new ParserJobspresso());
+        mapParsers.put("webbjobb.io", new ParserWebbjobb());
+
+        ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(4);
+        for (int i = 0; i < 5/*linkPanel.getComponents().length*/; i++) {
+            linkPanel.getComponents()[i].setBackground(new Color(0x717184));
+            JPanel labelPanel = (JPanel) linkPanel.getComponents()[i];
+            JLabel label = (JLabel) labelPanel.getComponent(0);
+            String homeLink = label.getText();
+            executor.execute(new Task(labelPanel, mapParsers.get(homeLink), homeLink));
+        }
 
         c = wfhLink;
-        wfhLink.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("text speciality :111 ");
-                linkPanel.setVisible(false);
-                c.setForeground(new Color(-16777216));
-                c = e.getComponent();
-                c.setForeground(new Color(0x696969));
-                linkPanel.setVisible(true);
-                jobPanel.removeAll();
-                panelFiller(new ParserWFH().getJobsInforms());
-
-                System.out.println("text speciality :111 ");
-
-            }
-        });
-        remoteok.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("text speciality :222 ");
-                linkPanel.setVisible(false);
-                c.setForeground(new Color(-16777216));
-                c = e.getComponent();
-                c.setForeground(new Color(0x696969));
-                linkPanel.setVisible(true);
-                jobPanel.removeAll();
-                panelFiller(new ParserRemoteok().getJobsInforms());
-//                super.mouseClicked(e);
-                System.out.println("text speciality :222 ");
-            }
-        });
-        landingJobsLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("text speciality :333 ");
-                linkPanel.setVisible(false);
-                c.setForeground(new Color(-16777216));
-                c = e.getComponent();
-                c.setForeground(new Color(0x696969));
-                linkPanel.setVisible(true);
-                jobPanel.removeAll();
-                panelFiller(new ParserLandingJobs().getJobsInforms());
-//                super.mouseClicked(e);
-                System.out.println("text speciality :333 ");
-            }
-        });
-        startusLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("text speciality :444 ");
-                linkPanel.setVisible(false);
-                c.setForeground(new Color(-16777216));
-                c = e.getComponent();
-                c.setForeground(new Color(0x696969));
-                linkPanel.setVisible(true);
-                jobPanel.removeAll();
-                panelFiller(new ParserStartus().getJobsInforms());
-//                super.mouseClicked(e);
-                System.out.println("text speciality :444 ");
-            }
-        });
-        virtualvocationsLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("text speciality :555 ");
-                linkPanel.setVisible(false);
-                c.setForeground(new Color(-16777216));
-                c = e.getComponent();
-                c.setForeground(new Color(0x696969));
-                linkPanel.setVisible(true);
-                jobPanel.removeAll();
-                panelFiller(new ParserVirtualvocations().getJobsInforms());
-//                super.mouseClicked(e);
-                System.out.println("text speciality :555 ");
-            }
-        });
-        simplyhiredLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("text speciality :666 ");
-                linkPanel.setVisible(false);
-                c.setForeground(new Color(-16777216));
-                c = e.getComponent();
-                c.setForeground(new Color(0x696969));
-                linkPanel.setVisible(true);
-                jobPanel.removeAll();
-                panelFiller(new ParserSimplyhired().getJobsInforms());
-//                super.mouseClicked(e);
-                System.out.println("text speciality :666 ");
-            }
-        });
-        stackoverflowLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("text speciality :777 ");
-                linkPanel.setVisible(false);
-                c.setForeground(new Color(-16777216));
-                c = e.getComponent();
-                c.setForeground(new Color(0x696969));
-                linkPanel.setVisible(true);
-                jobPanel.removeAll();
-                panelFiller(new ParserStackoverflow().getJobsInforms());
-//                super.mouseClicked(e);
-                System.out.println("text speciality :777 ");
-            }
-        });
-        jujuLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("text speciality :888 ");
-                linkPanel.setVisible(false);
-                c.setForeground(new Color(-16777216));
-                c = e.getComponent();
-                c.setForeground(new Color(0x696969));
-                linkPanel.setVisible(true);
-                jobPanel.removeAll();
-                panelFiller(new ParserJuju().getJobsInforms());
-//                super.mouseClicked(e);
-                System.out.println("text speciality :888 ");
-            }
-        });
-        drupalLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("text speciality :999 ");
-                linkPanel.setVisible(false);
-                c.setForeground(new Color(-16777216));
-                c = e.getComponent();
-                c.setForeground(new Color(0x696969));
-                linkPanel.setVisible(true);
-                jobPanel.removeAll();
-                panelFiller(new ParserDrupal().getJobsInforms());
-//                super.mouseClicked(e);
-                System.out.println("text speciality :999 ");
-            }
-        });
-        dutchstartupjobsLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("text speciality :10 ");
-                linkPanel.setVisible(false);
-                c.setForeground(new Color(-16777216));
-                c = e.getComponent();
-                c.setForeground(new Color(0x696969));
-                linkPanel.setVisible(true);
-                jobPanel.removeAll();
-                panelFiller(new ParserDutchstartupjobs().getJobsInforms());
-//                super.mouseClicked(e);
-                System.out.println("text speciality :10 ");
-            }
-        });
-        monsterDeLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("text speciality :11 ");
-                linkPanel.setVisible(false);
-                c.setForeground(new Color(-16777216));
-                c = e.getComponent();
-                c.setForeground(new Color(0x696969));
-                linkPanel.setVisible(true);
-                jobPanel.removeAll();
-                panelFiller(new ParserMonsterDe().getJobsInforms());
-//                super.mouseClicked(e);
-                System.out.println("text speciality :11 ");
-            }
-        });
-        weloveangularLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("text speciality :12 ");
-                linkPanel.setVisible(false);
-                c.setForeground(new Color(-16777216));
-                c = e.getComponent();
-                c.setForeground(new Color(0x696969));
-                linkPanel.setVisible(true);
-                jobPanel.removeAll();
-                panelFiller(new ParserWeloveangular().getJobsInforms());
-//                super.mouseClicked(e);
-                System.out.println("text speciality :12 ");
-            }
-        });
-        weworkremotelyLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("text speciality :12 ");
-                linkPanel.setVisible(false);
-                c.setForeground(new Color(-16777216));
-                c = e.getComponent();
-                c.setForeground(new Color(0x696969));
-                linkPanel.setVisible(true);
-                jobPanel.removeAll();
-                panelFiller(new ParserWeworkremotely().getJobsInforms());
-//                super.mouseClicked(e);
-                System.out.println("text speciality :12 ");
-            }
-        });
-        startupjobsLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("text speciality :12 ");
-                linkPanel.setVisible(false);
-                c.setForeground(new Color(-16777216));
-                c = e.getComponent();
-                c.setForeground(new Color(0x696969));
-                linkPanel.setVisible(true);
-                jobPanel.removeAll();
-                panelFiller(new ParserStartupjobsSe().getJobsInforms());
-//                super.mouseClicked(e);
-                System.out.println("text speciality :12 ");
-            }
-        });
-        berlinstartupjobsLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("text speciality :12 ");
-                linkPanel.setVisible(false);
-                c.setForeground(new Color(-16777216));
-                c = e.getComponent();
-                c.setForeground(new Color(0x696969));
-                linkPanel.setVisible(true);
-                jobPanel.removeAll();
-                panelFiller(new ParserBerlinstartupjobs().getJobsInforms());
-//                super.mouseClicked(e);
-                System.out.println("text speciality :12 ");
-            }
-        });
-        jobsChLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("text speciality :12 ");
-                linkPanel.setVisible(false);
-                c.setForeground(new Color(-16777216));
-                c = e.getComponent();
-                c.setForeground(new Color(0x696969));
-                linkPanel.setVisible(true);
-                jobPanel.removeAll();
-                panelFiller(new ParserJobs().getJobsInforms());
-//                super.mouseClicked(e);
-                System.out.println("text speciality :12 ");
-            }
-        });
-        flexjobsLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("text speciality :13 ");
-                linkPanel.setVisible(false);
-                c.setForeground(new Color(-16777216));
-                c = e.getComponent();
-                c.setForeground(new Color(0x696969));
-                linkPanel.setVisible(true);
-                jobPanel.removeAll();
-                panelFiller(new ParserFlexjobs().getJobsInforms());
-//                super.mouseClicked(e);
-                System.out.println("text speciality :13 ");
-            }
-        });
-        builtinnodeLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("text speciality :13 ");
-                linkPanel.setVisible(false);
-                c.setForeground(new Color(-16777216));
-                c = e.getComponent();
-                c.setForeground(new Color(0x696969));
-                linkPanel.setVisible(true);
-                jobPanel.removeAll();
-                panelFiller(new ParserBuiltinnode().getJobsInforms());
-//                super.mouseClicked(e);
-                System.out.println("text speciality :13 ");
-            }
-        });
-        weworkmeteorLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("text speciality :13 ");
-                linkPanel.setVisible(false);
-                c.setForeground(new Color(-16777216));
-                c = e.getComponent();
-                c.setForeground(new Color(0x696969));
-                linkPanel.setVisible(true);
-                jobPanel.removeAll();
-                panelFiller(new ParserWeworkmeteor().getJobsInforms());
-//                super.mouseClicked(e);
-                System.out.println("text speciality :13 ");
-            }
-        });
-        jobbankLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("text speciality :13 ");
-                linkPanel.setVisible(false);
-                c.setForeground(new Color(-16777216));
-                c = e.getComponent();
-                c.setForeground(new Color(0x696969));
-                linkPanel.setVisible(true);
-                jobPanel.removeAll();
-                panelFiller(new ParserJobbank().getJobsInforms());
-//                super.mouseClicked(e);
-                System.out.println("text speciality :13 ");
-            }
-        });
-        workingnomadsLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("text speciality :13 ");
-                linkPanel.setVisible(false);
-                c.setForeground(new Color(-16777216));
-                c = e.getComponent();
-                c.setForeground(new Color(0x696969));
-                linkPanel.setVisible(true);
-                jobPanel.removeAll();
-                panelFiller(new ParserWorkingnomads().getJobsInforms());
-//                super.mouseClicked(e);
-                System.out.println("text speciality :13 ");
-            }
-        });
-        remoteLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("text speciality :13 ");
-                linkPanel.setVisible(false);
-                c.setForeground(new Color(-16777216));
-                c = e.getComponent();
-                c.setForeground(new Color(0x696969));
-                linkPanel.setVisible(true);
-                jobPanel.removeAll();
-                panelFiller(new ParserRemote().getJobsInforms());
-//                super.mouseClicked(e);
-                System.out.println("text speciality :13 ");
-            }
-        });
-        randstadLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("text speciality :13 ");
-                linkPanel.setVisible(false);
-                c.setForeground(new Color(-16777216));
-                c = e.getComponent();
-                c.setForeground(new Color(0x696969));
-                linkPanel.setVisible(true);
-                jobPanel.removeAll();
-                panelFiller(new ParserRandstad().getJobsInforms());
-//                super.mouseClicked(e);
-                System.out.println("text speciality :13 ");
-            }
-        });
+        wfhLink.addMouseListener(this);
+        remoteokLabel.addMouseListener(this);
+        landingJobsLabel.addMouseListener(this);
+        startusLabel.addMouseListener(this);
+        virtualvocationsLabel.addMouseListener(this);
+        simplyhiredLabel.addMouseListener(this);
+        stackoverflowLabel.addMouseListener(this);
+        jujuLabel.addMouseListener(this);
+        drupalLabel.addMouseListener(this);
+        dutchstartupjobsLabel.addMouseListener(this);
+        monsterDeLabel.addMouseListener(this);
+        weloveangularLabel.addMouseListener(this);
+        weworkremotelyLabel.addMouseListener(this);
+        startupjobsLabel.addMouseListener(this);
+        berlinstartupjobsLabel.addMouseListener(this);
+        jobsChLabel.addMouseListener(this);
+        flexjobsLabel.addMouseListener(this);
+        builtinnodeLabel.addMouseListener(this);
+        weworkmeteorLabel.addMouseListener(this);
+        jobbankLabel.addMouseListener(this);
+        workingnomadsLabel.addMouseListener(this);
+        remoteLabel.addMouseListener(this);
+        randstadLabel.addMouseListener(this);
+        workopolisLabel.addMouseListener(this);
+        elutaLabel.addMouseListener(this);
+        jobspressoLabel.addMouseListener(this);
+        webbjobbLabel.addMouseListener(this);
     }
 
-    private void panelFiller(final List<JobsInform> jobsInformList) {
+    private void panelFiller(final List<JobsInform> jobsInformList, String homeLink) {
 
         jobPanel.setVisible(false);
         JPanel mainJobPanel = new JPanel();
@@ -461,6 +199,11 @@ public class ParserApp {
             JPanel label1Panel = new JPanel();
             String stringDate = new SimpleDateFormat("dd-MM-yyyy").format(ji.getPublishedDate());
             JLabel label1 = new JLabel("VOCATION: " + ji.getHeadPublication());
+            if (ji.isSeen()) {
+                label1.setForeground(new Color(213123));
+            } else {
+                label1.setForeground(new Color(0x830200));
+            }
             label1.setMaximumSize(new Dimension(540, 20));
             label1.setMinimumSize(new Dimension(540, 20));
             label1.setPreferredSize(new Dimension(540, 20));
@@ -469,6 +212,7 @@ public class ParserApp {
             label2.setMinimumSize(new Dimension(540, 20));
             label2.setPreferredSize(new Dimension(540, 20));
             JLabel label3 = new JLabel("COMPANY: " + ji.getCompanyName() + "     " + stringDate);
+            label3.setForeground(new Color(0x308365));
             label1.setHorizontalAlignment(SwingConstants.LEFT);
             label2.setHorizontalAlignment(SwingConstants.LEFT);
             label3.setHorizontalAlignment(SwingConstants.LEFT);
@@ -609,6 +353,16 @@ public class ParserApp {
             label1Panel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
 
         }
+        boolean isChanged = false;
+        for (JobsInform j : jobsInformList) {
+            if (isChanged || !j.isSeen()) {
+                isChanged = true;
+            }
+            j.setSeen(true);
+        }
+        if (isChanged) {
+            executorDB.execute(new TaskDBWriteSeen(jobsInformList, homeLink));
+        }
         mainJobPanel.setMinimumSize(new
 
                 Dimension(580, 65 * jobsInformList.size()));
@@ -642,14 +396,43 @@ public class ParserApp {
         return dummyEditorPane.getPreferredSize().height;
     }
 
-    private static void open(URI uri) {
-        if (Desktop.isDesktopSupported()) {
-            try {
-                Desktop.getDesktop().browse(uri);
-            } catch (IOException e) { /* TODO: error handling */ }
-        } else { /* TODO: error handling */ }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        System.out.println("text speciality :111 ");
+        linkPanel.setVisible(false);
+        JLabel label = (JLabel) e.getComponent();
+        c.setForeground(new Color(-16777216));
+        c = label;
+        c.setForeground(new Color(0x696969));
+        linkPanel.setVisible(true);
+        jobPanel.removeAll();
+        if (label.getText().contains(" ")) {
+            String text = label.getText().substring(0, label.getText().indexOf(" "));
+            label.setText(text);
+        }
+        panelFiller(new DbHelper().getJobsInformFromDb(label.getText()), label.getText());
     }
 
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
+    }
 
     {
 // GUI initializer generated by IntelliJ IDEA GUI Designer
@@ -726,23 +509,23 @@ public class ParserApp {
         remoteokLabelPanel.setPreferredSize(new Dimension(180, 30));
         linkPanel.add(remoteokLabelPanel);
         remoteokLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
-        remoteok = new JLabel();
-        remoteok.setAutoscrolls(false);
-        remoteok.setEnabled(true);
-        remoteok.setFocusable(false);
-        remoteok.setFont(new Font("Times New Roman", remoteok.getFont().getStyle(), 12));
-        remoteok.setForeground(new Color(-16777216));
-        remoteok.setHorizontalAlignment(2);
-        remoteok.setHorizontalTextPosition(2);
-        remoteok.setMaximumSize(new Dimension(170, 30));
-        remoteok.setMinimumSize(new Dimension(-1, -1));
-        remoteok.setOpaque(false);
-        remoteok.setPreferredSize(new Dimension(170, 30));
-        remoteok.setText("remoteok");
-        remoteok.setToolTipText("www.remoteok.io");
-        remoteok.setVerifyInputWhenFocusTarget(false);
-        remoteok.putClientProperty("html.disable", Boolean.TRUE);
-        remoteokLabelPanel.add(remoteok);
+        remoteokLabel = new JLabel();
+        remoteokLabel.setAutoscrolls(false);
+        remoteokLabel.setEnabled(true);
+        remoteokLabel.setFocusable(false);
+        remoteokLabel.setFont(new Font("Times New Roman", remoteokLabel.getFont().getStyle(), 12));
+        remoteokLabel.setForeground(new Color(-16777216));
+        remoteokLabel.setHorizontalAlignment(2);
+        remoteokLabel.setHorizontalTextPosition(2);
+        remoteokLabel.setMaximumSize(new Dimension(170, 30));
+        remoteokLabel.setMinimumSize(new Dimension(-1, -1));
+        remoteokLabel.setOpaque(false);
+        remoteokLabel.setPreferredSize(new Dimension(170, 30));
+        remoteokLabel.setText("remoteok.io");
+        remoteokLabel.setToolTipText("www.remoteok.io");
+        remoteokLabel.setVerifyInputWhenFocusTarget(false);
+        remoteokLabel.putClientProperty("html.disable", Boolean.TRUE);
+        remoteokLabelPanel.add(remoteokLabel);
         landingJobsPanel = new JPanel();
         landingJobsPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
         landingJobsPanel.setAlignmentX(0.0f);
@@ -1331,6 +1114,118 @@ public class ParserApp {
         randstadLabel.setVerifyInputWhenFocusTarget(false);
         randstadLabel.putClientProperty("html.disable", Boolean.TRUE);
         randstadLabelPanel.add(randstadLabel);
+        workopolisLabelPanel = new JPanel();
+        workopolisLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        workopolisLabelPanel.setAlignmentX(0.0f);
+        workopolisLabelPanel.setAlignmentY(0.0f);
+        workopolisLabelPanel.setAutoscrolls(true);
+        workopolisLabelPanel.setBackground(new Color(-721665));
+        workopolisLabelPanel.setMaximumSize(new Dimension(210, 30));
+        workopolisLabelPanel.setMinimumSize(new Dimension(180, 30));
+        workopolisLabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(workopolisLabelPanel);
+        workopolisLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        workopolisLabel = new JLabel();
+        workopolisLabel.setAutoscrolls(false);
+        workopolisLabel.setEnabled(true);
+        workopolisLabel.setFocusable(false);
+        workopolisLabel.setFont(new Font("Times New Roman", workopolisLabel.getFont().getStyle(), 12));
+        workopolisLabel.setForeground(new Color(-16777216));
+        workopolisLabel.setHorizontalAlignment(2);
+        workopolisLabel.setHorizontalTextPosition(2);
+        workopolisLabel.setMaximumSize(new Dimension(170, 30));
+        workopolisLabel.setMinimumSize(new Dimension(-1, -1));
+        workopolisLabel.setOpaque(false);
+        workopolisLabel.setPreferredSize(new Dimension(170, 30));
+        workopolisLabel.setText("workopolis.com");
+        workopolisLabel.setToolTipText("http://www.workopolis.com");
+        workopolisLabel.setVerifyInputWhenFocusTarget(false);
+        workopolisLabel.putClientProperty("html.disable", Boolean.TRUE);
+        workopolisLabelPanel.add(workopolisLabel);
+        elutaLabelPanel = new JPanel();
+        elutaLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        elutaLabelPanel.setAlignmentX(0.0f);
+        elutaLabelPanel.setAlignmentY(0.0f);
+        elutaLabelPanel.setAutoscrolls(true);
+        elutaLabelPanel.setBackground(new Color(-721665));
+        elutaLabelPanel.setMaximumSize(new Dimension(210, 30));
+        elutaLabelPanel.setMinimumSize(new Dimension(180, 30));
+        elutaLabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(elutaLabelPanel);
+        elutaLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        elutaLabel = new JLabel();
+        elutaLabel.setAutoscrolls(false);
+        elutaLabel.setEnabled(true);
+        elutaLabel.setFocusable(false);
+        elutaLabel.setFont(new Font("Times New Roman", elutaLabel.getFont().getStyle(), 12));
+        elutaLabel.setForeground(new Color(-16777216));
+        elutaLabel.setHorizontalAlignment(2);
+        elutaLabel.setHorizontalTextPosition(2);
+        elutaLabel.setMaximumSize(new Dimension(170, 30));
+        elutaLabel.setMinimumSize(new Dimension(-1, -1));
+        elutaLabel.setOpaque(false);
+        elutaLabel.setPreferredSize(new Dimension(170, 30));
+        elutaLabel.setText("eluta.ca");
+        elutaLabel.setToolTipText("http://www.eluta.ca");
+        elutaLabel.setVerifyInputWhenFocusTarget(false);
+        elutaLabel.putClientProperty("html.disable", Boolean.TRUE);
+        elutaLabelPanel.add(elutaLabel);
+        jobspressoLabelPanel = new JPanel();
+        jobspressoLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        jobspressoLabelPanel.setAlignmentX(0.0f);
+        jobspressoLabelPanel.setAlignmentY(0.0f);
+        jobspressoLabelPanel.setAutoscrolls(true);
+        jobspressoLabelPanel.setBackground(new Color(-721665));
+        jobspressoLabelPanel.setMaximumSize(new Dimension(210, 30));
+        jobspressoLabelPanel.setMinimumSize(new Dimension(180, 30));
+        jobspressoLabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(jobspressoLabelPanel);
+        jobspressoLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        jobspressoLabel = new JLabel();
+        jobspressoLabel.setAutoscrolls(false);
+        jobspressoLabel.setEnabled(true);
+        jobspressoLabel.setFocusable(false);
+        jobspressoLabel.setFont(new Font("Times New Roman", jobspressoLabel.getFont().getStyle(), 12));
+        jobspressoLabel.setForeground(new Color(-16777216));
+        jobspressoLabel.setHorizontalAlignment(2);
+        jobspressoLabel.setHorizontalTextPosition(2);
+        jobspressoLabel.setMaximumSize(new Dimension(170, 30));
+        jobspressoLabel.setMinimumSize(new Dimension(-1, -1));
+        jobspressoLabel.setOpaque(false);
+        jobspressoLabel.setPreferredSize(new Dimension(170, 30));
+        jobspressoLabel.setText("jobspresso.co");
+        jobspressoLabel.setToolTipText("http://www.jobspresso.co");
+        jobspressoLabel.setVerifyInputWhenFocusTarget(false);
+        jobspressoLabel.putClientProperty("html.disable", Boolean.TRUE);
+        jobspressoLabelPanel.add(jobspressoLabel);
+        webbjobbLabelPrser = new JPanel();
+        webbjobbLabelPrser.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        webbjobbLabelPrser.setAlignmentX(0.0f);
+        webbjobbLabelPrser.setAlignmentY(0.0f);
+        webbjobbLabelPrser.setAutoscrolls(true);
+        webbjobbLabelPrser.setBackground(new Color(-721665));
+        webbjobbLabelPrser.setMaximumSize(new Dimension(210, 30));
+        webbjobbLabelPrser.setMinimumSize(new Dimension(180, 30));
+        webbjobbLabelPrser.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(webbjobbLabelPrser);
+        webbjobbLabelPrser.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        webbjobbLabel = new JLabel();
+        webbjobbLabel.setAutoscrolls(false);
+        webbjobbLabel.setEnabled(true);
+        webbjobbLabel.setFocusable(false);
+        webbjobbLabel.setFont(new Font("Times New Roman", webbjobbLabel.getFont().getStyle(), 12));
+        webbjobbLabel.setForeground(new Color(-16777216));
+        webbjobbLabel.setHorizontalAlignment(2);
+        webbjobbLabel.setHorizontalTextPosition(2);
+        webbjobbLabel.setMaximumSize(new Dimension(170, 30));
+        webbjobbLabel.setMinimumSize(new Dimension(-1, -1));
+        webbjobbLabel.setOpaque(false);
+        webbjobbLabel.setPreferredSize(new Dimension(170, 30));
+        webbjobbLabel.setText("webbjobb.io");
+        webbjobbLabel.setToolTipText("http://www.webbjobb.io");
+        webbjobbLabel.setVerifyInputWhenFocusTarget(false);
+        webbjobbLabel.putClientProperty("html.disable", Boolean.TRUE);
+        webbjobbLabelPrser.add(webbjobbLabel);
         jobPanel = new JPanel();
         jobPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5));
         jobPanel.setAutoscrolls(false);
@@ -1392,5 +1287,79 @@ public class ParserApp {
     public JComponent $$$getRootComponent$$$() {
         return panelMain;
     }
+
+    private class Task implements Runnable {
+        private String homeLink;
+        private ParserMain classParser;
+        private JPanel labelPanel;
+
+        public Task(JPanel labelPanel, ParserMain classParser, String homeLink) {
+            this.classParser = classParser;
+            this.labelPanel = labelPanel;
+            this.homeLink = homeLink;
+        }
+
+        @Override
+        public void run() {
+
+            List<JobsInform> jobsInforms = classParser.startParse();
+
+            executorDB.execute(new TaskDB(labelPanel, jobsInforms, homeLink));
+
+        }
+    }
+
+    private class TaskDB implements Runnable {
+
+        private String homeLink;
+        private JPanel labelPanel;
+        private List<JobsInform> jobsInforms;
+
+        public TaskDB(JPanel labelPanel, List<JobsInform> jobsInforms, String homeLink) {
+            this.homeLink = homeLink;
+            this.labelPanel = labelPanel;
+            this.jobsInforms = jobsInforms;
+
+        }
+
+        @Override
+        public void run() {
+            int newResults = new DbHelper().writeDB(homeLink, jobsInforms);
+            labelPanel.setVisible(false);
+            labelPanel.setBackground(new Color(-721665));
+            JLabel label = (JLabel) labelPanel.getComponent(0);
+            String text = label.getText();
+            label.setText(text + " new " + newResults);
+            label.setForeground(new Color(0x5F0200));
+            labelPanel.setVisible(true);
+        }
+    }
+
+    private class TaskDBWriteSeen implements Runnable {
+
+        private String homeLink;
+        private List<JobsInform> jobsInforms;
+
+        public TaskDBWriteSeen(List<JobsInform> jobsInforms, String homeLink) {
+            this.homeLink = homeLink;
+            this.jobsInforms = jobsInforms;
+
+        }
+
+        @Override
+        public void run() {
+            int newResults = new DbHelper().writeDB(homeLink, jobsInforms);
+        }
+    }
+
+    private static void open(URI uri) {
+        if (Desktop.isDesktopSupported()) {
+            try {
+                Desktop.getDesktop().browse(uri);
+            } catch (IOException e) { /* TODO: error handling */ }
+        } else { /* TODO: error handling */ }
+    }
+
+
 }
 

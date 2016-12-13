@@ -1,5 +1,4 @@
-package com.parser.parsers.dk.jobbank;
-
+package com.parser.parsers.com.workopolis;
 
 import com.parser.entity.DateGenerator;
 import com.parser.entity.JobsInform;
@@ -18,16 +17,16 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by rolique_pc on 12/9/2016.
+ * Created by rolique_pc on 12/13/2016.
  */
-public class ParserJobbank implements ParserMain{
+public class ParserWorkopolis implements ParserMain{
 
-    private String startLink = "http://jobbank.dk/job";
+    private String startLink = "http://www.workopolis.com/jobsearch/find-jobs#lg=en&st=POSTDATE%20%20%20%20&lr=50&pn=";
     private List<JobsInform> jobsInforms = new ArrayList<JobsInform>();
     private Document doc;
     private DateGenerator dateClass;
 
-    public ParserJobbank(){
+    public ParserWorkopolis(){
     }
 
     public List<JobsInform> startParse(){
@@ -41,36 +40,53 @@ public class ParserJobbank implements ParserMain{
 
 
             // need http protocol
-            doc = Jsoup.connect(startLink)
+            doc = Jsoup.connect(startLink+1)
                     .validateTLSCertificates(false)
                     .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
                     .timeout(5000)
                     .get();
-
-            Elements tables2 = doc.select(".job-item-container");
+//        doc = ParserLandingJobs.renderPage(startLink);
+//
+            Elements tables2 = doc.select("article");
 //            System.out.println("text : " + doc);
+////
+//            System.out.println("text : " + tables2);
             runParse(tables2, 0);
-
+//
             Date datePublished = null;
             int count = 2;
-            do {
-                try {
+//            for(Element element: tables2) {
+                do {
+                    try {
 
-                    datePublished = null;
-                    // need http protocol
-                    doc = Jsoup.connect(startLink + "?&page=" + count)
-                            .validateTLSCertificates(false).userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36").timeout(5000).get();
+                        datePublished = null;
+                        // need http protocol
 
-                    Elements tables1 = doc.select(".job-item-container");
-//            System.out.println("text : " + tables2);
-                    datePublished = runParse(tables1, 0);
-                    count++;
+                        doc = Jsoup.connect(startLink+count)
+                                .validateTLSCertificates(false)
+                                .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
+                                .timeout(5000)
+                                .get();
+//                        InputStream input = new URL("https://www.workingnomads.co/jobsapi/job/_search?sort=premium:desc,pub_date:desc&_source=company,category_name,description,instructions,id,external_id,slug,title,pub_date,tags,source,apply_url,premium&size=20&from=" + count).openStream();
+//                        Reader reader = new InputStreamReader(input, "UTF-8");
+//                        JSONObject data = new Gson().fromJson(reader, JSONObject.class);
+//                    JSONObject jsonObject = (JSONObject) Jsoup.connect("https://www.workingnomads.co/jobsapi/job/_search?sort=premium:desc,pub_date:desc&_source=company,category_name,description,instructions,id,external_id,slug,title,pub_date,tags,source,apply_url,premium&size=20&from=" + count).get()
+//                            .;
+//                System.out.println("text : " + doc);
 
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+//                        System.out.println("text : " + data);
+//                    doc = Jsoup.parse(data.toString());
+                        Elements tables1 = doc.select("article");
+//                        System.out.println(" text RENDER: " + tables1);
+                        datePublished = runParse(tables1, 0);
+                        count ++;
 
-            }while(dateClass.dateChecker(datePublished));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                } while (dateClass.dateChecker(datePublished));
+//            }
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -80,19 +96,21 @@ public class ParserJobbank implements ParserMain{
 
     private Date runParse(Elements tables2, int counter) {
         System.out.println("text date : " + tables2.size());
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         Date datePublished = null;
-        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
         for (int i = counter; i<tables2.size(); i+=1) {
 //            System.out.println("text date : " + tables2.get(i));
+            datePublished = null;
 
 //                 for (int i = counter; i<tables2.size(); i+=1) {
-            String stringDate = tables2.get(i).select(".job-date-updated").text().replace("Dato:", "");
+            String stringDate = tables2.get(i).select("time").attr("datetime");
+            stringDate = stringDate.substring(0, stringDate.indexOf(" "));
 //            System.out.println("text date : " + stringDate);
 //            System.out.println("text date : " + stringDate.contains("hour"));
 //            System.out.println("text date : " + stringDate.split(" ").contains("hour"));
 //            if(stringDate.contains("minut")||stringDate.contains("hour")){
 //                datePublished = new Date();
-//            }else if(stringDate.contains("yesterday")){
+//            }else if(stringDate.contains("yesterday")||stringDate.contains("1 day")){
 //                datePublished = new Date(new Date().getTime() - 1*24*3600*1000);
 //            }else if(stringDate.contains("2 day")){
 //                datePublished = new Date(new Date().getTime() - 2*24*3600*1000);
@@ -109,9 +127,9 @@ public class ParserJobbank implements ParserMain{
 //            Date datePublished = null;
             try {
                 datePublished = formatter.parse(stringDate);
-//                    System.out.println("text date : " + datePublished);
-            objectGenerator(tables2.get(i), tables2.get(i).select(".job-header").first(),
-                    tables2.get(i), datePublished, tables2.get(i).select(".job-item").first());
+                    System.out.println("text date : " + datePublished);
+            objectGenerator(tables2.get(i).select("[itemprop='jobLocation']").first(), tables2.get(i).select(".link").first(),
+                    tables2.get(i).select("[itemprop='name']").first(), datePublished, tables2.get(i).select("a").first());
             } catch (ParseException e) {
                 System.out.println(e.getMessage());
             }
@@ -123,16 +141,16 @@ public class ParserJobbank implements ParserMain{
     private void objectGenerator(Element place, Element headPost, Element company, Date datePublished, Element linkDescription){
         if(dateClass.dateChecker(datePublished)) {
             JobsInform jobsInform = new JobsInform();
-//                System.out.println("text place : " + place.text());
-//                System.out.println("text headPost : " + headPost.text());
-//                System.out.println("text company : " + company.text());
-//                System.out.println("text link1 : " + linkDescription.attr("abs:href"));
+                System.out.println("text place : " + place.text());
+            System.out.println("text headPost : " + headPost.text());
+            System.out.println("text company : " + company.ownText());
+            System.out.println("text link1 : " + "http://www.workopolis.com" + linkDescription.attr("href"));
             jobsInform.setPublishedDate(datePublished);
             jobsInform.setHeadPublication(headPost.text());
-//            jobsInform.setCompanyName(company.text());
-//            jobsInform.setPlace(place.text());
-            jobsInform.setPublicationLink(startLink.substring(0, startLink.lastIndexOf("job"))+linkDescription.attr("href"));
-            jobsInform = getDescription(startLink.substring(0, startLink.lastIndexOf("job")) + linkDescription.attr("href"), jobsInform);
+            jobsInform.setCompanyName(company.ownText());
+            jobsInform.setPlace(place.text());
+            jobsInform.setPublicationLink("http://www.workopolis.com" + linkDescription.attr("href"));
+            jobsInform = getDescription("http://www.workopolis.com" + linkDescription.attr("href"), jobsInform);
             if(!jobsInforms.contains(jobsInform)) {
                 jobsInforms.add(jobsInform);
             }
@@ -148,27 +166,32 @@ public class ParserJobbank implements ParserMain{
                     .timeout(5000)
                     .get();
 
+//        Document document = ParserLandingJobs.renderPage(linkToDescription);
 
-            Elements tablesDescription = document.select(".jobContent").first().children();
-            Elements tablesHead = document.select(".job-view-title");
-            Element tablesPlace = document.select("span[itemprop=\"jobLocation\"]").first();
-            Element tablesCompany = document.select("b[itemprop=\"hiringOrganization\"]").first();
+//        System.out.println("text link1 : " + document);
+            Elements tablesDescription = document.select(".job-view-content-wrapper").first().children();
+            Elements tablesHead = document.select(".job-view-header-title");
             List<ListImpl> list = new ArrayList<ListImpl>();
-            jobsInform.setCompanyName(tablesCompany.text());
-            jobsInform.setPlace(tablesPlace.text());
-//            System.out.println("text link1 : " + tablesDescription);
 
-            if(tablesHead != null){
-                list.add(addHead(tablesHead.first()));
-            }
+            list.add(addHead(tablesHead.first()));
             for (int i = 0; i<tablesDescription.size(); i++) {
 
 
-                if (tablesDescription.get(i).tagName().equals("p")) {
+
+                if (tablesDescription.get(i).select(".iCIMS_Expandable_Text").size()>0) {
+                    for (Element element : tablesDescription.get(i).select(".iCIMS_Expandable_Text").first().children()) {
+                        if (element.tagName().equals("p")) {
+                            list.add(addParagraph(element));
+                        } else if (element.tagName().equals("ul")) {
+                            list.add(addList(element));
+                        }
+                    }
+                }else if (tablesDescription.get(i).tagName().equals("p")) {
                     list.add(addParagraph(tablesDescription.get(i)));
-                }
-                if (tablesDescription.get(i).tagName().equals("ul")) {
+                }else if (tablesDescription.get(i).tagName().equals("ul")){
                     list.add(addList(tablesDescription.get(i)));
+                }else if(tablesDescription.get(i).select("div").size()>0){
+                    list.add(addParagraph(tablesDescription.get(i)));
                 }
             }
 

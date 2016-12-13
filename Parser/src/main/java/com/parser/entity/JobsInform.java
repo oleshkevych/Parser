@@ -87,15 +87,17 @@ public class JobsInform implements Serializable{
 
         JobsInform that = (JobsInform) o;
 
-        if (!getPublishedDate().equals(that.getPublishedDate())) return false;
+        if (isSeen() != that.isSeen()) return false;
+        if (!getHeadPublication().equals(that.getHeadPublication())) return false;
         return getPublicationLink().equals(that.getPublicationLink());
 
     }
 
     @Override
     public int hashCode() {
-        int result = getPublishedDate().hashCode();
+        int result = getHeadPublication().hashCode();
         result = 31 * result + getPublicationLink().hashCode();
+        result = 31 * result + (isSeen() ? 1 : 0);
         return result;
     }
 }

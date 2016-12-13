@@ -4,6 +4,7 @@ package com.parser.parsers.com.flexjobs;
 import com.parser.entity.DateGenerator;
 import com.parser.entity.JobsInform;
 import com.parser.entity.ListImpl;
+import com.parser.entity.ParserMain;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -19,20 +20,18 @@ import java.util.List;
 /**
  * Created by rolique_pc on 12/9/2016.
  */
-public class ParserFlexjobs {
+public class ParserFlexjobs implements ParserMain{
     private String startLink = "https://www.flexjobs.com/jobs/computer-it";
     private List<JobsInform> jobsInforms = new ArrayList<JobsInform>();
     private Document doc;
     private DateGenerator dateClass;
 
     public ParserFlexjobs(){
-        dateClass = new DateGenerator();
-        parser();
-        System.out.println("FINISH ");
-
     }
 
-    public List<JobsInform> getJobsInforms() {
+    public List<JobsInform> startParse(){
+        dateClass = new DateGenerator();
+        parser();
         return jobsInforms;
     }
 

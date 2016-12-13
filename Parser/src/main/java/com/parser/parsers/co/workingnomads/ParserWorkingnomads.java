@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.parser.entity.DateGenerator;
 import com.parser.entity.JobsInform;
 import com.parser.entity.ListImpl;
+import com.parser.entity.ParserMain;
 import com.parser.parsers.jobs.landing.ParserLandingJobs;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
@@ -24,7 +25,7 @@ import java.util.List;
 /**
  * Created by rolique_pc on 12/12/2016.
  */
-public class ParserWorkingnomads {
+public class ParserWorkingnomads implements ParserMain{
 
     private String startLink = "https://www.workingnomads.co/jobs";
     private List<JobsInform> jobsInforms = new ArrayList<JobsInform>();
@@ -32,13 +33,11 @@ public class ParserWorkingnomads {
     private DateGenerator dateClass;
 
     public ParserWorkingnomads(){
-        dateClass = new DateGenerator();
-        parser();
-        System.out.println("FINISH ");
-
     }
 
-    public List<JobsInform> getJobsInforms() {
+    public List<JobsInform> startParse(){
+        dateClass = new DateGenerator();
+        parser();
         return jobsInforms;
     }
 

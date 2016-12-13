@@ -3,6 +3,7 @@ package com.parser.parsers.se.startupjobs;
 import com.parser.entity.DateGenerator;
 import com.parser.entity.JobsInform;
 import com.parser.entity.ListImpl;
+import com.parser.entity.ParserMain;
 import com.parser.parsers.jobs.landing.ParserLandingJobs;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -19,20 +20,18 @@ import java.util.List;
 /**
  * Created by rolique_pc on 12/8/2016.
  */
-public class ParserStartupjobsSe {
+public class ParserStartupjobsSe implements ParserMain{
     private String startLink = "http://startupjobs.se/";
     private List<JobsInform> jobsInforms = new ArrayList<JobsInform>();
     private Document doc;
     private DateGenerator dateClass;
 
     public ParserStartupjobsSe(){
-        dateClass = new DateGenerator();
-        parser();
-        System.out.println("FINISH ");
-
     }
 
-    public List<JobsInform> getJobsInforms() {
+    public List<JobsInform> startParse(){
+        dateClass = new DateGenerator();
+        parser();
         return jobsInforms;
     }
 

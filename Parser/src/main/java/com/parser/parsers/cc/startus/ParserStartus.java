@@ -3,6 +3,7 @@ package com.parser.parsers.cc.startus;
 import com.parser.entity.DateGenerator;
 import com.parser.entity.JobsInform;
 import com.parser.entity.ListImpl;
+import com.parser.entity.ParserMain;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -18,7 +19,7 @@ import java.util.List;
 /**
  * Created by rolique_pc on 12/6/2016.
  */
-public class ParserStartus {
+public class ParserStartus implements ParserMain {
 
 
     private String startLink = "https://www.startus.cc/jobs?search=&radius[0]=50&job_geo_location=&lat=&lon=&country=&administrative_area_level_1=";
@@ -27,13 +28,10 @@ public class ParserStartus {
     private DateGenerator dateClass;
 
     public ParserStartus(){
+    }
+    public List<JobsInform> startParse(){
         dateClass = new DateGenerator();
         parser();
-        System.out.println("FINISH ");
-
-    }
-
-    public List<JobsInform> getJobsInforms() {
         return jobsInforms;
     }
 

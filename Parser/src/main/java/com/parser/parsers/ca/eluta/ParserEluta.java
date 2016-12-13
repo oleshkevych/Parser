@@ -1,38 +1,33 @@
-package com.parser.parsers.co.remote;
+package com.parser.parsers.ca.eluta;
 
-import com.google.gson.Gson;
 import com.parser.entity.DateGenerator;
 import com.parser.entity.JobsInform;
 import com.parser.entity.ListImpl;
 import com.parser.entity.ParserMain;
-import com.parser.parsers.jobs.landing.ParserLandingJobs;
-import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 /**
- * Created by rolique_pc on 12/12/2016.
+ * Created by rolique_pc on 12/13/2016.
  */
-public class ParserRemote implements ParserMain{
+public class ParserEluta implements ParserMain{
 
 
-    private String startLink = "https://remote.co/remote-jobs";
+    private String startLink = "http://www.eluta.ca/search?q=&pg=";
     private List<JobsInform> jobsInforms = new ArrayList<JobsInform>();
     private Document doc;
     private DateGenerator dateClass;
 
-    public ParserRemote(){
+    public ParserEluta(){
     }
 
     public List<JobsInform> startParse(){
@@ -45,34 +40,36 @@ public class ParserRemote implements ParserMain{
         try {
 
 
-        // need http protocol
-            doc = Jsoup.connect(startLink)
+            // need http protocol
+            doc = Jsoup.connect(startLink+1)
                     .validateTLSCertificates(false)
                     .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
                     .timeout(5000)
                     .get();
 //        doc = ParserLandingJobs.renderPage(startLink);
 //
-            Elements tables2 = doc.select(".see_all_link a");
-////            System.out.println("text : " + doc);
+            Elements tables2 = doc.select(".organic-job");
+//            Elements tables1 = doc.select(".sponsored_job");
+//            System.out.println("text : " + doc);
 ////
-////            System.out.println("text : " + tables2);
-//            runParse(tables2, 0);
+//            System.out.println("text : " + tables2);
+            runParse(tables2, 0);
+//            runParse(tables1, 0);
 //
-        Date datePublished = null;
-        int count = 0;
-            for(Element element: tables2) {
+            Date datePublished = null;
+            int count = 2;
+//            for(Element element: tables2) {
                 do {
                     try {
 
                         datePublished = null;
                         // need http protocol
 
-                    doc = Jsoup.connect(element.attr("href"))
-                            .validateTLSCertificates(false)
-                            .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-                            .timeout(5000)
-                            .get();
+                        doc = Jsoup.connect(startLink+count)
+                                .validateTLSCertificates(false)
+                                .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
+                                .timeout(5000)
+                                .get();
 //                        InputStream input = new URL("https://www.workingnomads.co/jobsapi/job/_search?sort=premium:desc,pub_date:desc&_source=company,category_name,description,instructions,id,external_id,slug,title,pub_date,tags,source,apply_url,premium&size=20&from=" + count).openStream();
 //                        Reader reader = new InputStreamReader(input, "UTF-8");
 //                        JSONObject data = new Gson().fromJson(reader, JSONObject.class);
@@ -82,17 +79,23 @@ public class ParserRemote implements ParserMain{
 
 //                        System.out.println("text : " + data);
 //                    doc = Jsoup.parse(data.toString());
-                        Elements tables1 = doc.select(".job_listings .job_listing");
+                        Elements tables3 = doc.select(".organic-job");
+//            System.out.println("text : " + doc);
+////
+//            System.out.println("text : " + tables2);
+                        datePublished = runParse(tables3, 0);
+//                        Elements tables4 = doc.select(".sponsored_job");
+//                        runParse(tables4, 0);
 //                        System.out.println(" text RENDER: " + tables1);
-                        datePublished = runParse(tables1, 0);
-                        count += 20;
+//                        datePublished = runParse(tables1, 0);
+                        count ++;
 
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
 
-                } while (dateClass.dateChecker(datePublished));
-            }
+                } while (dateClass.dateChecker(datePublished) /*&& jobsInforms.size()<100*/);
+//            }
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -102,14 +105,15 @@ public class ParserRemote implements ParserMain{
 
     private Date runParse(Elements tables2, int counter) {
         System.out.println("text date : " + tables2.size());
-//        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
+//        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         Date datePublished = null;
         for (int i = counter; i<tables2.size(); i+=1) {
 //            System.out.println("text date : " + tables2.get(i));
             datePublished = null;
 
 //                 for (int i = counter; i<tables2.size(); i+=1) {
-            String stringDate = tables2.get(i).select("date").first().text();
+            String stringDate = tables2.get(i).select(".lastseen").text();
+//            stringDate = stringDate.substring(0, stringDate.indexOf(" "));
 //            System.out.println("text date : " + stringDate);
 //            System.out.println("text date : " + stringDate.contains("hour"));
 //            System.out.println("text date : " + stringDate.split(" ").contains("hour"));
@@ -131,10 +135,10 @@ public class ParserRemote implements ParserMain{
 
 //            Date datePublished = null;
 //            try {
-//                datePublished = formatter.parse(tables2.get(i).select(".date").text());
-//                    System.out.println("text date : " + datePublished);
-            objectGenerator(tables2.get(i).select(".location").first(), tables2.get(i).select(".position").first(),
-                    tables2.get(i).select(".company").first(), datePublished, tables2.get(i).select("a").first());
+//                datePublished = formatter.parse(stringDate);
+//                System.out.println("text date : " + datePublished);
+                objectGenerator(tables2.get(i).select(".location").first(), tables2.get(i).select(".lk-job-title").first(),
+                        tables2.get(i).select(".lk-employer").first(), datePublished, tables2.get(i).select(".lk-job-title").first());
 //            } catch (ParseException e) {
 //                System.out.println(e.getMessage());
 //            }
@@ -145,17 +149,19 @@ public class ParserRemote implements ParserMain{
 
     private void objectGenerator(Element place, Element headPost, Element company, Date datePublished, Element linkDescription){
         if(dateClass.dateChecker(datePublished)) {
+            String link = linkDescription.attr("onclick");
+            link = link.substring(link.indexOf("'")+1, link.lastIndexOf("'"));
             JobsInform jobsInform = new JobsInform();
-//                System.out.println("text place : " + place.text());
-//            System.out.println("text headPost : " + headPost.text());
-//            System.out.println("text company : " + company.text());
-//            System.out.println("text link1 : " + linkDescription.attr("href"));
+            System.out.println("text place : " + place.text());
+            System.out.println("text headPost : " + headPost.text());
+            System.out.println("text company : " + company.ownText());
+            System.out.println("text link1 : " + "http://www.eluta.ca" + link);
             jobsInform.setPublishedDate(datePublished);
             jobsInform.setHeadPublication(headPost.text());
-            jobsInform.setCompanyName(company.text());
-            jobsInform.setPlace("");
-            jobsInform.setPublicationLink(linkDescription.attr("href"));
-            jobsInform = getDescription(linkDescription.attr("href"), jobsInform);
+            jobsInform.setCompanyName(company.ownText());
+            jobsInform.setPlace(place.text());
+            jobsInform.setPublicationLink("http://www.eluta.ca" + link);
+//            jobsInform = getDescription("http://www.eluta.ca" + linkDescription.attr("onclick"), jobsInform);
             if(!jobsInforms.contains(jobsInform)) {
                 jobsInforms.add(jobsInform);
             }
@@ -174,36 +180,37 @@ public class ParserRemote implements ParserMain{
 //        Document document = ParserLandingJobs.renderPage(linkToDescription);
 
 //        System.out.println("text link1 : " + document);
-        Elements tablesDescription = document.select(".job_description").first().children();
-        Elements tablesHead = document.select(".entry-title");
-        List<ListImpl> list = new ArrayList<ListImpl>();
+            Elements tablesDescription = document.select(".job-view-content-wrapper").first().children();
+            Elements tablesHead = document.select(".job-view-header-title");
+            List<ListImpl> list = new ArrayList<ListImpl>();
 
-        list.add(addHead(tablesHead.first()));
-        for (int i = 0; i<tablesDescription.size(); i++) {
+            list.add(addHead(tablesHead.first()));
+            for (int i = 0; i<tablesDescription.size(); i++) {
 
 
 
-            if (tablesDescription.get(i).tagName().equals("div")) {
-                for (Element element : tablesDescription.get(i).children()) {
-                    if (element.tagName().equals("p")) {
-                        list.add(addParagraph(element));
-                    }else if (element.tagName().equals("ul")){
-                        list.add(addList(element));
+                if (tablesDescription.get(i).select(".iCIMS_Expandable_Text").size()>0) {
+                    for (Element element : tablesDescription.get(i).select(".iCIMS_Expandable_Text").first().children()) {
+                        if (element.tagName().equals("p")) {
+                            list.add(addParagraph(element));
+                        } else if (element.tagName().equals("ul")) {
+                            list.add(addList(element));
+                        }
                     }
+                }else if (tablesDescription.get(i).tagName().equals("p")) {
+                    list.add(addParagraph(tablesDescription.get(i)));
+                }else if (tablesDescription.get(i).tagName().equals("ul")){
+                    list.add(addList(tablesDescription.get(i)));
+                }else if(tablesDescription.get(i).select("div").size()>0){
+                    list.add(addParagraph(tablesDescription.get(i)));
                 }
-            }else
-            if (tablesDescription.get(i).tagName().equals("p")) {
-                list.add(addParagraph(tablesDescription.get(i)));
-            }else if (tablesDescription.get(i).tagName().equals("ul")){
-                list.add(addList(tablesDescription.get(i)));
             }
-        }
 
-        list.add(null);
-        jobsInform.setOrder(list);
+            list.add(null);
+            jobsInform.setOrder(list);
 
 
-        return jobsInform;
+            return jobsInform;
         } catch (Exception e) {
             System.out.println("Error : " + e.getMessage() + " " + jobsInform.getPublicationLink());
             e.printStackTrace();

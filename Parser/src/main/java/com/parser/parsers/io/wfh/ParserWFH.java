@@ -4,6 +4,7 @@ import com.parser.dbmanager.DbHelper;
 import com.parser.entity.DateGenerator;
 import com.parser.entity.JobsInform;
 import com.parser.entity.ListImpl;
+import com.parser.entity.ParserMain;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -20,27 +21,32 @@ import java.util.List;
 /**
  * Created by rolique_pc on 12/5/2016.
  */
-public class ParserWFH {
+public class ParserWFH implements ParserMain{
 
     private String startLink = "https://www.wfh.io/latest-remote-jobs";
     private List<JobsInform> jobsInforms = new ArrayList<JobsInform>();
     private Document doc;
     private DateGenerator dateClass;
 
+
     public ParserWFH(){
+
+    }
+
+    public List<JobsInform> startParse(){
         dateClass = new DateGenerator();
         parser();
-    }
-
-    public List<JobsInform> getJobsInforms() {
-//        for(JobsInform jobsInform: jobsInforms) {
-
-//                new DbHelper().writeDB("wfh.io",jobsInforms);
-
-//        }
-//        return new DbHelper().getJobsInformFromDb("wfh.io");
         return jobsInforms;
     }
+
+//    public List<JobsInform> getJobsInforms() {
+////        for(JobsInform jobsInform: jobsInforms) {
+//
+////                new DbHelper().writeDB("wfh.io",jobsInforms);
+//
+////        }
+//        return new DbHelper().getJobsInformFromDb("wfh.io");
+//    }
 
     private void parser() {
         try {
