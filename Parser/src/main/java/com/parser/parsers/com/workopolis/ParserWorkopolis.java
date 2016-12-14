@@ -19,17 +19,17 @@ import java.util.List;
 /**
  * Created by rolique_pc on 12/13/2016.
  */
-public class ParserWorkopolis implements ParserMain{
+public class ParserWorkopolis implements ParserMain {
 
     private String startLink = "http://www.workopolis.com/jobsearch/find-jobs#lg=en&st=POSTDATE%20%20%20%20&lr=50&pn=";
     private List<JobsInform> jobsInforms = new ArrayList<JobsInform>();
     private Document doc;
     private DateGenerator dateClass;
 
-    public ParserWorkopolis(){
+    public ParserWorkopolis() {
     }
 
-    public List<JobsInform> startParse(){
+    public List<JobsInform> startParse() {
         dateClass = new DateGenerator();
         parser();
         return jobsInforms;
@@ -38,54 +38,36 @@ public class ParserWorkopolis implements ParserMain{
     private void parser() {
         try {
 
-
-            // need http protocol
-            doc = Jsoup.connect(startLink+1)
+            doc = Jsoup.connect(startLink + 1)
                     .validateTLSCertificates(false)
                     .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
                     .timeout(5000)
                     .get();
-//        doc = ParserLandingJobs.renderPage(startLink);
-//
             Elements tables2 = doc.select("article");
-//            System.out.println("text : " + doc);
-////
-//            System.out.println("text : " + tables2);
             runParse(tables2, 0);
 //
             Date datePublished = null;
             int count = 2;
-//            for(Element element: tables2) {
-                do {
-                    try {
+            do {
+                try {
 
-                        datePublished = null;
-                        // need http protocol
+                    datePublished = null;
 
-                        doc = Jsoup.connect(startLink+count)
-                                .validateTLSCertificates(false)
-                                .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-                                .timeout(5000)
-                                .get();
-//                        InputStream input = new URL("https://www.workingnomads.co/jobsapi/job/_search?sort=premium:desc,pub_date:desc&_source=company,category_name,description,instructions,id,external_id,slug,title,pub_date,tags,source,apply_url,premium&size=20&from=" + count).openStream();
-//                        Reader reader = new InputStreamReader(input, "UTF-8");
-//                        JSONObject data = new Gson().fromJson(reader, JSONObject.class);
-//                    JSONObject jsonObject = (JSONObject) Jsoup.connect("https://www.workingnomads.co/jobsapi/job/_search?sort=premium:desc,pub_date:desc&_source=company,category_name,description,instructions,id,external_id,slug,title,pub_date,tags,source,apply_url,premium&size=20&from=" + count).get()
-//                            .;
-//                System.out.println("text : " + doc);
+                    doc = Jsoup.connect(startLink + count)
+                            .validateTLSCertificates(false)
+                            .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
+                            .timeout(5000)
+                            .get();
+                    Elements tables1 = doc.select("article");
+                    datePublished = runParse(tables1, 0);
+                    count++;
 
-//                        System.out.println("text : " + data);
-//                    doc = Jsoup.parse(data.toString());
-                        Elements tables1 = doc.select("article");
-//                        System.out.println(" text RENDER: " + tables1);
-                        datePublished = runParse(tables1, 0);
-                        count ++;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                System.out.println("text date : Workopolice" + jobsInforms.size());
 
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                } while (dateClass.dateChecker(datePublished));
+            } while (dateClass.dateChecker(datePublished) && jobsInforms.size() < 40);
 //            }
 
         } catch (IOException e) {
@@ -98,38 +80,14 @@ public class ParserWorkopolis implements ParserMain{
         System.out.println("text date : " + tables2.size());
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         Date datePublished = null;
-        for (int i = counter; i<tables2.size(); i+=1) {
-//            System.out.println("text date : " + tables2.get(i));
+        for (int i = counter; i < tables2.size(); i += 1) {
             datePublished = null;
-
-//                 for (int i = counter; i<tables2.size(); i+=1) {
             String stringDate = tables2.get(i).select("time").attr("datetime");
             stringDate = stringDate.substring(0, stringDate.indexOf(" "));
-//            System.out.println("text date : " + stringDate);
-//            System.out.println("text date : " + stringDate.contains("hour"));
-//            System.out.println("text date : " + stringDate.split(" ").contains("hour"));
-//            if(stringDate.contains("minut")||stringDate.contains("hour")){
-//                datePublished = new Date();
-//            }else if(stringDate.contains("yesterday")||stringDate.contains("1 day")){
-//                datePublished = new Date(new Date().getTime() - 1*24*3600*1000);
-//            }else if(stringDate.contains("2 day")){
-//                datePublished = new Date(new Date().getTime() - 2*24*3600*1000);
-//            }else if(stringDate.contains("3 day")){
-//                datePublished = new Date(new Date().getTime() - 3*24*3600*1000);
-//            }else if(stringDate.contains("4 day")){
-//                datePublished = new Date(new Date().getTime() - 4*24*3600*1000);
-//            }else if(stringDate.contains("5 day")){
-//                datePublished = new Date(new Date().getTime() - 5*24*3600*1000);
-//            }else if(stringDate.contains("6 day")){
-//                datePublished = new Date(new Date().getTime() - 6*24*3600*1000);
-//            }
-
-//            Date datePublished = null;
             try {
                 datePublished = formatter.parse(stringDate);
-                    System.out.println("text date : " + datePublished);
-            objectGenerator(tables2.get(i).select("[itemprop='jobLocation']").first(), tables2.get(i).select(".link").first(),
-                    tables2.get(i).select("[itemprop='name']").first(), datePublished, tables2.get(i).select("a").first());
+                objectGenerator(tables2.get(i).select("[itemprop='jobLocation']").first(), tables2.get(i).select(".link").first(),
+                        tables2.get(i).select("[itemprop='name']").first(), datePublished, tables2.get(i).select("a").first());
             } catch (ParseException e) {
                 System.out.println(e.getMessage());
             }
@@ -138,26 +96,22 @@ public class ParserWorkopolis implements ParserMain{
         return datePublished;
     }
 
-    private void objectGenerator(Element place, Element headPost, Element company, Date datePublished, Element linkDescription){
-        if(dateClass.dateChecker(datePublished)) {
+    private void objectGenerator(Element place, Element headPost, Element company, Date datePublished, Element linkDescription) {
+        if (dateClass.dateChecker(datePublished) && jobsInforms.size() < 100) {
             JobsInform jobsInform = new JobsInform();
-                System.out.println("text place : " + place.text());
-            System.out.println("text headPost : " + headPost.text());
-            System.out.println("text company : " + company.ownText());
-            System.out.println("text link1 : " + "http://www.workopolis.com" + linkDescription.attr("href"));
             jobsInform.setPublishedDate(datePublished);
             jobsInform.setHeadPublication(headPost.text());
             jobsInform.setCompanyName(company.ownText());
             jobsInform.setPlace(place.text());
             jobsInform.setPublicationLink("http://www.workopolis.com" + linkDescription.attr("href"));
             jobsInform = getDescription("http://www.workopolis.com" + linkDescription.attr("href"), jobsInform);
-            if(!jobsInforms.contains(jobsInform)) {
+            if (!jobsInforms.contains(jobsInform)) {
                 jobsInforms.add(jobsInform);
             }
         }
     }
 
-    public static JobsInform getDescription(String linkToDescription, JobsInform jobsInform){
+    public static JobsInform getDescription(String linkToDescription, JobsInform jobsInform) {
 
         try {
             Document document = Jsoup.connect(linkToDescription)
@@ -166,19 +120,15 @@ public class ParserWorkopolis implements ParserMain{
                     .timeout(5000)
                     .get();
 
-//        Document document = ParserLandingJobs.renderPage(linkToDescription);
-
-//        System.out.println("text link1 : " + document);
             Elements tablesDescription = document.select(".job-view-content-wrapper").first().children();
             Elements tablesHead = document.select(".job-view-header-title");
             List<ListImpl> list = new ArrayList<ListImpl>();
 
             list.add(addHead(tablesHead.first()));
-            for (int i = 0; i<tablesDescription.size(); i++) {
+            for (int i = 0; i < tablesDescription.size(); i++) {
 
 
-
-                if (tablesDescription.get(i).select(".iCIMS_Expandable_Text").size()>0) {
+                if (tablesDescription.get(i).select(".iCIMS_Expandable_Text").size() > 0) {
                     for (Element element : tablesDescription.get(i).select(".iCIMS_Expandable_Text").first().children()) {
                         if (element.tagName().equals("p")) {
                             list.add(addParagraph(element));
@@ -186,11 +136,11 @@ public class ParserWorkopolis implements ParserMain{
                             list.add(addList(element));
                         }
                     }
-                }else if (tablesDescription.get(i).tagName().equals("p")) {
+                } else if (tablesDescription.get(i).tagName().equals("p")) {
                     list.add(addParagraph(tablesDescription.get(i)));
-                }else if (tablesDescription.get(i).tagName().equals("ul")){
+                } else if (tablesDescription.get(i).tagName().equals("ul")) {
                     list.add(addList(tablesDescription.get(i)));
-                }else if(tablesDescription.get(i).select("div").size()>0){
+                } else if (tablesDescription.get(i).select("div").size() > 0) {
                     list.add(addParagraph(tablesDescription.get(i)));
                 }
             }
@@ -207,15 +157,17 @@ public class ParserWorkopolis implements ParserMain{
         }
 
     }
-    private static ListImpl addHead(Element element){
+
+    private static ListImpl addHead(Element element) {
         ListImpl list = new ListImpl();
         list.setListHeader(element.text());
         return list;
     }
-    private static ListImpl addParagraph(Element element){
-        if(element.select("strong").size()>0){
+
+    private static ListImpl addParagraph(Element element) {
+        if (element.select("strong").size() > 0) {
             return addHead(element.select("strong").first());
-        }else {
+        } else {
 
 
             ListImpl list = new ListImpl();
@@ -223,10 +175,11 @@ public class ParserWorkopolis implements ParserMain{
             return list;
         }
     }
-    private static ListImpl addList(Element element){
+
+    private static ListImpl addList(Element element) {
         ListImpl list = new ListImpl();
         List<String> strings = new ArrayList<String>();
-        for(Element e : element.getAllElements()) {
+        for (Element e : element.getAllElements()) {
             strings.add(e.text());
         }
         list.setListItem(strings);

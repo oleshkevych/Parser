@@ -39,33 +39,14 @@ public class ParserWFH implements ParserMain{
         return jobsInforms;
     }
 
-//    public List<JobsInform> getJobsInforms() {
-////        for(JobsInform jobsInform: jobsInforms) {
-//
-////                new DbHelper().writeDB("wfh.io",jobsInforms);
-//
-////        }
-//        return new DbHelper().getJobsInformFromDb("wfh.io");
-//    }
-
     private void parser() {
         try {
 
 
-            // need http protocol
-            doc = Jsoup.connect(startLink).userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36").timeout(5000).get();
-
-
-            // get page title
-            String title = doc.title();
-            System.out.println("title : " + title);
-
-//            Elements tables1 = doc.select("tbody tr");
-//            for (Element table : tables1) {
-//
-//                System.out.println("text tr : " + table.text());
-//
-//            }
+            doc = Jsoup.connect(startLink)
+                    .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
+                    .timeout(5000)
+                    .get();
             Elements tables2 = doc.select("tbody tr td");
 
             runParse(tables2, 0);
@@ -89,9 +70,6 @@ public class ParserWFH implements ParserMain{
                 if(tables2.get(i).text().equals("Click for more Remote Software Development jobs")){
                     Document doc1 = null;
                     try {
-//                        System.out.println("text date : " + tables2.get(i).attr("abs:href"));
-//                        System.out.println("text date : " + tables2.get(i).select("a"));
-//                        System.out.println("text date : " + tables2.get(i).select("a").attr("abs:href"));
                         doc1 = Jsoup.connect(tables2.get(i).select("a").attr("abs:href")).get();
                     } catch (IOException e1) {
                         e1.printStackTrace();
@@ -110,10 +88,6 @@ public class ParserWFH implements ParserMain{
     private void objectGenerator(Element table1, Element table2, Element table3, Date datePublished){
         if(dateClass.dateChecker(datePublished)) {
             JobsInform jobsInform = new JobsInform();
-//            System.out.println("text date : " + table1.text());
-//            System.out.println("text speciality : " + table2.text());
-//            System.out.println("text place : " + table3.text());
-//            System.out.println("text link : " + table2.getAllElements().get(2).attr("abs:href"));
             jobsInform.setPublishedDate(datePublished);
             jobsInform.setHeadPublication(table2.text());
             jobsInform.setPlace(table3.text());
@@ -139,14 +113,7 @@ public class ParserWFH implements ParserMain{
 
             jobsInform.setCompanyName(document.select(".page-header small").text());
             List<ListImpl> list = new ArrayList<ListImpl>();
-//            list1.setListHeader(description.get(0).select("strong").text());
-//            int count = 0;
-//            if (list1.getListHeader()!=null){
-//                count = 1;
-//            }
             for (Element aDescription: description) {
-
-
 
                 if (aDescription.getElementsByTag("li").size() > 0) {
                     list.add(addList(aDescription));

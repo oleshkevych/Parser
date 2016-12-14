@@ -14,7 +14,21 @@ import java.util.Date;
  */
 public class DbHelper {
 
-    private final static String DB_NAME = "ParserDB.s3db";
+    private final static String DB_NAME_1 = "ParserDB1.s3db";
+    private final static String DB_NAME_2 = "ParserDB2.s3db";
+    private final static String DB_NAME_3 = "ParserDB3.s3db";
+    private final static String DB_NAME_4 = "ParserDB4.s3db";
+    private final static String DB_NAME_5 = "ParserDB5.s3db";
+    private final static String DB_NAME_6 = "ParserDB6.s3db";
+    private final static String DB_NAME_7 = "ParserDB7.s3db";
+    private final static String DB_NAME_8 = "ParserDB8.s3db";
+    private final static String DB_NAME_9 = "ParserDB9.s3db";
+    private final static String DB_NAME_10 = "ParserDB10.s3db";
+    private final static String DB_NAME_11 = "ParserDB11.s3db";
+    private final static String DB_NAME_12 = "ParserDB12.s3db";
+    private final static String DB_NAME_13 = "ParserDB13.s3db";
+    private final static String DB_NAME_14 = "ParserDB14.s3db";
+    private final static String DB_NAME_15 = "ParserDB15.s3db";
     private final static String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS ";
     private final static String DROP_TABLE = "DROP TABLE IF EXISTS ";
 
@@ -42,11 +56,43 @@ public class DbHelper {
     private final static String LIST_ITEM = "ListItem";
 
 
-    private static Connection connection = null;
-    private static Statement statement = null;
-    private static ResultSet rs = null;
+    private Connection connection = null;
+    private Statement statement = null;
+    private ResultSet rs = null;
+    private Map<String, String> mapParsers = new HashMap<>();
 
-    public Connection connect() {
+    public DbHelper(){
+
+        mapParsers.put("wfh.io", DB_NAME_1);
+        mapParsers.put("remoteok.io", DB_NAME_1);
+        mapParsers.put("landing.jobs", DB_NAME_1);
+        mapParsers.put("startus.cc", DB_NAME_2);
+        mapParsers.put("virtualvocations.com", DB_NAME_2);
+        mapParsers.put("simplyhired.com", DB_NAME_2);
+        mapParsers.put("stackoverflow.com", DB_NAME_3);
+        mapParsers.put("juju.com", DB_NAME_3);
+        mapParsers.put("jobs.drupal.org", DB_NAME_3);
+        mapParsers.put("dutchstartupjobs.com", DB_NAME_4);
+        mapParsers.put("monster.de", DB_NAME_4);
+        mapParsers.put("weloveangular.com", DB_NAME_4);
+        mapParsers.put("weworkremotely.com", DB_NAME_5);
+        mapParsers.put("startupjobs.se", DB_NAME_5);
+        mapParsers.put("berlinstartupjobs.com", DB_NAME_5);
+        mapParsers.put("flexjobs.com", DB_NAME_6);
+        mapParsers.put("builtinnode.com", DB_NAME_6);
+        mapParsers.put("weworkmeteor.com", DB_NAME_7);
+        mapParsers.put("jobbank.dk", DB_NAME_7);
+        mapParsers.put("workingnomads.co", DB_NAME_7);
+        mapParsers.put("remote.co", DB_NAME_8);
+        mapParsers.put("randstad.com", DB_NAME_8);
+        mapParsers.put("workopolis.com", DB_NAME_8);
+        mapParsers.put("eluta.ca", DB_NAME_9);
+        mapParsers.put("webbjobb.io", DB_NAME_9);
+        mapParsers.put("jobspresso.co", DB_NAME_10);
+        mapParsers.put("jobs.ch", DB_NAME_10);
+    }
+
+    public Connection connect(String link) {
         try {
             Class.forName("org.sqlite.JDBC");
 //            String path = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath().substring(1);
@@ -56,7 +102,7 @@ public class DbHelper {
 //            if (!f.exists()) {
 //                f.createNewFile();
 //            }
-            connection = DriverManager.getConnection("jdbc:sqlite:" + DB_NAME);
+            connection = DriverManager.getConnection("jdbc:sqlite:" + mapParsers.get(link));
 
 
             return connection;
@@ -69,9 +115,9 @@ public class DbHelper {
         }
     }
 
-    public void open() {
+    public void open(String link) {
         try {
-            statement = connect().createStatement();
+            statement = connect(link).createStatement();
             statement.execute(CREATE_TABLE + "'" + SITE + "' (" +
                     ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     SITE_NAME + " TEXT);");
@@ -105,16 +151,12 @@ public class DbHelper {
     }
 
     public int writeDB(String siteName, final List<JobsInform> jobsInforms) {
-        open();
+        open(siteName);
 
         try {
 
 
             PreparedStatement preparedStatement = null;
-            PreparedStatement preparedStatementDescription = null;
-            PreparedStatement preparedStatementList = null;
-            ResultSet resultSetDescription = null;
-            ResultSet resultSetList = null;
             int siteID = 0;
             int newResults = jobsInforms.size();
             preparedStatement = connection.prepareStatement("SELECT * FROM " + SITE);
@@ -138,24 +180,24 @@ public class DbHelper {
                     jobsInform.setPublicationLink(rs.getString(PUBLICATION_LINK));
                     oldJobsInforms.add(jobsInform);
                 }
+                boolean writeTrigger = false;
                 for (JobsInform jobsInform : oldJobsInforms) {
                     if (jobsInforms.contains(jobsInform)) {
                         newResults--;
+                        if(!jobsInforms.get(jobsInforms.indexOf(jobsInform)).isSeen()) {
+                            jobsInforms.get(jobsInforms.indexOf(jobsInform)).setSeen(true);
+                            writeTrigger = true;
+                        }
                     }
                 }
-            }
-
-
-//            int siteID = 0;
-//            preparedStatement = connection.prepareStatement("SELECT * FROM " + SITE);
-//            rs = preparedStatement.executeQuery();
-//            boolean isExists = false;
-//            while (rs.next()) {
-//                siteID = rs.getInt(ID);
-//                if (rs.getString(SITE_NAME).equals(siteName)) {
-//                    isExists = true;
+//                if(newResults == 0 && writeTrigger){
+//                    return 0;
 //                }
-//            }
+            }
+            System.out.println("    SITE: " + siteName);
+
+            System.out.println("    NEW RESULTS: " + newResults);
+
             if (!isExists) {
                 preparedStatement = connection
                         .prepareStatement("INSERT INTO '" + SITE + "' ('" + SITE_NAME + "') VALUES ('" + siteName + "'); ",
@@ -163,28 +205,16 @@ public class DbHelper {
                 preparedStatement.executeUpdate();
                 siteID++;
             }
-            System.out.println("    IS siteID: " + siteID);
             preparedStatement = connection.prepareStatement("SELECT * FROM '" + JOB_INFORM + "'");
             rs = preparedStatement.executeQuery();
             int count = 0;
-            System.out.println("    start running jobs table : ");
             while (rs.next()) {
-                System.out.println("    IS Header before: " + count + " " + rs.getString(SITE_ID));
                 count++;
             }
-            System.out.println("    finish running before jobs table : " + count);
 
             preparedStatement = connection.prepareStatement("DELETE FROM " + JOB_INFORM + " WHERE " + SITE_ID + " = ? ;");
             preparedStatement.setInt(1, siteID);
             preparedStatement.executeUpdate();
-//            preparedStatement = connection.prepareStatement("SELECT * FROM '" + JOB_INFORM + "'");
-//            rs = preparedStatement.executeQuery();
-//            int count1 = 0;
-//            while (rs.next()) {
-//                System.out.println("    IS Header after: " + count1 + " " + rs.getString(SITE_ID));
-//                count1++;
-//            }
-//            System.out.println("    finish running after jobs table : " + count1);
             preparedStatement = connection.prepareStatement("DELETE FROM " + DESCRIPTION + " WHERE " + SITE_ID + " = ? ;");
             preparedStatement.setInt(1, siteID);
             preparedStatement.executeUpdate();
@@ -209,13 +239,10 @@ public class DbHelper {
                 preparedStatement.setInt(1, siteID);
                 rs = preparedStatement.executeQuery();
                 count = 0;
-//            System.out.println("    IS counting jobs : " + jobInformId);
                 while (rs.next()) {
                     count = rs.getInt(ID);
-//                System.out.println("    IS Header jobs: "+count+" " + rs.getString(HEAD_PUBLICATION));
                 }
                 int jobInformId = count;
-//            System.out.println("    IS jobInformId: " + jobInformId);
 
                 if (jobsInform.getOrder() != null)
                     for (ListImpl list : jobsInform.getOrder()) {
@@ -267,8 +294,10 @@ public class DbHelper {
             rs.close();
             preparedStatement.close();
             connection.close();
+            System.out.println("    FINISH: " + siteName);
             return newResults;
         } catch (SQLException e) {
+            System.out.println("    FAIL: " + siteName);
             e.printStackTrace();
             return 0;
         }
@@ -279,7 +308,7 @@ public class DbHelper {
     public List<JobsInform> getJobsInformFromDb(String siteName) {
         List<JobsInform> jobsInforms = new ArrayList<>();
         try {
-            connect();
+            connect(siteName);
             PreparedStatement preparedStatement = null;
             PreparedStatement preparedStatementDescription = null;
             PreparedStatement preparedStatementList = null;

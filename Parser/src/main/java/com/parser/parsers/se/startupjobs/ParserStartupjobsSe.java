@@ -125,7 +125,7 @@ public class ParserStartupjobsSe implements ParserMain{
     }
 
     private void objectGenerator(Element place, Element headPost, Element company, Date datePublished, Element linkDescription){
-        if(dateClass.dateChecker(datePublished)) {
+        if(dateClass.dateChecker(datePublished)&& jobsInforms.size() < 100) {
             JobsInform jobsInform = new JobsInform();
 //                System.out.println("text place : " + place.text());
 //                System.out.println("text headPost : " + headPost.text());

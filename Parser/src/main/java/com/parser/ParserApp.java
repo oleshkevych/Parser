@@ -46,9 +46,7 @@ import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.*;
 
 public class ParserApp implements MouseListener {
 
@@ -152,7 +150,7 @@ public class ParserApp implements MouseListener {
         mapParsers.put("webbjobb.io", new ParserWebbjobb());
 
         ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(4);
-        for (int i = 0; i < 5/*linkPanel.getComponents().length*/; i++) {
+        for (int i = 0; i < linkPanel.getComponents().length; i++) {
             linkPanel.getComponents()[i].setBackground(new Color(0x717184));
             JPanel labelPanel = (JPanel) linkPanel.getComponents()[i];
             JLabel label = (JLabel) labelPanel.getComponent(0);
@@ -277,24 +275,30 @@ public class ParserApp implements MouseListener {
                                 heading2Style.addAttribute(StyleConstants.FontFamily, "serif");
                                 heading2Style.addAttribute(StyleConstants.Bold, Boolean.TRUE);
 
-                                do {
-                                    j++;
-                                    if (order.get(j) != null) {
+                                if (order.size() > 0)
+                                    do {
+                                        j++;
+//                                    System.out.println("date " + j + " size " + order.size());
+//                                    System.out.println("date " + order.get(j));
+                                        if (order.size() > j && order.get(j) != null) {
 
-                                        if (order.get(j).getListHeader() != null) {
-                                            text += /*"<FONT size=\"15\" color=\"#000099\"><U>Run to the source site</U></FONT>"*/order.get(j).getListHeader() + "\n";
-                                        } else if (order.get(j).getListItem() != null) {
-//                                                text += "<UL>";
-                                            for (String s : order.get(j).getListItem()) {
-                                                text += /*"    <LI> " +*/ "  --  " + s +  /*</LI> */"\n";
+                                            if (order.get(j).getListHeader() != null) {
+                                                text += /*"<FONT size=\"15\" color=\"#000099\"><U>Run to the source site</U></FONT>"*/order.get(j).getListHeader() + "\n";
                                             }
+                                            if (order.get(j).getListItem() != null) {
+//                                                text += "<UL>";
+                                                for (String s : order.get(j).getListItem()) {
+                                                    text += /*"    <LI> " +*/ "  --  " + s +  /*</LI> */"\n";
+                                                }
 //                                                text += "</UL>";
 
-                                        } else {
-                                            text += "  " + order.get(j).getTextFieldImpl() + "\n";
+                                            }
+                                            if (order.get(j).getTextFieldImpl() != null) {
+                                                text += "  " + order.get(j).getTextFieldImpl() + "\n";
+                                            }
                                         }
-                                    }
-                                } while (order.get(j) != null && j < order.size() - 1);
+//                                    System.out.println("date " + text);
+                                    } while (order.get(j) != null && j < order.size() - 1);
                                 pane.setLayout(null);
 //                                pane.setBounds(0, 0, 470, getContentHeight(text));
 
@@ -411,7 +415,12 @@ public class ParserApp implements MouseListener {
             String text = label.getText().substring(0, label.getText().indexOf(" "));
             label.setText(text);
         }
-        panelFiller(new DbHelper().getJobsInformFromDb(label.getText()), label.getText());
+        Future<List<JobsInform>> taskJobsInforms = executorDB.submit(new TaskReadDb(label.getText()));
+        try {
+            panelFiller(taskJobsInforms.get(), label.getText());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     @Override
@@ -1348,7 +1357,21 @@ public class ParserApp implements MouseListener {
 
         @Override
         public void run() {
-            int newResults = new DbHelper().writeDB(homeLink, jobsInforms);
+            new DbHelper().writeDB(homeLink, jobsInforms);
+        }
+    }
+
+    private class TaskReadDb implements Callable<List<JobsInform>> {
+
+        private String siteName;
+
+        public TaskReadDb(String siteName) {
+            this.siteName = siteName;
+
+        }
+
+        public List<JobsInform> call() {
+            return new DbHelper().getJobsInformFromDb(siteName);
         }
     }
 

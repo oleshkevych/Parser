@@ -37,8 +37,6 @@ public class ParserStackoverflow implements ParserMain {
     private void parser() {
         try {
 
-
-            // need http protocol
             doc = Jsoup.connect(startLink)
                     .validateTLSCertificates(false)
                     .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
@@ -46,7 +44,6 @@ public class ParserStackoverflow implements ParserMain {
                     .get();
 
             Elements tables2 = doc.select(".listResults .-item");
-//            System.out.println("text : " + tables2);
             runParse(tables2, 0);
 
             Date datePublished = null;
@@ -55,12 +52,10 @@ public class ParserStackoverflow implements ParserMain {
                 try {
 
                     datePublished = null;
-                    // need http protocol
                     doc = Jsoup.connect(startLink + "&pg=" + count)
                             .validateTLSCertificates(false).userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36").timeout(5000).get();
 
                     Elements tables1 = doc.select(".listResults .-item");
-//            System.out.println("text : " + tables2);
                     datePublished = runParse(tables1, 0);
                     count++;
 
@@ -68,7 +63,7 @@ public class ParserStackoverflow implements ParserMain {
                     e.printStackTrace();
                 }
 
-            } while (dateClass.dateChecker(datePublished));
+            } while (dateClass.dateChecker(datePublished) && jobsInforms.size() < 100);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -79,15 +74,9 @@ public class ParserStackoverflow implements ParserMain {
     private Date runParse(Elements tables2, int counter) {
         System.out.println("text date : " + tables2.size());
         Date datePublished = null;
-//        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
         for (int i = counter; i < tables2.size(); i += 1) {
-//            System.out.println("text date : " + tables2.get(i));
 
-//                 for (int i = counter; i<tables2.size(); i+=1) {
             String stringDate = tables2.get(i).select(".posted").text();
-//            System.out.println("text date : " + stringDate);
-//            System.out.println("text date : " + stringDate.contains("hour"));
-//            System.out.println("text date : " + stringDate.split(" ").contains("hour"));
             if (stringDate.contains("minut") || stringDate.contains("hour")) {
                 datePublished = new Date();
             } else if (stringDate.contains("yesterday")) {
@@ -103,17 +92,8 @@ public class ParserStackoverflow implements ParserMain {
             } else if (stringDate.contains("6 day")) {
                 datePublished = new Date(new Date().getTime() - 6 * 24 * 3600 * 1000);
             }
-
-//            Date datePublished = null;
-//            try {
-//                datePublished = formatter.parse(tables2.get(i).select(".date").text());
-//                    System.out.println("text date : " + datePublished);
             objectGenerator(tables2.get(i).select(".location").first(), tables2.get(i).select(".-title").first(),
                     tables2.get(i).select(".employer").first(), datePublished, tables2.get(i).select(".job-link").first());
-//            } catch (ParseException e) {
-//                System.out.println(e.getMessage());
-//            }
-
         }
         return datePublished;
     }
@@ -121,10 +101,6 @@ public class ParserStackoverflow implements ParserMain {
     private void objectGenerator(Element place, Element headPost, Element company, Date datePublished, Element linkDescription) {
         if (dateClass.dateChecker(datePublished)) {
             JobsInform jobsInform = new JobsInform();
-//                System.out.println("text place : " + place.text());
-//                System.out.println("text headPost : " + headPost.text());
-//                System.out.println("text company : " + company.text());
-//                System.out.println("text link1 : " + linkDescription.attr("abs:href"));
             jobsInform.setPublishedDate(datePublished);
             jobsInform.setHeadPublication(headPost.text());
             jobsInform.setCompanyName(company.text());
@@ -150,7 +126,6 @@ public class ParserStackoverflow implements ParserMain {
             Elements tablesDescription = document.select(".description");
             Elements tablesHead = document.select(".detail-sectionTitle");
             List<ListImpl> list = new ArrayList<ListImpl>();
-//            System.out.println("text link1 : " + tablesDescription);
 
             for (int i = 0; i < tablesDescription.size(); i++) {
 

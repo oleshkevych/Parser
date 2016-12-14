@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * Created by rolique_pc on 12/7/2016.
  */
-public class ParserJuju implements ParserMain{
+public class ParserJuju implements ParserMain {
 
     private String startLink = "http://www.juju.com/jobs?k=&l=&r=20&c=software-it";
     private List<JobsInform> jobsInforms = new ArrayList<JobsInform>();
@@ -48,7 +48,6 @@ public class ParserJuju implements ParserMain{
                     .get();
 
             Elements tables2 = doc.select(".article .job");
-//            System.out.println("text : " + tables2);
             runParse(tables2, 0);
 
             Date datePublished = null;
@@ -62,15 +61,14 @@ public class ParserJuju implements ParserMain{
                             .validateTLSCertificates(false).userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36").timeout(5000).get();
 
                     Elements tables1 = doc.select(".article .job");
-//            System.out.println("text : " + tables2);
-//                    datePublished = runParse(tables1, 0);
+                    datePublished = runParse(tables1, 0);
                     count++;
 
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
 
-            } while (dateClass.dateChecker(datePublished));
+            } while (dateClass.dateChecker(datePublished) && jobsInforms.size() < 100);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -83,33 +81,9 @@ public class ParserJuju implements ParserMain{
         Date datePublished = null;
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         for (int i = counter; i < tables2.size(); i += 1) {
-//                 for (int i = counter; i<tables2.size(); i+=1) {
             String stringDate = tables2.get(i).select(".options .source").text();
-
-//            System.out.println("text date : " + stringDate);
-//            System.out.println("text date : " + stringDate.contains("hour"));
-//            System.out.println("text date : " + stringDate.split(" ").contains("hour"));
-//            if(stringDate.contains("minut")||stringDate.contains("hour")){
-//                datePublished = new Date();
-//            }else if(stringDate.contains("yesterday")){
-//                datePublished = new Date(new Date().getTime() - 1*24*3600*1000);
-//            }else if(stringDate.contains("2 day")){
-//                datePublished = new Date(new Date().getTime() - 2*24*3600*1000);
-//            }else if(stringDate.contains("3 day")){
-//                datePublished = new Date(new Date().getTime() - 3*24*3600*1000);
-//            }else if(stringDate.contains("4 day")){
-//                datePublished = new Date(new Date().getTime() - 4*24*3600*1000);
-//            }else if(stringDate.contains("5 day")){
-//                datePublished = new Date(new Date().getTime() - 5*24*3600*1000);
-//            }else if(stringDate.contains("6 day")){
-//                datePublished = new Date(new Date().getTime() - 6*24*3600*1000);
-//            }
-
-//            Date datePublished = null;
             try {
-                System.out.println("text date0 : " + stringDate.substring(stringDate.indexOf("(") + 1, stringDate.indexOf("16)")) + 2016);
                 datePublished = formatter.parse(stringDate.substring(stringDate.indexOf("(") + 1, stringDate.indexOf("16)")) + 2016);
-                System.out.println("text date1 : " + datePublished);
 
                 objectGenerator(tables2.get(i).select(".company span").first(), tables2.get(i).select(".result").first(),
                         tables2.get(i).select(".company").first(), datePublished, tables2.get(i).select(".result").first());
@@ -124,10 +98,6 @@ public class ParserJuju implements ParserMain{
     private void objectGenerator(Element place, Element headPost, Element company, Date datePublished, Element linkDescription) {
         if (dateClass.dateChecker(datePublished)) {
             JobsInform jobsInform = new JobsInform();
-            System.out.println("text place : " + place.text());
-            System.out.println("text headPost : " + headPost.text());
-            System.out.println("text company : " + company.ownText());
-            System.out.println("text link1 : " + linkDescription.attr("href"));
             jobsInform.setPublishedDate(datePublished);
             jobsInform.setHeadPublication(headPost.text());
             jobsInform.setCompanyName(company.ownText());
@@ -157,25 +127,16 @@ public class ParserJuju implements ParserMain{
                 count++;
             }
             List<ListImpl> list = new ArrayList<ListImpl>();
-//            System.out.println("text link1 : " + tablesDescription);
 
             for (int i = count; i < tablesDescription.size(); i++) {
                 list.add(addHead(document.select("article h2").first()));
 
-
-//                Elements ps = tablesDescription.get(i).select("p");
-//                Elements uls = tablesDescription.get(i).select("ul");
                 if (tablesDescription.get(i).hasClass("item"))
                     list.add(addHead(tablesDescription.get(i)));
 
                 if (tablesDescription.get(i).hasClass("simple_line")) {
                     list.add(addParagraph(tablesDescription.get(i)));
                 }
-//                if (uls.size() > 0) {
-//                    for(Element ul: uls) {
-//                        list.add(addList(ul));
-//                    }
-//                }
             }
 
             list.add(null);

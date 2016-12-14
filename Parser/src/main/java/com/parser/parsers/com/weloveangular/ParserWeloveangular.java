@@ -38,8 +38,6 @@ public class ParserWeloveangular implements ParserMain {
     private void parser() {
         try {
 
-
-            // need http protocol
             doc = Jsoup.connect(startLink)
                     .validateTLSCertificates(false)
                     .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
@@ -47,30 +45,7 @@ public class ParserWeloveangular implements ParserMain {
                     .get();
 
             Elements tables2 = doc.select(".stream-job");
-//            System.out.println("text : " + tables2);
             runParse(tables2, 0);
-
-//            Date datePublished = null;
-//            int count = 2;
-//            do {
-//                try {
-//
-//
-//                    // need http protocol
-//                    doc = Jsoup.connect(startLink + "&pg=" + count)
-//                            .validateTLSCertificates(false).userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36").timeout(5000).get();
-//
-//                    Elements tables1 = doc.select(".listResults .-item");
-////            System.out.println("text : " + tables2);
-//                    datePublished = runParse(tables1, 0);
-//                    count++;
-//
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//
-//            }while(dateClass.dateChecker(datePublished));
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -82,37 +57,15 @@ public class ParserWeloveangular implements ParserMain {
         Date datePublished = null;
         SimpleDateFormat formatter = new SimpleDateFormat("MMM dd yyyy");
         for (int i = counter; i < tables2.size(); i += 1) {
-//            System.out.println("text date : " + tables2.get(i));
 
-//                 for (int i = counter; i<tables2.size(); i+=1) {
             String stringDate = tables2.get(i).select(".date").first().text() + " 2016";
-//            System.out.println("text date : " + stringDate);
-//            System.out.println("text date : " + stringDate.contains("hour"));
             if (stringDate.length() < 11) {
                 String day = stringDate.substring(4);
                 stringDate = stringDate.substring(0, 4) + day;
-//            }else if(stringDate.contains("yesterday")){
-//                datePublished = new Date(new Date().getTime() - 1*24*3600*1000);
-//            }else if(stringDate.contains("2 day")){
-//                datePublished = new Date(new Date().getTime() - 2*24*3600*1000);
-//            }else if(stringDate.contains("3 day")){
-//                datePublished = new Date(new Date().getTime() - 3*24*3600*1000);
-//            }else if(stringDate.contains("4 day")){
-//                datePublished = new Date(new Date().getTime() - 4*24*3600*1000);
-//            }else if(stringDate.contains("5 day")){
-//                datePublished = new Date(new Date().getTime() - 5*24*3600*1000);
-//            }else if(stringDate.contains("6 day")){
-//                datePublished = new Date(new Date().getTime() - 6*24*3600*1000);
             }
 
-//            Date datePublished = null;
             try {
-//                System.out.println("text date : " + stringDate);
                 datePublished = formatter.parse(stringDate);
-//                    System.out.println("text date : " + datePublished);
-//                System.out.println("text date : " + stringDate);
-//                System.out.println("text date : " + tables2.get(i).select("time").first());
-
                 objectGenerator(tables2.get(i).select("span[itemprop=\"jobLocation\"]").first(), tables2.get(i).select(".media-heading").first(),
                         tables2.get(i).select("div > strong").first(), datePublished, tables2.get(i).select(".media-heading a").first());
             } catch (ParseException e) {
@@ -124,14 +77,8 @@ public class ParserWeloveangular implements ParserMain {
     }
 
     private void objectGenerator(Element place, Element headPost, Element company, Date datePublished, Element linkDescription) {
-        if (dateClass.dateChecker(datePublished)) {
+        if (dateClass.dateChecker(datePublished)&& jobsInforms.size() < 100) {
             JobsInform jobsInform = new JobsInform();
-//                System.out.println("text place : " + place.text());
-//                System.out.println("text headPost : " + headPost.text());
-//            if(company!=null) {
-//                System.out.println("text company : " + company.text());
-//            }
-//                System.out.println("text link1 : " + linkDescription.attr("abs:href"));
             jobsInform.setPublishedDate(datePublished);
             jobsInform.setHeadPublication(headPost.text());
             if (company != null) {
@@ -159,19 +106,10 @@ public class ParserWeloveangular implements ParserMain {
 
 
             Elements tablesDescription = document.select("div[itemprop=\"description\"]");
-//            Element tablesHead = tablesDescription.first();
             List<ListImpl> list = new ArrayList<ListImpl>();
-            System.out.println("text link1 : " + tablesDescription);
-//                list.add(null);
             list.add(addHead(document.select(".title").first()));
             for (int i = 0; i < tablesDescription.size(); i++) {
-//                System.out.println("text place all: " + tablesDescription.get(i));
-//                System.out.println("text place tag: " + tablesDescription.get(i).tagName());
-                System.out.println("text place tag1: " + tablesDescription.get(i));
-
                 for (Element e : tablesDescription.get(i).getAllElements()) {
-
-                    System.out.println("text place tag2: " + e);
 
                     if (e.tagName().contains("h")) {
                         list.add(null);

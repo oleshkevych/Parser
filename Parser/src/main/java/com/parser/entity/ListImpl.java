@@ -38,4 +38,13 @@ public class ListImpl implements Serializable{
     public void setTextFieldImpl(String textFieldImpl) {
         this.textFieldImpl = textFieldImpl;
     }
+
+    @Override
+    public String toString() {
+        return "ListImpl{" +
+                "listHeader='" + listHeader + '\'' +
+                ", listItem=" + listItem +
+                ", textFieldImpl='" + textFieldImpl + '\'' +
+                '}';
+    }
 }

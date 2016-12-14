@@ -42,8 +42,6 @@ public class ParserRemoteok implements ParserMain {
     private void parser() {
         try {
 
-
-            // need http protocol
             doc = Jsoup.connect(startLink)
                     .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
                     .timeout(5000)
@@ -51,7 +49,7 @@ public class ParserRemoteok implements ParserMain {
 
             Elements tables2 = doc.select("tbody .job");
 
-            runParse(tables2, 6);
+            runParse(tables2, 0);
 
 
         } catch (IOException e) {
@@ -62,16 +60,9 @@ public class ParserRemoteok implements ParserMain {
 
     private void runParse(Elements tables2, int counter) {
         System.out.println("text date : " + tables2.size());
-
-//        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        for (int i = counter; i < tables2.size(); i ++) {
-//                System.out.println("text date : " + tables2.get(i));
-
+        for (int i = counter; i < tables2.size() || i < 100; i ++) {
             Date datePublished = null;
             String stringDate = tables2.get(i).select(".time").text();
-//            System.out.println("text date : " + stringDate);
-//            System.out.println("text date : " + stringDate.contains("hour"));
-//            System.out.println("text date : " + stringDate.split(" ").contains("hour"));
             if (stringDate.contains("min") || stringDate.contains("h")) {
                 datePublished = new Date();
             } else if (stringDate.contains("1d")) {
@@ -88,27 +79,18 @@ public class ParserRemoteok implements ParserMain {
                 datePublished = new Date(new Date().getTime() - 6 * 24 * 3600 * 1000);
             }
             try {
-//                datePublished = formatter.parse(tables2.get(i).child(0).text());
-//                    System.out.println("text date : " + datePublished);
                 objectGenerator(tables2.get(i).select(".location").first(), tables2.get(i).select("[itemprop='title']").first(), tables2.get(i).select(".company [itemprop='name']").first(),
                         datePublished, tables2.get(i).select("[itemprop='url']").first());
-//            } catch (ParseException e) {
-//                System.out.println(e.getMessage());
             } catch (IndexOutOfBoundsException e) {
                 System.out.println(e.getMessage());
-                System.out.println(tables2.get(i));
             }
 
         }
     }
 
     private void objectGenerator(Element place, Element headPost, Element company, Date datePublished, Element linkDescription) {
-        if (dateClass.dateChecker(datePublished)) {
+        if (dateClass.dateChecker(datePublished) && jobsInforms.size() < 100) {
             JobsInform jobsInform = new JobsInform();
-//                System.out.println("text place : " + place.text());
-//                System.out.println("text headPost : " + headPost.text());
-//                System.out.println("text company : " + company.text());
-//                System.out.println("text link1 : " + linkDescription.child(0).attr("abs:href"));
             jobsInform.setPublishedDate(datePublished);
             jobsInform.setHeadPublication(headPost.text());
             jobsInform.setCompanyName(company.text());
@@ -124,7 +106,10 @@ public class ParserRemoteok implements ParserMain {
     public static JobsInform getDescription(String linkToDescription, JobsInform jobsInform) {
 
         try {
-            Document document = Jsoup.connect(linkToDescription).userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36").timeout(5000).get();
+            Document document = Jsoup.connect(linkToDescription)
+                    .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
+                    .timeout(5000)
+                    .get();
             if (document.select(".navbar-brand img").attr("alt").contains("white")) {
                 return ParserWFH.getDescription(linkToDescription, jobsInform);
             }

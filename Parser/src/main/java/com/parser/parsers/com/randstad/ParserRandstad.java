@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * Created by rolique_pc on 12/12/2016.
  */
-public class ParserRandstad implements ParserMain{
+public class ParserRandstad implements ParserMain {
 
 
     private String startLink = "https://www.randstad.com/jobs/";
@@ -37,7 +37,7 @@ public class ParserRandstad implements ParserMain{
     public ParserRandstad() {
     }
 
-    public List<JobsInform> startParse(){
+    public List<JobsInform> startParse() {
         dateClass = new DateGenerator();
         parser();
         return jobsInforms;
@@ -53,46 +53,29 @@ public class ParserRandstad implements ParserMain{
                     .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
                     .timeout(5000)
                     .get();
-//        doc = ParserLandingJobs.renderPage(startLink);
-//
             Elements tables2 = doc.select("article");
-////            System.out.println("text : " + doc);
-////
-////            System.out.println("text : " + tables2);
             runParse(tables2, 0);
-//
             Date datePublished = null;
             int count = 2;
             do {
                 try {
 
                     datePublished = null;
-                    // need http protocol
 
                     doc = Jsoup.connect(startLink + "page-" + count + "/")
                             .validateTLSCertificates(false)
                             .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
                             .timeout(5000)
                             .get();
-//                InputStream input = new URL("https://www.workingnomads.co/jobsapi/job/_search?sort=premium:desc,pub_date:desc&_source=company,category_name,description,instructions,id,external_id,slug,title,pub_date,tags,source,apply_url,premium&size=20&from=" + count).openStream();
-//                Reader reader = new InputStreamReader(input, "UTF-8");
-//                JSONObject data = new Gson().fromJson(reader, JSONObject.class);
-//                    JSONObject jsonObject = (JSONObject) Jsoup.connect("https://www.workingnomads.co/jobsapi/job/_search?sort=premium:desc,pub_date:desc&_source=company,category_name,description,instructions,id,external_id,slug,title,pub_date,tags,source,apply_url,premium&size=20&from=" + count).get()
-//                            .;
-//                System.out.println("text : " + doc);
-
-//                System.out.println("text : " + data);
-//                    doc = Jsoup.parse(data.toString());
                     Elements tables1 = doc.select("article");
-//                System.out.println(" text RENDER: " + tables1);
-//                datePublished = runParse(tables1, 0);
+                    datePublished = runParse(tables1, 0);
                     count += 20;
 
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
 
-            } while (dateClass.dateChecker(datePublished));
+            } while (dateClass.dateChecker(datePublished) && jobsInforms.size() < 100);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -105,33 +88,9 @@ public class ParserRandstad implements ParserMain{
         Date datePublished = null;
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         for (int i = counter; i < tables2.size(); i += 1) {
-//            System.out.println("text date : " + tables2.get(i));
-
-//                 for (int i = counter; i<tables2.size(); i+=1) {
             String stringDate = tables2.get(i).select("time").attr("datetime");
-//            System.out.println("text date : " + stringDate);
-//            System.out.println("text date : " + stringDate.contains("hour"));
-//            System.out.println("text date : " + stringDate.split(" ").contains("hour"));
-//            if(stringDate.contains("minut")||stringDate.contains("hour")){
-//                datePublished = new Date();
-//            }else if(stringDate.contains("yesterday")||stringDate.contains("1 day")){
-//                datePublished = new Date(new Date().getTime() - 1*24*3600*1000);
-//            }else if(stringDate.contains("2 day")){
-//                datePublished = new Date(new Date().getTime() - 2*24*3600*1000);
-//            }else if(stringDate.contains("3 day")){
-//                datePublished = new Date(new Date().getTime() - 3*24*3600*1000);
-//            }else if(stringDate.contains("4 day")){
-//                datePublished = new Date(new Date().getTime() - 4*24*3600*1000);
-//            }else if(stringDate.contains("5 day")){
-//                datePublished = new Date(new Date().getTime() - 5*24*3600*1000);
-//            }else if(stringDate.contains("6 day")){
-//                datePublished = new Date(new Date().getTime() - 6*24*3600*1000);
-//            }
-
-//            Date datePublished = null;
             try {
                 datePublished = formatter.parse(stringDate);
-                System.out.println("text date : " + datePublished);
                 objectGenerator(tables2.get(i).select("[itemprop='jobLocation']").first(), tables2.get(i).select("[itemprop='title']").first(),
                         tables2.get(i).select("[itemprop='employmentType']").first(), datePublished, tables2.get(i).select("a").last());
             } catch (ParseException e) {
@@ -145,10 +104,6 @@ public class ParserRandstad implements ParserMain{
     private void objectGenerator(Element place, Element headPost, Element company, Date datePublished, Element linkDescription) {
         if (dateClass.dateChecker(datePublished)) {
             JobsInform jobsInform = new JobsInform();
-//                System.out.println("text place : " + place.text());
-//            System.out.println("text headPost : " + headPost.text());
-//            System.out.println("text company : " + company.text());
-//            System.out.println("text link1 : " + linkDescription.attr("href"));
             jobsInform.setPublishedDate(datePublished);
             jobsInform.setHeadPublication(headPost.text());
             jobsInform.setCompanyName(company.text());
@@ -169,27 +124,12 @@ public class ParserRandstad implements ParserMain{
                     .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
                     .timeout(5000)
                     .get();
-
-//        Document document = ParserLandingJobs.renderPage(linkToDescription);
-
-//        System.out.println("text link1 : " + document);
             Elements tablesDescription = document.select(".job-desc-section span").first().children();
             Elements tablesHead = document.select("article h1");
             List<ListImpl> list = new ArrayList<ListImpl>();
 
             list.add(addHead(tablesHead.first()));
             for (int i = 0; i < tablesDescription.size(); i++) {
-
-
-//            if (tablesDescription.get(i).tagName().equals("div")) {
-//                for (Element element : tablesDescription.get(i).children()) {
-//                    if (element.tagName().equals("p")) {
-//                        list.add(addParagraph(element));
-//                    }else if (element.tagName().equals("ul")){
-//                        list.add(addList(element));
-//                    }
-//                }
-//            }
                 if (tablesDescription.get(i).tagName().equals("p")) {
                     list.add(addParagraph(tablesDescription.get(i)));
                 } else if (tablesDescription.get(i).tagName().equals("ul")) {
