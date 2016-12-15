@@ -90,6 +90,15 @@ public class DbHelper {
         mapParsers.put("webbjobb.io", DB_NAME_9);
         mapParsers.put("jobspresso.co", DB_NAME_10);
         mapParsers.put("jobs.ch", DB_NAME_10);
+        mapParsers.put("jobs.smashingmagazine.com", DB_NAME_11);
+        mapParsers.put("themuse.com", DB_NAME_11);
+        mapParsers.put("techjobs.com", DB_NAME_12);
+        mapParsers.put("careerbuilder.com", DB_NAME_12);
+        mapParsers.put("webentwickler-jobs.de", DB_NAME_13);
+        mapParsers.put("uberjobs.de", DB_NAME_14);
+        mapParsers.put("guru.com", DB_NAME_14);
+        mapParsers.put("authenticjobs.com", DB_NAME_15);
+        mapParsers.put("eurojobs.com", DB_NAME_15);
     }
 
     public Connection connect(String link) {
@@ -231,7 +240,7 @@ public class DbHelper {
                 preparedStatement.setString(3, jobsInform.getCompanyName());
                 preparedStatement.setString(4, jobsInform.getHeadPublication());
                 preparedStatement.setString(5, jobsInform.getPublicationLink());
-                preparedStatement.setLong(6, jobsInform.getPublishedDate().getTime());
+                preparedStatement.setLong(6,  jobsInform.getPublishedDate()!=null ? jobsInform.getPublishedDate().getTime() : 0);
                 preparedStatement.setInt(7, (jobsInform.isSeen() ? 1 : 0));
                 preparedStatement.executeUpdate();
 
@@ -364,7 +373,7 @@ public class DbHelper {
                     orderList.add(list);
                 }
                 jobsInform.setOrder(orderList);
-                jobsInform.setPublishedDate(new Date(rs.getLong(DATE_PUBLICATION)));
+                jobsInform.setPublishedDate(rs.getLong(DATE_PUBLICATION) != 0 ? new Date(rs.getLong(DATE_PUBLICATION)) : null);
                 jobsInform.setCompanyName(rs.getString(COMPANY_NAME));
                 jobsInform.setHeadPublication(rs.getString(HEAD_PUBLICATION));
                 jobsInform.setPlace(rs.getString(PLACE));

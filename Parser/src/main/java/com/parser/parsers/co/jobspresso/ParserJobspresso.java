@@ -46,7 +46,7 @@ public class ParserJobspresso implements ParserMain {
 //        do
 
         try {
-            System.out.println("text date : ParserJobspresso" + jobsInforms.size());
+//            System.out.println("text date : ParserJobspresso" + jobsInforms.size());
             datePublished = null;
             String urlS = ("https://jobspresso.co/jm-ajax/get_listings/");
             URL url = new URL(urlS);
@@ -61,7 +61,7 @@ public class ParserJobspresso implements ParserMain {
             doc = Jsoup.parse(jsonObject.get("html").getAsString());
             Elements tables3 = doc.select(".job_listing");
             datePublished = runParse(tables3,/* jobsInforms.size()*/0);
-            System.out.println("text date : ParserJobspresso" + jobsInforms.size());
+//            System.out.println("text date : ParserJobspresso" + jobsInforms.size());
 
         } catch (IOException e) {
             e.printStackTrace();
