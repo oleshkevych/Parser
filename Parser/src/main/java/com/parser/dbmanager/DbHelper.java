@@ -29,6 +29,9 @@ public class DbHelper {
     private final static String DB_NAME_13 = "ParserDB13.s3db";
     private final static String DB_NAME_14 = "ParserDB14.s3db";
     private final static String DB_NAME_15 = "ParserDB15.s3db";
+    private final static String DB_NAME_16 = "ParserDB16.s3db";
+    private final static String DB_NAME_17 = "ParserDB17.s3db";
+    private final static String DB_NAME_18 = "ParserDB18.s3db";
     private final static String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS ";
     private final static String DROP_TABLE = "DROP TABLE IF EXISTS ";
 
@@ -99,6 +102,10 @@ public class DbHelper {
         mapParsers.put("guru.com", DB_NAME_14);
         mapParsers.put("authenticjobs.com", DB_NAME_15);
         mapParsers.put("eurojobs.com", DB_NAME_15);
+        mapParsers.put("technojobs.co.uk", DB_NAME_16);
+        mapParsers.put("learn4good.com", DB_NAME_16);
+        mapParsers.put("canadajobs.com", DB_NAME_16);
+        mapParsers.put("drupal.org.uk", DB_NAME_17);
     }
 
     public Connection connect(String link) {

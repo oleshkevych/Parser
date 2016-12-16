@@ -82,9 +82,9 @@ public class ParserAuthenticjobs implements ParserMain {
                 } else {
                     datePublished = formatter.parse(stringDate + " " + 2016);
                 }
-                System.out.println("text date : " + link);
-                System.out.println("text date : " + stringDate);
-                System.out.println("text date : " + datePublished);
+//                System.out.println("text date : " + link);
+//                System.out.println("text date : " + stringDate);
+//                System.out.println("text date : " + datePublished);
 
                 if (dateClass.dateChecker(datePublished) && jobsInforms.size() < 50) {
 
