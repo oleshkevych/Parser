@@ -5,6 +5,7 @@ import com.parser.entity.DateGenerator;
 import com.parser.entity.JobsInform;
 import com.parser.entity.ListImpl;
 import com.parser.entity.ParserMain;
+import com.parser.parsers.PrintDescription;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -43,7 +44,7 @@ public class ParserLandingJobs implements ParserMain {
     }
 
 
-    public static Document renderPage(String url) {
+    private Document renderPage(String url) {
         DesiredCapabilities caps = new DesiredCapabilities();
         caps.setJavascriptEnabled(true);
         caps.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, "C:\\Users\\rolique_pc\\Desktop\\ParserApp\\Parser\\Libs\\phantomjs.exe");
@@ -72,11 +73,16 @@ public class ParserLandingJobs implements ParserMain {
         System.out.println("text size : " + tables2.size());
         for (int i = counter; i < tables2.size(); i++) {
             Date datePublished = null;
-            int daysOld = 90 - Integer.parseInt(tables2.get(i).select(".ld-time-left").text().substring(0, 2));
-            datePublished = new Date(new Date().getTime() - daysOld * 24 * 60 * 60 * 1000);
-            objectGenerator(tables2.get(i).select(".ld-location").first(), tables2.get(i).select(".ld-title").first(),
-                    tables2.get(i).select(".company-name").first(), datePublished, tables2.get(i).select(".ld-job-offer-link").first());
-
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                String stringDate = tables2.get(i).select(".ld-action-time").attr("datetime");
+                try {
+                    datePublished = formatter.parse(stringDate);
+                    objectGenerator(tables2.get(i).select(".ld-job-detail").first(), tables2.get(i).select(".ld-job-title").first(),
+                            tables2.get(i).select(".ld-job-company").first(), datePublished, tables2.get(i).select(".ld-job-offer-link").first());
+                }catch(Exception e){
+                    System.out.println("error : ParserLandingJobs");
+                    e.printStackTrace();
+                }
         }
     }
 
@@ -104,9 +110,12 @@ public class ParserLandingJobs implements ParserMain {
                     .get();
 
             Elements tablesDescription = document.select(".ld-job-offer-section");
+            Element tablesHead = document.select("h1").first();
             List<ListImpl> list = new ArrayList<ListImpl>();
+            list.add(addHead(tablesHead));
 
             for (int i = 1; i < tablesDescription.size() - 1; i++) {
+                if(i!=0)
                 list.add(null);
                 Elements ps = tablesDescription.get(i).select("p");
                 Elements uls = tablesDescription.get(i).select("ul");
@@ -126,6 +135,7 @@ public class ParserLandingJobs implements ParserMain {
                     }
                 }
             }
+//            list.addAll(new PrintDescription().generateListImpl(tablesDescription));
 
             list.add(null);
             jobsInform.setOrder(list);

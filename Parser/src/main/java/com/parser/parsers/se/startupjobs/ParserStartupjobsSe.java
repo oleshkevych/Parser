@@ -9,6 +9,10 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriverService;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -35,6 +39,20 @@ public class ParserStartupjobsSe implements ParserMain{
         return jobsInforms;
     }
 
+    private Document renderPage(String url) {
+        DesiredCapabilities caps = new DesiredCapabilities();
+        caps.setJavascriptEnabled(true);
+        caps.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, "C:\\Users\\rolique_pc\\Desktop\\ParserApp\\Parser\\Libs\\phantomjs.exe");
+
+        WebDriver ghostDriver = new PhantomJSDriver(caps);
+        try {
+            ghostDriver.get(url);
+            return Jsoup.parse(ghostDriver.getPageSource());
+        } finally {
+            ghostDriver.quit();
+        }
+    }
+
     private void parser() {
 //        try {
 
@@ -45,7 +63,7 @@ public class ParserStartupjobsSe implements ParserMain{
 //                    .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
 //                    .timeout(5000)
 //                    .get();
-            doc = ParserLandingJobs.renderPage(startLink);
+            doc = renderPage(startLink);
 //            System.out.println("text : " + doc);
 
             Elements tables2 = doc.select("#leadpageData").first().children();
@@ -147,8 +165,6 @@ public class ParserStartupjobsSe implements ParserMain{
     }
 
     public static JobsInform getDescription(String linkToDescription, JobsInform jobsInform){
-//        System.out.println("text link1 : " + linkToDescription);
-
         try {
             Document document = Jsoup.connect(linkToDescription)
                     .validateTLSCertificates(false)

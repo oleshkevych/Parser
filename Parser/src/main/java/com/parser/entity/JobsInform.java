@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Created by rolique_pc on 12/5/2016.
  */
-public class JobsInform implements Serializable{
+public class JobsInform implements Serializable {
     private Date publishedDate;
     private String headPublication;
     private String place;
@@ -84,20 +84,21 @@ public class JobsInform implements Serializable{
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof JobsInform)) return false;
-
         JobsInform that = (JobsInform) o;
-
-        if (isSeen() != that.isSeen()) return false;
         if (!getHeadPublication().equals(that.getHeadPublication())) return false;
-        return getPublicationLink().equals(that.getPublicationLink());
+        if (getPlace() != null ? !getPlace().toLowerCase().equals(that.getPlace().toLowerCase()) : that.getPlace() != null)
+            return false;
+        if (!getPublicationLink().toLowerCase().equals(that.getPublicationLink().toLowerCase())) return false;
+        return getCompanyName() != null ? getCompanyName().toLowerCase().equals(that.getCompanyName().toLowerCase()) : that.getCompanyName() == null;
 
     }
 
     @Override
     public int hashCode() {
         int result = getHeadPublication().hashCode();
+        result = 31 * result + (getPlace() != null ? getPlace().hashCode() : 0);
         result = 31 * result + getPublicationLink().hashCode();
-        result = 31 * result + (isSeen() ? 1 : 0);
+        result = 31 * result + (getCompanyName() != null ? getCompanyName().hashCode() : 0);
         return result;
     }
 }

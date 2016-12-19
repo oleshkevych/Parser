@@ -10,6 +10,10 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriverService;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -36,11 +40,25 @@ public class ParserBuiltinnode implements ParserMain {
         return jobsInforms;
     }
 
+    private Document renderPage(String url) {
+        DesiredCapabilities caps = new DesiredCapabilities();
+        caps.setJavascriptEnabled(true);
+        caps.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, "C:\\Users\\rolique_pc\\Desktop\\ParserApp\\Parser\\Libs\\phantomjs.exe");
+
+        WebDriver ghostDriver = new PhantomJSDriver(caps);
+        try {
+            ghostDriver.get(url);
+            return Jsoup.parse(ghostDriver.getPageSource());
+        } finally {
+            ghostDriver.quit();
+        }
+    }
+
     private void parser() {
 //        try {
 
 
-        doc = ParserLandingJobs.renderPage(startLink);
+        doc = renderPage(startLink);
 
         Elements tables2 = doc.select(".template-perl-job-board");
         runParse(tables2, 0);

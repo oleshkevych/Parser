@@ -9,6 +9,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -30,40 +31,34 @@ public class ParserCareerbuilder implements ParserMain {
     }
 
     private void parser() {
-        try {
-            doc = Jsoup.connect(startLink)
-                    .validateTLSCertificates(false)
-                    .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-                    .timeout(5000)
-                    .get();
-            Elements tables2 = doc.select(".jobs .job-row");
-            runParse(tables2, 0);
 
-//            Date datePublished = null;
-//            int count = 2;
-////            do {
-//                try {
-//
-//
-//                    // need http protocol
-//                    doc = Jsoup.connect(startLink + "&pg=" + count)
-//                            .validateTLSCertificates(false).userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36").timeout(5000).get();
-//
-//                    Elements tables1 = doc.select(".listResults .-item");
-////            System.out.println("text : " + tables2);
-//                    datePublished = runParse(tables1, 0);
-//                    count++;
-//
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//
-//            }while(dateClass.dateChecker(datePublished));
+        List<String> startLinksList = new ArrayList<>();
+        startLinksList.add("http://www.careerbuilder.com/jobs-frontend?posted=7&sort=date_desc");
+        startLinksList.add("http://www.careerbuilder.com/jobs-Angular?posted=7&sort=date_desc");
+        startLinksList.add("http://www.careerbuilder.com/jobs-React?posted=7&sort=date_desc");
+        startLinksList.add("http://www.careerbuilder.com/jobs-Meteor?posted=7&sort=date_desc");
+        startLinksList.add("http://www.careerbuilder.com/jobs-Node?posted=7&sort=date_desc");
+        startLinksList.add("http://www.careerbuilder.com/jobs-Frontend?posted=7&sort=date_desc");
+        startLinksList.add("http://www.careerbuilder.com/jobs-iOS?posted=7&sort=date_desc");
+        startLinksList.add("http://www.careerbuilder.com/jobs-JavaScript?posted=7&sort=date_desc");
+        startLinksList.add("http://www.careerbuilder.com/jobs-mobile?posted=7&sort=date_desc");
 
-        } catch (Exception e) {
-            e.printStackTrace();
+
+        for (String link : startLinksList) {
+
+            try {
+                doc = Jsoup.connect(link)
+                        .validateTLSCertificates(false)
+                        .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
+                        .timeout(5000)
+                        .get();
+                Elements tables2 = doc.select(".jobs .job-row");
+                runParse(tables2, 0);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-
     }
 
     private void runParse(Elements tables2, int counter) {
@@ -95,9 +90,9 @@ public class ParserCareerbuilder implements ParserMain {
     }
 
     private void objectGenerator(Element place, Element headPost, Element company, Element linkDescription, Date date) {
-        if (new DateGenerator().dateChecker(date) && jobsInforms.size() < 50) {
+        if (new DateGenerator().dateChecker(date)) {
             JobsInform jobsInform = new JobsInform();
-            jobsInform.setPublishedDate(null);
+            jobsInform.setPublishedDate(date);
             jobsInform.setHeadPublication(headPost.text());
             jobsInform.setCompanyName(company.text());
             jobsInform.setPlace(place.text());

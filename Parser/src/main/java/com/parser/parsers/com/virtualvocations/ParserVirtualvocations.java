@@ -41,47 +41,62 @@ public class ParserVirtualvocations implements ParserMain {
     }
 
     private void parser() {
-        try {
+
+        List<String> startLinksList = new ArrayList<>();
+        startLinksList.add("https://www.virtualvocations.com/jobs/q-Drupal");
+        startLinksList.add("https://www.virtualvocations.com/jobs/q-Angular");
+        startLinksList.add("https://www.virtualvocations.com/jobs/q-React");
+        startLinksList.add("https://www.virtualvocations.com/jobs/q-Meteor");
+        startLinksList.add("https://www.virtualvocations.com/jobs/q-Node");
+        startLinksList.add("https://www.virtualvocations.com/jobs/q-Frontend");
+        startLinksList.add("https://www.virtualvocations.com/jobs/q-JavaScript");
+        startLinksList.add("https://www.virtualvocations.com/jobs/q-iOS");
+        startLinksList.add("https://www.virtualvocations.com/jobs/q-mobile");
+
+        for (String link : startLinksList) {
+            try {
 
 
-            // need http protocol
-            doc = Jsoup.connect(startLink)
-                    .validateTLSCertificates(false)
-                    .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-                    .timeout(5000)
-                    .get();
+                // need http protocol
+                doc = Jsoup.connect(link)
+                        .validateTLSCertificates(false)
+                        .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
+                        .timeout(5000)
+                        .get();
 
-            Elements tables2 = doc.select(".col-sm-6 .list-unstyled li");
-            runParse(tables2, 0);
+                Elements tables2 = doc.select(".col-sm-6 .list-unstyled li");
+                runParse(tables2, 0);
 
-            Date datePublished = null;
-            int count = 1;
-            do {
-                try {
+                Date datePublished = null;
+                int count = 1;
+                do {
+                    try {
 
-                    datePublished = null;
-                    // need http protocol
-                    doc = Jsoup.connect(startLink + "/p-" + count)
-                            .validateTLSCertificates(false)
-                            .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-                            .timeout(5000)
-                            .get();
+                        datePublished = null;
+                        // need http protocol
+                        doc = Jsoup.connect(link + "/p-" + count)
+                                .validateTLSCertificates(false)
+                                .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
+                                .timeout(5000)
+                                .get();
 
-                    Elements tables1 = doc.select(".col-sm-6 .list-unstyled li");
+                        Elements tables1 = doc.select(".col-sm-6 .list-unstyled li");
 
-                    datePublished = runParse(tables1, 0);
-                    count += 10;
+                        datePublished = runParse(tables1, 0);
+                        count += 10;
 
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
                 }
-
-            } while (dateClass.dateChecker(datePublished) && jobsInforms.size() < 100);
+                while (dateClass.dateChecker(datePublished) && jobsInforms.size() < (startLinksList.indexOf(link) + 1) * 20);
 //
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
+        }
     }
 
     private Date runParse(Elements tables2, int counter) {

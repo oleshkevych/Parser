@@ -5,6 +5,7 @@ import com.parser.entity.DateGenerator;
 import com.parser.entity.JobsInform;
 import com.parser.entity.ListImpl;
 import com.parser.entity.ParserMain;
+import com.parser.parsers.PrintDescription;
 import com.parser.parsers.jobs.landing.ParserLandingJobs;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
@@ -27,7 +28,7 @@ import java.util.List;
 public class ParserRemote implements ParserMain {
 
 
-    private String startLink = "https://remote.co/remote-jobs";
+    private String startLink = "https://remote.co/remote-jobs/developer/";
     private List<JobsInform> jobsInforms = new ArrayList<JobsInform>();
     private Document doc;
     private DateGenerator dateClass;
@@ -42,42 +43,44 @@ public class ParserRemote implements ParserMain {
     }
 
     private void parser() {
+//        try {
+
+//
+//            // need http protocol
+//            doc = Jsoup.connect(startLink)
+//                    .validateTLSCertificates(false)
+//                    .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
+//                    .timeout(5000)
+//                    .get();
+//            Elements tables2 = doc.select(".see_all_link a");
+        Date datePublished = null;
+//            for (Element element : tables2) {
+//                do {
         try {
 
-
+            datePublished = null;
             // need http protocol
+
+//                        doc = Jsoup.connect(element.attr("href"))
+
             doc = Jsoup.connect(startLink)
                     .validateTLSCertificates(false)
                     .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
                     .timeout(5000)
                     .get();
-            Elements tables2 = doc.select(".see_all_link a");
-            Date datePublished = null;
-            for (Element element : tables2) {
-                do {
-                    try {
-
-                        datePublished = null;
-                        // need http protocol
-
-                        doc = Jsoup.connect(element.attr("href"))
-                                .validateTLSCertificates(false)
-                                .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-                                .timeout(5000)
-                                .get();
-                        Elements tables1 = doc.select(".job_listings .job_listing");
-                        datePublished = runParse(tables1, 0);
-
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                } while (dateClass.dateChecker(datePublished) && jobsInforms.size() < 100);
-            }
+            Elements tables1 = doc.select(".job_listings .job_listing");
+            datePublished = runParse(tables1, 0);
 
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+//                } while (dateClass.dateChecker(datePublished) && jobsInforms.size() < 100);
+//            }
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
     }
 
@@ -124,6 +127,7 @@ public class ParserRemote implements ParserMain {
     }
 
     public static JobsInform getDescription(String linkToDescription, JobsInform jobsInform) {
+        System.out.println("start");
 
         try {
             Document document = Jsoup.connect(linkToDescription)
@@ -132,32 +136,45 @@ public class ParserRemote implements ParserMain {
                     .timeout(5000)
                     .get();
 
-            Elements tablesDescription = document.select(".job_description").first().children();
+            Elements tablesDescription = document.select("[itemprop='description']").first().children();
+            int c = 0;
+            System.out.println(tablesDescription.size());
+
+            while (tablesDescription.size() < 2 && c < 10) {
+                tablesDescription = tablesDescription.first().children();
+                System.out.println("in"+tablesDescription.size());
+
+                c++;
+            }
             Elements tablesHead = document.select(".entry-title");
             List<ListImpl> list = new ArrayList<ListImpl>();
 
             list.add(addHead(tablesHead.first()));
-            for (int i = 0; i < tablesDescription.size(); i++) {
+            System.out.println("addhead");
 
-
-                if (tablesDescription.get(i).tagName().equals("div")) {
-                    for (Element element : tablesDescription.get(i).children()) {
-                        if (element.tagName().equals("p")) {
-                            list.add(addParagraph(element));
-                        } else if (element.tagName().equals("ul")) {
-                            list.add(addList(element));
-                        }
-                    }
-                } else if (tablesDescription.get(i).tagName().equals("p")) {
-                    list.add(addParagraph(tablesDescription.get(i)));
-                } else if (tablesDescription.get(i).tagName().equals("ul")) {
-                    list.add(addList(tablesDescription.get(i)));
-                }
-            }
+//            for (int i = 0; i < tablesDescription.size(); i++) {
+//
+//
+//                if (tablesDescription.get(i).tagName().equals("div")) {
+//                    for (Element element : tablesDescription.get(i).children()) {
+//                        if (element.tagName().equals("p")) {
+//                            list.add(addParagraph(element));
+//                        } else if (element.tagName().equals("ul")) {
+//                            list.add(addList(element));
+//                        }
+//                    }
+//                } else if (tablesDescription.get(i).tagName().equals("p")) {
+//                    list.add(addParagraph(tablesDescription.get(i)));
+//                } else if (tablesDescription.get(i).tagName().equals("ul")) {
+//                    list.add(addList(tablesDescription.get(i)));
+//                }
+//            }
+            list.addAll(new PrintDescription().generateListImpl(tablesDescription));
 
             list.add(null);
             jobsInform.setOrder(list);
 
+            System.out.println("finish");
 
             return jobsInform;
         } catch (Exception e) {

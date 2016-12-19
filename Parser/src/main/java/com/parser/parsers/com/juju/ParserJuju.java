@@ -37,53 +37,65 @@ public class ParserJuju implements ParserMain {
     }
 
     private void parser() {
-        try {
+        List<String> startLinksList = new ArrayList<>();
+        startLinksList.add("http://www.juju.com/jobs?k=Drupal&l&r");
+        startLinksList.add("http://www.juju.com/jobs?k=Angular&l&r");
+        startLinksList.add("http://www.juju.com/jobs?k=React&l&r");
+        startLinksList.add("http://www.juju.com/jobs?k=Meteor&l&r");
+        startLinksList.add("http://www.juju.com/jobs?k=Node&l&r");
+        startLinksList.add("http://www.juju.com/jobs?k=Frontend&l&r");
+        startLinksList.add("http://www.juju.com/jobs?k=JavaScript&l&r");
+        startLinksList.add("http://www.juju.com/jobs?k=iOS&l&r");
+        startLinksList.add("http://www.juju.com/jobs?k=mobile&l&r");
+
+        for (String link : startLinksList) {
+            try {
 
 
-            // need http protocol
-            doc = Jsoup.connect(startLink)
-                    .validateTLSCertificates(false)
-                    .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-                    .timeout(5000)
-                    .get();
+                // need http protocol
+                doc = Jsoup.connect(link)
+                        .validateTLSCertificates(false)
+                        .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
+                        .timeout(5000)
+                        .get();
 
-            Elements tables2 = doc.select(".article .job");
-            runParse(tables2, 0);
+                Elements tables2 = doc.select(".article .job");
+                runParse(tables2, 0);
 
-            Date datePublished = null;
-            int count = 2;
-            do {
-                try {
+                Date datePublished = null;
+                int count = 2;
+                do {
+                    try {
 
-                    datePublished = null;
-                    // need http protocol
-                    doc = Jsoup.connect(startLink + "&page=" + count)
-                            .validateTLSCertificates(false).userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36").timeout(5000).get();
+                        datePublished = null;
+                        // need http protocol
+                        doc = Jsoup.connect(link + "&page=" + count)
+                                .validateTLSCertificates(false).userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36").timeout(5000).get();
 
-                    Elements tables1 = doc.select(".article .job");
-                    datePublished = runParse(tables1, 0);
-                    count++;
+                        Elements tables1 = doc.select(".article .job");
+                        datePublished = runParse(tables1, 0);
+                        count++;
 
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
 
-            } while (dateClass.dateChecker(datePublished) && jobsInforms.size() < 100);
+                } while (dateClass.dateChecker(datePublished) &&  jobsInforms.size() < (startLinksList.indexOf(link)+1) * 20);
 
-        } catch (IOException e) {
-            e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-
     }
 
     private Date runParse(Elements tables2, int counter) {
         System.out.println("text date1 : " + tables2.size());
         Date datePublished = null;
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yy");
         for (int i = counter; i < tables2.size(); i += 1) {
             String stringDate = tables2.get(i).select(".options .source").text();
             try {
-                datePublished = formatter.parse(stringDate.substring(stringDate.indexOf("(") + 1, stringDate.indexOf("16)")) + 2016);
+                datePublished = formatter.parse(stringDate.substring(stringDate.indexOf("(") + 1, stringDate.indexOf(")")));
 
                 objectGenerator(tables2.get(i).select(".company span").first(), tables2.get(i).select(".result").first(),
                         tables2.get(i).select(".company").first(), datePublished, tables2.get(i).select(".result").first());
@@ -120,24 +132,24 @@ public class ParserJuju implements ParserMain {
                     .get();
 
 
-            int count = 0;
+//            int count = 0;
             Elements tablesDescription = document.select(".description");
-            if (tablesDescription.select("p").first().hasClass("simple_line")) {
-                jobsInform.setPlace(tablesDescription.select("p").first().text());
-                count++;
-            }
+//            if (tablesDescription.select("p").first().hasClass("simple_line")) {
+//                jobsInform.setPlace(tablesDescription.select("p").first().text());
+//                count++;
+//            }
             List<ListImpl> list = new ArrayList<ListImpl>();
 
-            for (int i = count; i < tablesDescription.size(); i++) {
-                list.add(addHead(document.select("article h2").first()));
-
-                if (tablesDescription.get(i).hasClass("item"))
-                    list.add(addHead(tablesDescription.get(i)));
-
-                if (tablesDescription.get(i).hasClass("simple_line")) {
-                    list.add(addParagraph(tablesDescription.get(i)));
-                }
-            }
+            list.add(addHead(document.select("h1").first()));
+//            for (int i = count; i < tablesDescription.size(); i++) {
+//
+//                if (tablesDescription.get(i).hasClass("item"))
+//                    list.add(addHead(tablesDescription.get(i)));
+//
+//                if (tablesDescription.get(i).hasClass("simple_line")) {
+//                    list.add(addParagraph(tablesDescription.get(i)));
+//                }
+//            }
 
             list.add(null);
             jobsInform.setOrder(list);

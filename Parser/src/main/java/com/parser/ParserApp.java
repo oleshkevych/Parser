@@ -20,6 +20,7 @@ import com.parser.parsers.com.canadajobs.ParserCanadajobs;
 import com.parser.parsers.com.careerbuilder.ParserCareerbuilder;
 import com.parser.parsers.com.dutchstartupjobs.ParserDutchstartupjobs;
 import com.parser.parsers.com.eurojobs.ParserEurojobs;
+import com.parser.parsers.com.europeremotely.ParserEuroperemotely;
 import com.parser.parsers.com.flexjobs.ParserFlexjobs;
 import com.parser.parsers.com.guru.ParserGugu;
 import com.parser.parsers.com.jobs_smashingmagazine.ParserJobsSmashingmagazine;
@@ -35,6 +36,7 @@ import com.parser.parsers.com.weloveangular.ParserWeloveangular;
 import com.parser.parsers.com.weworkmeteor.ParserWeworkmeteor;
 import com.parser.parsers.com.weworkremotely.ParserWeworkremotely;
 import com.parser.parsers.com.workopolis.ParserWorkopolis;
+import com.parser.parsers.com.ziprecruiter.ParserZiprecruiter;
 import com.parser.parsers.de.monster.ParserMonsterDe;
 import com.parser.parsers.de.uberjobs.ParserUberjobs;
 import com.parser.parsers.de.webentwicklerJobs.ParserWebentwicklerJobs;
@@ -150,6 +152,9 @@ public class ParserApp implements MouseListener {
     private JLabel canadajobsLabel;
     private JPanel drupalOrgUkLabelParser;
     private JLabel drupalOrgUkLabel;
+    private JPanel ziprecruiterLabelPanel;
+    private JLabel ziprecruiterLabel;
+    private JLabel europeremotelyLabel;
     private JFrame jFrame = new JFrame();
     private Component c;
     private ExecutorService executorDB = Executors.newFixedThreadPool(1);
@@ -161,46 +166,88 @@ public class ParserApp implements MouseListener {
 
     public ParserApp() {
         Map<String, ParserMain> mapParsers = new HashMap<>();
+/*0*/
         mapParsers.put("wfh.io", new ParserWFH());
+/*1*/
         mapParsers.put("remoteok.io", new ParserRemoteok());
+/*2*/
         mapParsers.put("landing.jobs", new ParserLandingJobs());
+/*3*/
         mapParsers.put("startus.cc", new ParserStartus());
+/*4*/
         mapParsers.put("virtualvocations.com", new ParserVirtualvocations());
+/*5*/
         mapParsers.put("simplyhired.com", new ParserSimplyhired());
+/*6*/
         mapParsers.put("stackoverflow.com", new ParserStackoverflow());
+/*7*/
         mapParsers.put("juju.com", new ParserJuju());
+/*8*/
         mapParsers.put("jobs.drupal.org", new ParserDrupal());
+/*9*/
         mapParsers.put("dutchstartupjobs.com", new ParserDutchstartupjobs());
+/*10*/
         mapParsers.put("monster.de", new ParserMonsterDe());
+/*11*/
         mapParsers.put("weloveangular.com", new ParserWeloveangular());
+/*12*/
         mapParsers.put("weworkremotely.com", new ParserWeworkremotely());
+/*13*/
         mapParsers.put("startupjobs.se", new ParserStartupjobsSe());
+/*14*/
         mapParsers.put("berlinstartupjobs.com", new ParserBerlinstartupjobs());
+/*15*/
         mapParsers.put("jobs.ch", new ParserJobs());
+/*16*/
         mapParsers.put("flexjobs.com", new ParserFlexjobs());
+/*17*/
         mapParsers.put("builtinnode.com", new ParserBuiltinnode());
+/*18*/
         mapParsers.put("weworkmeteor.com", new ParserWeworkmeteor());
+/*19*/
         mapParsers.put("jobbank.dk", new ParserJobbank());
+/*20*/
         mapParsers.put("workingnomads.co", new ParserWorkingnomads());
+/*21*/
         mapParsers.put("remote.co", new ParserRemote());
+/*22*/
         mapParsers.put("randstad.com", new ParserRandstad());
+/*23*/
         mapParsers.put("workopolis.com", new ParserWorkopolis());
+/*24*/
         mapParsers.put("eluta.ca", new ParserEluta());
+/*25*/
         mapParsers.put("jobspresso.co", new ParserJobspresso());
+/*26*/
         mapParsers.put("webbjobb.io", new ParserWebbjobb());
+/*27*/
         mapParsers.put("jobs.smashingmagazine.com", new ParserJobsSmashingmagazine());
+/*28*/
         mapParsers.put("themuse.com", new ParserThemuse());
+/*29*/
         mapParsers.put("techjobs.com", new ParserTechjobs());
+/*30*/
         mapParsers.put("careerbuilder.com", new ParserCareerbuilder());
+/*31*/
         mapParsers.put("webentwickler-jobs.de", new ParserWebentwicklerJobs());
+/*32*/
         mapParsers.put("uberjobs.de", new ParserUberjobs());
+/*33*/
         mapParsers.put("guru.com", new ParserGugu());
+/*34*/
         mapParsers.put("authenticjobs.com", new ParserAuthenticjobs());
+/*35*/
         mapParsers.put("eurojobs.com", new ParserEurojobs());
+/*36*/
         mapParsers.put("technojobs.co.uk", new ParserTechnojobs());
+/*37*/
         mapParsers.put("learn4good.com", new ParserLearn4good());
+/*38*/
         mapParsers.put("canadajobs.com", new ParserCanadajobs());
+/*39*/
         mapParsers.put("drupal.org.uk", new ParserDrupalOrgUk());
+/*40*/
+        mapParsers.put("ziprecruiter.com", new ParserZiprecruiter());
 
         ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(4);
 //        for (int i = 0; i < linkPanel.getComponents().length; i++) {
@@ -211,7 +258,7 @@ public class ParserApp implements MouseListener {
 //            executor.execute(new Task(labelPanel, mapParsers.get(homeLink), homeLink));
 //        }
 
-        JPanel labelPanel = (JPanel) linkPanel.getComponents()[39];
+        JPanel labelPanel = (JPanel) linkPanel.getComponents()[9];
         labelPanel.setBackground(new Color(0x717184));
         JLabel label = (JLabel) labelPanel.getComponent(0);
         String homeLink = label.getText();
@@ -258,6 +305,7 @@ public class ParserApp implements MouseListener {
         learn4goodLabel.addMouseListener(this);
         canadajobsLabel.addMouseListener(this);
         drupalOrgUkLabel.addMouseListener(this);
+        ziprecruiterLabel.addMouseListener(this);
     }
 
     private void panelFiller(final List<JobsInform> jobsInformList, String homeLink) {
@@ -1671,6 +1719,34 @@ public class ParserApp implements MouseListener {
         drupalOrgUkLabel.setVerifyInputWhenFocusTarget(false);
         drupalOrgUkLabel.putClientProperty("html.disable", Boolean.TRUE);
         drupalOrgUkLabelParser.add(drupalOrgUkLabel);
+        ziprecruiterLabelPanel = new JPanel();
+        ziprecruiterLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        ziprecruiterLabelPanel.setAlignmentX(0.0f);
+        ziprecruiterLabelPanel.setAlignmentY(0.0f);
+        ziprecruiterLabelPanel.setAutoscrolls(true);
+        ziprecruiterLabelPanel.setBackground(new Color(-721665));
+        ziprecruiterLabelPanel.setMaximumSize(new Dimension(210, 30));
+        ziprecruiterLabelPanel.setMinimumSize(new Dimension(180, 30));
+        ziprecruiterLabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(ziprecruiterLabelPanel);
+        ziprecruiterLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        ziprecruiterLabel = new JLabel();
+        ziprecruiterLabel.setAutoscrolls(false);
+        ziprecruiterLabel.setEnabled(true);
+        ziprecruiterLabel.setFocusable(false);
+        ziprecruiterLabel.setFont(new Font("Times New Roman", ziprecruiterLabel.getFont().getStyle(), 12));
+        ziprecruiterLabel.setForeground(new Color(-16777216));
+        ziprecruiterLabel.setHorizontalAlignment(2);
+        ziprecruiterLabel.setHorizontalTextPosition(2);
+        ziprecruiterLabel.setMaximumSize(new Dimension(170, 30));
+        ziprecruiterLabel.setMinimumSize(new Dimension(-1, -1));
+        ziprecruiterLabel.setOpaque(false);
+        ziprecruiterLabel.setPreferredSize(new Dimension(170, 30));
+        ziprecruiterLabel.setText("ziprecruiter.com");
+        ziprecruiterLabel.setToolTipText("http://www.ziprecruiter.com");
+        ziprecruiterLabel.setVerifyInputWhenFocusTarget(false);
+        ziprecruiterLabel.putClientProperty("html.disable", Boolean.TRUE);
+        ziprecruiterLabelPanel.add(ziprecruiterLabel);
         jobPanel = new JPanel();
         jobPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5));
         jobPanel.setAutoscrolls(false);

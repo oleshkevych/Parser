@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class ParserSimplyhired implements ParserMain {
 
-    private String startLink = "http://www.simplyhired.com/search?q=software+engineer&fdb=1&sb=dd";
+    //    private String startLink = "http://www.simplyhired.com/search?q=software+engineer&fdb=1&sb=dd";
     private List<JobsInform> jobsInforms = new ArrayList<JobsInform>();
     private Document doc;
     private DateGenerator dateClass;
@@ -40,44 +40,52 @@ public class ParserSimplyhired implements ParserMain {
     }
 
     private void parser() {
-        try {
+        List<String> startLinksList = new ArrayList<>();
+        startLinksList.add("http://www.simplyhired.com/search?q=drupal&fdb=7&sb=dd");
+        startLinksList.add("http://www.simplyhired.com/search?q=Angular&fdb=7&sb=dd");
+        startLinksList.add("http://www.simplyhired.com/search?q=React&fdb=7&sb=dd");
+        startLinksList.add("http://www.simplyhired.com/search?q=Meteor&fdb=7&sb=dd");
+        startLinksList.add("http://www.simplyhired.com/search?q=iOS&fdb=7&sb=dd");
+        startLinksList.add("http://www.simplyhired.com/search?q=Frontend&fdb=7&sb=dd");
+        startLinksList.add("http://www.simplyhired.com/search?q=Node&fdb=7&sb=dd");
+        startLinksList.add("http://www.simplyhired.com/search?q=JavaScript&fdb=7&sb=dd");
+        startLinksList.add("http://www.simplyhired.com/search?q=mobile&fdb=7&sb=dd");
 
+        for (String link : startLinksList) {
+            try {
 
-            // need http protocol
-            doc = Jsoup.connect(startLink)
-                    .validateTLSCertificates(false)
-                    .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-                    .timeout(5000)
-                    .get();
+                doc = Jsoup.connect(link)
+                        .validateTLSCertificates(false)
+                        .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
+                        .timeout(5000)
+                        .get();
 
-            Elements tables2 = doc.select(".jobs .card");
-//            System.out.println("text : " + tables2);
-            runParse(tables2, 0);
-            Date datePublished = null;
+                Elements tables2 = doc.select(".jobs .card");
+                runParse(tables2, 0);
+                Date datePublished = null;
 
-            int count = 2;
-            do {
-                try {
-                    datePublished = null;
+                int count = 2;
+                do {
+                    try {
+                        datePublished = null;
+                        doc = Jsoup.connect(link + "&pn=" + count)
+                                .validateTLSCertificates(false).userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36").timeout(5000).get();
 
-                    // need http protocol
-                    doc = Jsoup.connect(startLink + "&pn=" + count)
-                            .validateTLSCertificates(false).userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36").timeout(5000).get();
+                        Elements tables1 = doc.select(".jobs .card");
+                        datePublished = runParse(tables1, 0);
+                        count++;
 
-                    Elements tables1 = doc.select(".jobs .card");
-                    datePublished = runParse(tables1, 0);
-                    count++;
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
 
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
+                while (dateClass.dateChecker(datePublished) && jobsInforms.size() < (startLinksList.indexOf(link) + 1) * 50);
 
-            } while (dateClass.dateChecker(datePublished)&& jobsInforms.size() < 100);
-
-        } catch (IOException e) {
-            e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-
     }
 
     private Date runParse(Elements tables2, int counter) {
@@ -115,85 +123,10 @@ public class ParserSimplyhired implements ParserMain {
             jobsInform.setCompanyName(company.text());
             jobsInform.setPlace(place.text());
             jobsInform.setPublicationLink(linkDescription.attr("abs:href"));
-//            jobsInform = getDescription(linkDescription.attr("abs:href"), jobsInform);
             if (!jobsInforms.contains(jobsInform)) {
                 jobsInforms.add(jobsInform);
             }
         }
     }
-
-//    public static JobsInform getDescription(String linkToDescription, JobsInform jobsInform) {
-//
-//        try {
-//            Document document = Jsoup.connect(linkToDescription)
-//                    .validateTLSCertificates(false)
-//                    .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-//                    .timeout(5000)
-//                    .get();
-//
-//
-//            Elements tablesDescription = document.select("body");
-//            List<ListImpl> list = new ArrayList<ListImpl>();
-//
-//
-//
-//            Elements ps = tablesDescription.select("p");
-//            ListImpl list1;
-//            list1 = new ListImpl();
-//            list1.setListHeader(jobsInform.getHeadPublication());
-//            list.add(list1);
-//
-//            if (ps.size() > 0) {
-//                for (Element p : ps) {
-//                    list.add(addParagraph(p));
-//                }
-//            }
-////                if (uls.size() > 0) {
-////                    for(Element ul: uls) {
-////                        list.add(addList(ul));
-////                    }
-////                }
-////            }
-//
-//            list.add(null);
-//            jobsInform.setOrder(list);
-//
-//
-//            return jobsInform;
-//        } catch (Exception e) {
-//            System.out.println("Error : " + e.getMessage() + " " + jobsInform.getPublicationLink());
-//            e.printStackTrace();
-//            return jobsInform;
-//        }
-//
-//    }
-//
-//    private static ListImpl addHead(Element element) {
-//        ListImpl list = new ListImpl();
-//        list.setListHeader(element.text());
-//        return list;
-//    }
-//
-//    private static ListImpl addParagraph(Element element) {
-//        if (element.select("strong").size() > 0) {
-//            return addHead(element.select("strong").first());
-//        } else {
-//
-//
-//            ListImpl list = new ListImpl();
-//            list.setTextFieldImpl(element.text());
-//            return list;
-//        }
-//    }
-//
-//    private static ListImpl addList(Element element) {
-//        ListImpl list = new ListImpl();
-//        List<String> strings = new ArrayList<String>();
-//        for (Element e : element.getAllElements()) {
-//            strings.add(e.text());
-//        }
-//        list.setListItem(strings);
-//        return list;
-//    }
 
 }

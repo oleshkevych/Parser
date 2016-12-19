@@ -4,6 +4,7 @@ import com.parser.entity.DateGenerator;
 import com.parser.entity.JobsInform;
 import com.parser.entity.ListImpl;
 import com.parser.entity.ParserMain;
+import com.parser.parsers.PrintDescription;
 import com.parser.parsers.jobs.landing.ParserLandingJobs;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -18,6 +19,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -25,7 +27,7 @@ import java.util.List;
  * Created by rolique_pc on 12/15/2016.
  */
 public class ParserTechjobs implements ParserMain {
-    private String startLink = "http://www.techjobs.com/SearchResults.aspx?query=djAuMXxSVjpRdWlja2xpc3Rpbmd8U086UmVsZXZhbnN8UE46MXxQUzo1MHx2MC4x&params=c2VhcmNoc3RhcnRkYXRlOjF8cXVlcnlmaWx0ZXI6fHdvcmthcmVhOjB8d29ya2FyZWFfbW9yZTowfEpvYmxvY2F0aW9uMTowfEpvYmxvY2F0aW9uMV9tb3JlOjB8Sm9ibG9jYXRpb246MHxKb2Jsb2NhdGlvbl9tb3JlOjB8Sm9ibG9jYXRpb24zOjB8Sm9ibG9jYXRpb24zX21vcmU6MHxKb2Jsb2NhdGlvbjQ6MHxKb2Jsb2NhdGlvbjRfbW9yZTowfEpvYmxvY2F0aW9uNTowfEpvYmxvY2F0aW9uNV9tb3JlOjB8Sm9idHlwZTowfEpvYnR5cGVfbW9yZTow";
+    private String startLink = "http://www.techjobs.com/SearchResults.aspx?query=djAuMXxSVjpRdWlja2xpc3Rpbmd8U086ZGF0ZSBkZXNjfFBOOjF8UFM6NTB8Q1I6c2VhcmNoc3RhcnRkYXRlOkRhdGVSZXN0cmljdGVkJm13ZW5jMztAVG9kYXktNyZtd2VuYzM7T1AmbXdlbmMzO1JhbmdlfElWOnNlYXJjaHN0YXJ0ZGF0ZTpEYXRlUmVzdHJpY3RlZF9AVG9kYXktN19PUF9SYW5nZXxOQTp3b3JrYXJlYTpeQ29tcHV0aW5nL0lUJF9Db21wdXRpbmcvSVR8djAuMQ==&params=c2VhcmNoc3RhcnRkYXRlOjF8cXVlcnlmaWx0ZXI6fHdvcmthcmVhOjB8d29ya2FyZWFfbW9yZTowfEpvYmxvY2F0aW9uMTowfEpvYmxvY2F0aW9uMV9tb3JlOjB8Sm9ibG9jYXRpb246MHxKb2Jsb2NhdGlvbl9tb3JlOjB8Sm9ibG9jYXRpb24zOjB8Sm9ibG9jYXRpb24zX21vcmU6MHxKb2Jsb2NhdGlvbjQ6MHxKb2Jsb2NhdGlvbjRfbW9yZTowfEpvYmxvY2F0aW9uNTowfEpvYmxvY2F0aW9uNV9tb3JlOjB8Sm9idHlwZTowfEpvYnR5cGVfbW9yZTow";
     private List<JobsInform> jobsInforms = new ArrayList<JobsInform>();
     private Document doc;
 
@@ -56,38 +58,9 @@ public class ParserTechjobs implements ParserMain {
 
     private void parser() {
         try {
-//            doc = Jsoup.connect(startLink)
-//                    .validateTLSCertificates(false)
-//                    .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-//                    .timeout(5000)
-//                    .get();
             doc = renderPage(startLink);
-//            System.out.println("text : " + doc);
-
             Elements tables2 = doc.select(".borderContainer");
-//            System.out.println("text : " + tables2);
             runParse(tables2, 0);
-
-//            Date datePublished = null;
-//            int count = 2;
-////            do {
-//                try {
-//
-//
-//                    // need http protocol
-//                    doc = Jsoup.connect(startLink + "&pg=" + count)
-//                            .validateTLSCertificates(false).userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36").timeout(5000).get();
-//
-//                    Elements tables1 = doc.select(".listResults .-item");
-////            System.out.println("text : " + tables2);
-//                    datePublished = runParse(tables1, 0);
-//                    count++;
-//
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//
-//            }while(dateClass.dateChecker(datePublished));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -124,25 +97,18 @@ public class ParserTechjobs implements ParserMain {
             jobsInform.setCompanyName(company.text());
             jobsInform.setPlace(place.text());
 //            jobsInform.setPublicationLink("http://www.techjobs.com/SearchResults.aspx?" + linkDescription.attr("href"));
-            jobsInform = getDescription("http://www.techjobs.com/SearchResults.aspx?" + linkDescription.attr("href"), jobsInform);
+//            jobsInform = getDescription("http://www.techjobs.com/SearchResults.aspx?" + linkDescription.attr("href"), jobsInform);
             if (!jobsInforms.contains(jobsInform)) {
                 jobsInforms.add(jobsInform);
             }
         }
     }
 
-    public  JobsInform getDescription(String linkToDescription, JobsInform jobsInform) {
-//        System.out.println("text link1 : " + linkToDescription);
+    private JobsInform getDescription(String linkToDescription, JobsInform jobsInform) {
 
         try {
             ghostDriver.get(linkToDescription);
             Document document = Jsoup.parse(ghostDriver.getPageSource());
-/*            Document document = Jsoup.connect(linkToDescription)
-                    .validateTLSCertificates(false)
-                    .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-                    .timeout(5000)
-                    .get();*/
-
             jobsInform.setPublicationLink(ghostDriver.getCurrentUrl());
             Elements tablesDescription = document.select("[itemprop='description']").first().children();
             Elements tablesHead = document.select("h1");
@@ -151,15 +117,7 @@ public class ParserTechjobs implements ParserMain {
             list.add(addHead(tablesHead.first()));
 
 
-            for (Element element : tablesDescription) {
-                if (element.tagName().equals("p")) {
-                    list.add(addParagraph(element));
-                } else if (element.tagName().equals("ul")) {
-                    list.add(addList(element));
-                }
-
-
-            }
+            list.addAll(new PrintDescription().generateListImpl(tablesDescription));
 
             list.add(null);
             jobsInform.setOrder(list);

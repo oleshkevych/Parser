@@ -32,6 +32,9 @@ public class DbHelper {
     private final static String DB_NAME_16 = "ParserDB16.s3db";
     private final static String DB_NAME_17 = "ParserDB17.s3db";
     private final static String DB_NAME_18 = "ParserDB18.s3db";
+    private final static String DB_NAME_19 = "ParserDB19.s3db";
+    private final static String DB_NAME_20 = "ParserDB20.s3db";
+    private final static String DB_NAME_21 = "ParserDB21.s3db";
     private final static String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS ";
     private final static String DROP_TABLE = "DROP TABLE IF EXISTS ";
 
@@ -69,13 +72,13 @@ public class DbHelper {
         mapParsers.put("wfh.io", DB_NAME_1);
         mapParsers.put("remoteok.io", DB_NAME_1);
         mapParsers.put("landing.jobs", DB_NAME_1);
-        mapParsers.put("startus.cc", DB_NAME_2);
+             mapParsers.put("startus.cc", DB_NAME_18);
         mapParsers.put("virtualvocations.com", DB_NAME_2);
         mapParsers.put("simplyhired.com", DB_NAME_2);
         mapParsers.put("stackoverflow.com", DB_NAME_3);
         mapParsers.put("juju.com", DB_NAME_3);
         mapParsers.put("jobs.drupal.org", DB_NAME_3);
-        mapParsers.put("dutchstartupjobs.com", DB_NAME_4);
+        mapParsers.put("dutchstartupjobs.com", DB_NAME_20);
         mapParsers.put("monster.de", DB_NAME_4);
         mapParsers.put("weloveangular.com", DB_NAME_4);
         mapParsers.put("weworkremotely.com", DB_NAME_5);
@@ -106,6 +109,7 @@ public class DbHelper {
         mapParsers.put("learn4good.com", DB_NAME_16);
         mapParsers.put("canadajobs.com", DB_NAME_16);
         mapParsers.put("drupal.org.uk", DB_NAME_17);
+        mapParsers.put("ziprecruiter.com", DB_NAME_19);
     }
 
     public Connection connect(String link) {
@@ -194,6 +198,8 @@ public class DbHelper {
                     jobsInform.setHeadPublication(rs.getString(HEAD_PUBLICATION));
                     jobsInform.setSeen(rs.getInt(IS_SEEN) == 1);
                     jobsInform.setPublicationLink(rs.getString(PUBLICATION_LINK));
+                    jobsInform.setCompanyName(rs.getString(COMPANY_NAME));
+                    jobsInform.setPlace(rs.getString(PLACE));
                     oldJobsInforms.add(jobsInform);
                 }
                 boolean writeTrigger = false;

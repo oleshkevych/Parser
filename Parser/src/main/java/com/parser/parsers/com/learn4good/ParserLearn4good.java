@@ -6,6 +6,7 @@ import com.parser.entity.DateGenerator;
 import com.parser.entity.JobsInform;
 import com.parser.entity.ListImpl;
 import com.parser.entity.ParserMain;
+import com.parser.parsers.PrintDescription;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -61,7 +62,8 @@ public class ParserLearn4good implements ParserMain {
 
             String url = ("https://www.learn4good.com/jobs/index.php?controller=job_search&action=full_search");
 //            String url = "https://selfsolve.apple.com/wcResults.do";
-            URL obj = new URL(url);
+            String urlParameters = "country_id=0&state_id=0&city_id=0&online_status[]=onsite&online_status[]=online&job_category_ids[]=174&keywords=&min_edu_level_id=0&time_period=5&has_js=has_js";
+            URL obj = new URL(url + "country_id=0&state_id=0&city_id=0&online_status%5B%5D=onsite&online_status%5B%5D=online&job_category_ids%5B%5D=174&keywords=&min_edu_level_id=0&time_period=0&has_js=has_js");
             HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
 
             //add reuqest header
@@ -70,14 +72,13 @@ public class ParserLearn4good implements ParserMain {
             con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
             con.setRequestProperty("Upgrade-Insecure-Requests", "1");
 
-            String urlParameters = "country_id=0&state_id=0&city_id=0&online_status[]=onsite&online_status[]=online&job_category_ids[]=174&keywords=&min_edu_level_id=0&time_period=5&has_js=has_js";
 
             // Send post request
-            con.setDoOutput(true);
-            DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-            wr.writeBytes(urlParameters);
-            wr.flush();
-            wr.close();
+//            con.setDoOutput(true);
+//            DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+//            wr.writeBytes(urlParameters);
+//            wr.flush();
+//            wr.close();
 
             int responseCode = con.getResponseCode();
             System.out.println("\nSending 'POST' request to URL : " + url);
@@ -193,50 +194,52 @@ public class ParserLearn4good implements ParserMain {
             list.add(addHead(tablesHead));
 
 
-            for (int i = 0; i < tablesDescription.size(); i++) {
+//            for (int i = 0; i < tablesDescription.size(); i++) {
+//
+//                if(!tablesDescription.get(i).hasClass("top_section")) {
+//                    if (tablesDescription.get(i).tagName().equals("div")) {
+//                        for (Element e : tablesDescription.get(i).children()) {
+//                            if (e.tagName().equals("p")) {
+//                                list.add(addParagraph(e));
+//                            } else if (e.tagName().equals("ul")) {
+//                                list.add(addList(e));
+//                            } else if (e.tagName().contains("h")) {
+//                                list.add(addHead(e));
+//                            } else if (e.tagName().contains("di")) {
+//                                for (Element e1 : e.children()) {
+//                                    if (e1.tagName().equals("p")) {
+//                                        list.add(addParagraph(e1));
+//                                    } else if (e1.tagName().equals("ul")) {
+//                                        list.add(addList(e1));
+//                                    } else if (e1.tagName().contains("h")) {
+//                                        list.add(addHead(e1));
+//                                    } else if (e1.tagName().equals("div")) {
+//                                        ListImpl list1 = new ListImpl();
+//                                        list1.setTextFieldImpl(e1.text());
+//                                        list.add(list1);
+//                                    }
+//                                }
+//                                ListImpl list1 = new ListImpl();
+//                                list1.setTextFieldImpl(e.ownText());
+//                                list.add(list1);
+//                            }
+//                        }
+//                    }
+//                    if (tablesDescription.get(i).tagName().equals("p")) {
+//                        list.add(addParagraph(tablesDescription.get(i)));
+//                    } else if (tablesDescription.get(i).tagName().equals("ul")) {
+//                        list.add(addList(tablesDescription.get(i)));
+//                    } else if (tablesDescription.get(i).tagName().contains("h")) {
+//                        list.add(addHead(tablesDescription.get(i)));
+//                    } else if (tablesDescription.get(i).tagName().equals("div")) {
+//                        ListImpl list1 = new ListImpl();
+//                        list1.setTextFieldImpl(tablesDescription.get(i).ownText());
+//                        list.add(list1);
+//                    }
+//                }
+//            }
 
-                if(!tablesDescription.get(i).hasClass("top_section")) {
-                    if (tablesDescription.get(i).tagName().equals("div")) {
-                        for (Element e : tablesDescription.get(i).children()) {
-                            if (e.tagName().equals("p")) {
-                                list.add(addParagraph(e));
-                            } else if (e.tagName().equals("ul")) {
-                                list.add(addList(e));
-                            } else if (e.tagName().contains("h")) {
-                                list.add(addHead(e));
-                            } else if (e.tagName().contains("di")) {
-                                for (Element e1 : e.children()) {
-                                    if (e1.tagName().equals("p")) {
-                                        list.add(addParagraph(e1));
-                                    } else if (e1.tagName().equals("ul")) {
-                                        list.add(addList(e1));
-                                    } else if (e1.tagName().contains("h")) {
-                                        list.add(addHead(e1));
-                                    } else if (e1.tagName().equals("div")) {
-                                        ListImpl list1 = new ListImpl();
-                                        list1.setTextFieldImpl(e1.text());
-                                        list.add(list1);
-                                    }
-                                }
-                                ListImpl list1 = new ListImpl();
-                                list1.setTextFieldImpl(e.ownText());
-                                list.add(list1);
-                            }
-                        }
-                    }
-                    if (tablesDescription.get(i).tagName().equals("p")) {
-                        list.add(addParagraph(tablesDescription.get(i)));
-                    } else if (tablesDescription.get(i).tagName().equals("ul")) {
-                        list.add(addList(tablesDescription.get(i)));
-                    } else if (tablesDescription.get(i).tagName().contains("h")) {
-                        list.add(addHead(tablesDescription.get(i)));
-                    } else if (tablesDescription.get(i).tagName().equals("div")) {
-                        ListImpl list1 = new ListImpl();
-                        list1.setTextFieldImpl(tablesDescription.get(i).ownText());
-                        list.add(list1);
-                    }
-                }
-            }
+            list.addAll(new PrintDescription().generateListImpl(tablesDescription));
 
             list.add(null);
             jobsInform.setOrder(list);

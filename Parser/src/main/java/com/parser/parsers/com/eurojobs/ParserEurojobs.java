@@ -4,6 +4,7 @@ import com.parser.entity.DateGenerator;
 import com.parser.entity.JobsInform;
 import com.parser.entity.ListImpl;
 import com.parser.entity.ParserMain;
+import com.parser.parsers.PrintDescription;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -82,8 +83,6 @@ public class ParserEurojobs implements ParserMain {
         Date datePublished = null;
         SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
         for (int i = counter; i < tables2.size(); i += 1) {
-//            System.out.println("text date : " + 11111111);
-//            System.out.println("text date : " + tables2.get(i));
             if(tables2.get(i).select("span").size()>5) {
                 String stringDate = tables2.get(i).select(".listing-info div").first().select("span").last().text();
                 try {
@@ -131,48 +130,49 @@ public class ParserEurojobs implements ParserMain {
             list.add(addHead(tablesHead));
 
 
-            for (int i = 0; i < tablesDescription.size(); i++) {
-
-                if(tablesDescription.get(i).tagName().equals("div")){
-                    for (Element e : tablesDescription.get(i).children()){
-                        if (e.tagName().equals("p")) {
-                            list.add(addParagraph(e));
-                        } else if (e.tagName().equals("ul")) {
-                            list.add(addList(e));
-                        } else if (e.tagName().contains("h")) {
-                            list.add(addHead(e));
-                        }else  if(e.tagName().contains("di")){
-                            for (Element e1 : e.children()){
-                                if (e1.tagName().equals("p")) {
-                                    list.add(addParagraph(e1));
-                                } else if (e1.tagName().equals("ul")) {
-                                    list.add(addList(e1));
-                                } else if (e1.tagName().contains("h")) {
-                                    list.add(addHead(e1));
-                                }else if(e1.tagName().equals("div")) {
-                                    ListImpl list1 = new ListImpl();
-                                    list1.setTextFieldImpl(e1.text());
-                                    list.add(list1);
-                                }
-                            }
-                            ListImpl list1 = new ListImpl();
-                            list1.setTextFieldImpl(e.ownText());
-                            list.add(list1);
-                        }
-                    }
-                }
-                if (tablesDescription.get(i).tagName().equals("p")) {
-                    list.add(addParagraph(tablesDescription.get(i)));
-                } else if (tablesDescription.get(i).tagName().equals("ul")) {
-                    list.add(addList(tablesDescription.get(i)));
-                } else if (tablesDescription.get(i).tagName().contains("h")) {
-                    list.add(addHead(tablesDescription.get(i)));
-                }else if(tablesDescription.get(i).tagName().equals("div")) {
-                    ListImpl list1 = new ListImpl();
-                    list1.setTextFieldImpl(tablesDescription.get(i).ownText());
-                    list.add(list1);
-                }
-            }
+//            for (int i = 0; i < tablesDescription.size(); i++) {
+//
+//                if(tablesDescription.get(i).tagName().equals("div")){
+//                    for (Element e : tablesDescription.get(i).children()){
+//                        if (e.tagName().equals("p")) {
+//                            list.add(addParagraph(e));
+//                        } else if (e.tagName().equals("ul")) {
+//                            list.add(addList(e));
+//                        } else if (e.tagName().contains("h")) {
+//                            list.add(addHead(e));
+//                        }else  if(e.tagName().contains("di")){
+//                            for (Element e1 : e.children()){
+//                                if (e1.tagName().equals("p")) {
+//                                    list.add(addParagraph(e1));
+//                                } else if (e1.tagName().equals("ul")) {
+//                                    list.add(addList(e1));
+//                                } else if (e1.tagName().contains("h")) {
+//                                    list.add(addHead(e1));
+//                                }else if(e1.tagName().equals("div")) {
+//                                    ListImpl list1 = new ListImpl();
+//                                    list1.setTextFieldImpl(e1.text());
+//                                    list.add(list1);
+//                                }
+//                            }
+//                            ListImpl list1 = new ListImpl();
+//                            list1.setTextFieldImpl(e.ownText());
+//                            list.add(list1);
+//                        }
+//                    }
+//                }
+//                if (tablesDescription.get(i).tagName().equals("p")) {
+//                    list.add(addParagraph(tablesDescription.get(i)));
+//                } else if (tablesDescription.get(i).tagName().equals("ul")) {
+//                    list.add(addList(tablesDescription.get(i)));
+//                } else if (tablesDescription.get(i).tagName().contains("h")) {
+//                    list.add(addHead(tablesDescription.get(i)));
+//                }else if(tablesDescription.get(i).tagName().equals("div")) {
+//                    ListImpl list1 = new ListImpl();
+//                    list1.setTextFieldImpl(tablesDescription.get(i).ownText());
+//                    list.add(list1);
+//                }
+//            }
+            list.addAll(new PrintDescription().generateListImpl(tablesDescription));
 
             list.add(null);
             jobsInform.setOrder(list);

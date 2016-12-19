@@ -4,6 +4,7 @@ import com.parser.entity.DateGenerator;
 import com.parser.entity.JobsInform;
 import com.parser.entity.ListImpl;
 import com.parser.entity.ParserMain;
+import com.parser.parsers.PrintDescription;
 import com.parser.parsers.com.weworkremotely.ParserWeworkremotely;
 import com.parser.parsers.io.wfh.ParserWFH;
 import com.parser.parsers.jobs.landing.ParserLandingJobs;
@@ -63,7 +64,7 @@ public class ParserRemoteok implements ParserMain {
         for (int i = counter; i < tables2.size() || i < 100; i ++) {
             Date datePublished = null;
             String stringDate = tables2.get(i).select(".time").text();
-            if (stringDate.contains("min") || stringDate.contains("h")) {
+            if (stringDate.contains("m") || stringDate.contains("h")) {
                 datePublished = new Date();
             } else if (stringDate.contains("1d")) {
                 datePublished = new Date(new Date().getTime() - 1 * 24 * 3600 * 1000);
@@ -132,28 +133,29 @@ public class ParserRemoteok implements ParserMain {
 
             }
             Elements tablesDescription = document.select(".description");
-            Elements tablesHeaders = document.select("[itemprop=\"title\"]");
+            Elements tablesHeaders = document.select("[itemprop='title']");
             List<ListImpl> list = new ArrayList<ListImpl>();
 
             list.add(addHead(tablesHeaders.first()));
-            for (int i = 0; i < tablesDescription.size(); i++) {
+//            for (int i = 0; i < tablesDescription.size(); i++) {
+//
+//                Elements ps = tablesDescription.get(i).select("p");
+//                Elements uls = tablesDescription.get(i).select("ul");
+//
+//
+//                if (ps.size() > 0) {
+//                    for (Element p : ps) {
+//                        list.add(addParagraph(p));
+//                    }
+//                }
+//                if (uls.size() > 0) {
+//                    for (Element ul : uls) {
+//                        list.add(addList(ul));
+//                    }
+//                }
+//            }
 
-                Elements ps = tablesDescription.get(i).select("p");
-                Elements uls = tablesDescription.get(i).select("ul");
-
-
-                if (ps.size() > 0) {
-                    for (Element p : ps) {
-                        list.add(addParagraph(p));
-                    }
-                }
-                if (uls.size() > 0) {
-                    for (Element ul : uls) {
-                        list.add(addList(ul));
-                    }
-                }
-            }
-
+            list.addAll(new PrintDescription().generateListImpl(tablesDescription));
             list.add(null);
             jobsInform.setOrder(list);
 

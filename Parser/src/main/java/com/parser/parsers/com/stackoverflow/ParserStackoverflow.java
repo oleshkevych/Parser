@@ -20,7 +20,7 @@ import java.util.List;
  */
 public class ParserStackoverflow implements ParserMain {
 
-    private String startLink = "https://stackoverflow.com/jobs?sort=p";
+    //    private String startLink = "https://stackoverflow.com/jobs?sort=p";
     private List<JobsInform> jobsInforms = new ArrayList<JobsInform>();
     private Document doc;
     private DateGenerator dateClass;
@@ -35,40 +35,52 @@ public class ParserStackoverflow implements ParserMain {
     }
 
     private void parser() {
-        try {
+        List<String> startLinksList = new ArrayList<>();
+        startLinksList.add("https://stackoverflow.com/jobs?sort=p&q=Drupal");
+        startLinksList.add("https://stackoverflow.com/jobs?sort=p&q=Angular");
+        startLinksList.add("https://stackoverflow.com/jobs?sort=p&q=React");
+        startLinksList.add("https://stackoverflow.com/jobs?sort=p&q=Meteor");
+        startLinksList.add("https://stackoverflow.com/jobs?sort=p&q=Node");
+        startLinksList.add("https://stackoverflow.com/jobs?sort=p&q=Frontend");
+        startLinksList.add("https://stackoverflow.com/jobs?sort=p&q=JavaScript");
+        startLinksList.add("https://stackoverflow.com/jobs?sort=p&q=iOS");
+        startLinksList.add("https://stackoverflow.com/jobs?sort=p&q=mobile");
 
-            doc = Jsoup.connect(startLink)
-                    .validateTLSCertificates(false)
-                    .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-                    .timeout(5000)
-                    .get();
+        for (String link : startLinksList) {
+            try {
 
-            Elements tables2 = doc.select(".listResults .-item");
-            runParse(tables2, 0);
+                doc = Jsoup.connect(link)
+                        .validateTLSCertificates(false)
+                        .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
+                        .timeout(5000)
+                        .get();
 
-            Date datePublished = null;
-            int count = 2;
-            do {
-                try {
+                Elements tables2 = doc.select(".listResults .-item");
+                runParse(tables2, 0);
 
-                    datePublished = null;
-                    doc = Jsoup.connect(startLink + "&pg=" + count)
-                            .validateTLSCertificates(false).userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36").timeout(5000).get();
+//                Date datePublished = null;
+//                int count = 2;
+//                do {
+//                    try {
+//
+//                        datePublished = null;
+//                        doc = Jsoup.connect(link + "&pg=" + count)
+//                                .validateTLSCertificates(false).userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36").timeout(5000).get();
+//
+//                        Elements tables1 = doc.select(".listResults .-item");
+//                        datePublished = runParse(tables1, 0);
+//                        count++;
+//
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//
+//                } while (dateClass.dateChecker(datePublished) && jobsInforms.size() < 100);
 
-                    Elements tables1 = doc.select(".listResults .-item");
-                    datePublished = runParse(tables1, 0);
-                    count++;
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            } while (dateClass.dateChecker(datePublished) && jobsInforms.size() < 100);
-
-        } catch (IOException e) {
-            e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-
     }
 
     private Date runParse(Elements tables2, int counter) {
