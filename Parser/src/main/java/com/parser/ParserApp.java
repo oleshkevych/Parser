@@ -37,6 +37,7 @@ import com.parser.parsers.com.weworkmeteor.ParserWeworkmeteor;
 import com.parser.parsers.com.weworkremotely.ParserWeworkremotely;
 import com.parser.parsers.com.workopolis.ParserWorkopolis;
 import com.parser.parsers.com.ziprecruiter.ParserZiprecruiter;
+import com.parser.parsers.de.drupalcenter.ParserDrupalcenter;
 import com.parser.parsers.de.monster.ParserMonsterDe;
 import com.parser.parsers.de.uberjobs.ParserUberjobs;
 import com.parser.parsers.de.webentwicklerJobs.ParserWebentwicklerJobs;
@@ -154,6 +155,8 @@ public class ParserApp implements MouseListener {
     private JLabel drupalOrgUkLabel;
     private JPanel ziprecruiterLabelPanel;
     private JLabel ziprecruiterLabel;
+    private JPanel drupalcenterLabelPanel;
+    private JLabel drupalcenterLabel;
     private JLabel europeremotelyLabel;
     private JFrame jFrame = new JFrame();
     private Component c;
@@ -248,6 +251,8 @@ public class ParserApp implements MouseListener {
         mapParsers.put("drupal.org.uk", new ParserDrupalOrgUk());
 /*40*/
         mapParsers.put("ziprecruiter.com", new ParserZiprecruiter());
+/*41*/
+        mapParsers.put("drupalcenter.de", new ParserDrupalcenter());
 
         ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(4);
 //        for (int i = 0; i < linkPanel.getComponents().length; i++) {
@@ -258,7 +263,7 @@ public class ParserApp implements MouseListener {
 //            executor.execute(new Task(labelPanel, mapParsers.get(homeLink), homeLink));
 //        }
 
-        JPanel labelPanel = (JPanel) linkPanel.getComponents()[9];
+        JPanel labelPanel = (JPanel) linkPanel.getComponents()[35];
         labelPanel.setBackground(new Color(0x717184));
         JLabel label = (JLabel) labelPanel.getComponent(0);
         String homeLink = label.getText();
@@ -306,6 +311,7 @@ public class ParserApp implements MouseListener {
         canadajobsLabel.addMouseListener(this);
         drupalOrgUkLabel.addMouseListener(this);
         ziprecruiterLabel.addMouseListener(this);
+        drupalcenterLabel.addMouseListener(this);
     }
 
     private void panelFiller(final List<JobsInform> jobsInformList, String homeLink) {
@@ -1747,6 +1753,34 @@ public class ParserApp implements MouseListener {
         ziprecruiterLabel.setVerifyInputWhenFocusTarget(false);
         ziprecruiterLabel.putClientProperty("html.disable", Boolean.TRUE);
         ziprecruiterLabelPanel.add(ziprecruiterLabel);
+        drupalcenterLabelPanel = new JPanel();
+        drupalcenterLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        drupalcenterLabelPanel.setAlignmentX(0.0f);
+        drupalcenterLabelPanel.setAlignmentY(0.0f);
+        drupalcenterLabelPanel.setAutoscrolls(true);
+        drupalcenterLabelPanel.setBackground(new Color(-721665));
+        drupalcenterLabelPanel.setMaximumSize(new Dimension(210, 30));
+        drupalcenterLabelPanel.setMinimumSize(new Dimension(180, 30));
+        drupalcenterLabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(drupalcenterLabelPanel);
+        drupalcenterLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        drupalcenterLabel = new JLabel();
+        drupalcenterLabel.setAutoscrolls(false);
+        drupalcenterLabel.setEnabled(true);
+        drupalcenterLabel.setFocusable(false);
+        drupalcenterLabel.setFont(new Font("Times New Roman", drupalcenterLabel.getFont().getStyle(), 12));
+        drupalcenterLabel.setForeground(new Color(-16777216));
+        drupalcenterLabel.setHorizontalAlignment(2);
+        drupalcenterLabel.setHorizontalTextPosition(2);
+        drupalcenterLabel.setMaximumSize(new Dimension(170, 30));
+        drupalcenterLabel.setMinimumSize(new Dimension(-1, -1));
+        drupalcenterLabel.setOpaque(false);
+        drupalcenterLabel.setPreferredSize(new Dimension(170, 30));
+        drupalcenterLabel.setText("drupalcenter.de");
+        drupalcenterLabel.setToolTipText("http://www.drupalcenter.de");
+        drupalcenterLabel.setVerifyInputWhenFocusTarget(false);
+        drupalcenterLabel.putClientProperty("html.disable", Boolean.TRUE);
+        drupalcenterLabelPanel.add(drupalcenterLabel);
         jobPanel = new JPanel();
         jobPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5));
         jobPanel.setAutoscrolls(false);

@@ -38,42 +38,56 @@ public class ParserJobs implements ParserMain {
     }
 
     private void parser() {
-        try {
 
-            doc = Jsoup.connect(startLink)
-                    .validateTLSCertificates(false)
-                    .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-                    .timeout(5000)
-                    .get();
+        List<String> startLinksList = new ArrayList<>();
+        startLinksList.add("http://www.jobs.ch/en/vacancies/?page=1&sort-by=date&term=Drupal+&web-results=1");
+        startLinksList.add("http://www.jobs.ch/en/vacancies/?page=1&sort-by=date&term=Angular+&web-results=1");
+        startLinksList.add("http://www.jobs.ch/en/vacancies/?page=1&sort-by=date&term=React+&web-results=1");
+        startLinksList.add("http://www.jobs.ch/en/vacancies/?page=1&sort-by=date&term=Meteor+&web-results=1");
+        startLinksList.add("http://www.jobs.ch/en/vacancies/?page=1&sort-by=date&term=Node+&web-results=1");
+        startLinksList.add("http://www.jobs.ch/en/vacancies/?page=1&sort-by=date&term=Frontend+&web-results=1");
+        startLinksList.add("http://www.jobs.ch/en/vacancies/?page=1&sort-by=date&term=iOS+&web-results=1");
+        startLinksList.add("http://www.jobs.ch/en/vacancies/?page=1&sort-by=date&term=JavaScript+&web-results=1");
+        startLinksList.add("http://www.jobs.ch/en/vacancies/?page=1&sort-by=date&term=mobile+&web-results=1");
 
-            Elements tables2 = doc.select(".serp-item-job-info");
-            runParse(tables2, 0);
+        for (String link : startLinksList) {
+            try {
 
-            Date datePublished = null;
-            int count = 2;
-            do {
-                try {
-                    datePublished = null;
+                doc = Jsoup.connect(link)
+                        .validateTLSCertificates(false)
+                        .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
+                        .timeout(5000)
+                        .get();
 
-                    doc = Jsoup.connect(startLink.replace((count - 1) + "", count + ""))
-                            .validateTLSCertificates(false)
-                            .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-                            .timeout(5000)
-                            .get();
+                Elements tables2 = doc.select(".serp-item-job-info");
+                runParse(tables2, 0);
 
-                    Elements tables1 = doc.select(".serp-item-job-info");
-                    datePublished = runParse(tables1, 0);
-                    count++;
-                    System.out.println("text date : ParserJobs" + jobsInforms.size());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            } while (dateClass.dateChecker(datePublished) && jobsInforms.size() < 20);
+                Date datePublished = null;
+                int count = 2;
+                String nextLink = link;
+                do {
+                    try {
+                        datePublished = null;
+                        nextLink = nextLink.replace("page=" + (count - 1), "page=" + count);
 
-        } catch (IOException e) {
-            e.printStackTrace();
+                        doc = Jsoup.connect(nextLink)
+                                .validateTLSCertificates(false)
+                                .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
+                                .timeout(5000)
+                                .get();
+
+                        Elements tables1 = doc.select(".serp-item-job-info");
+                        datePublished = runParse(tables1, 0);
+                        count++;
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } while (dateClass.dateChecker(datePublished) && jobsInforms.size() < (20 * startLinksList.indexOf(link)));
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-
     }
 
     private Date runParse(Elements tables2, int counter) {
@@ -83,6 +97,7 @@ public class ParserJobs implements ParserMain {
         for (int i = counter; i < tables2.size(); i += 1) {
             if (i == 100)
                 break;
+            datePublished = null;
             String stringDate = tables2.get(i).select(".serp-item-meta .badge-pool .outline").first().text();
 
             try {
@@ -98,7 +113,7 @@ public class ParserJobs implements ParserMain {
     }
 
     private void objectGenerator(Element place, Element headPost, Element company, Date datePublished, Element linkDescription) {
-        if (dateClass.dateChecker(datePublished) && jobsInforms.size() < 20) {
+        if (dateClass.dateChecker(datePublished)) {
             JobsInform jobsInform = new JobsInform();
             jobsInform.setPublishedDate(datePublished);
             jobsInform.setHeadPublication(headPost.text());

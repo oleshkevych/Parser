@@ -1,5 +1,4 @@
-package com.parser.parsers.com.weloveangular;
-
+package com.parser.parsers.de.drupalcenter;
 
 import com.parser.entity.DateGenerator;
 import com.parser.entity.JobsInform;
@@ -12,22 +11,21 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 /**
- * Created by rolique_pc on 12/7/2016.
+ * Created by rolique_pc on 12/20/2016.
  */
-public class ParserWeloveangular implements ParserMain {
-    private String startLink = "http://www.weloveangular.com/";
+public class ParserDrupalcenter implements ParserMain {
+
+    private String startLink = "http://www.drupalcenter.de/drupal-jobs";
     private List<JobsInform> jobsInforms = new ArrayList<JobsInform>();
     private Document doc;
     private DateGenerator dateClass;
 
-    public ParserWeloveangular() {
+    public ParserDrupalcenter() {
     }
 
     public List<JobsInform> startParse() {
@@ -45,49 +43,51 @@ public class ParserWeloveangular implements ParserMain {
                     .timeout(5000)
                     .get();
 
-            Elements tables2 = doc.select(".stream-job");
+            Elements tables2 = doc.select("#forum tbody tr");
             runParse(tables2, 0);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
+
 
     private Date runParse(Elements tables2, int counter) {
         System.out.println("text date : " + tables2.size());
         Date datePublished = null;
-        SimpleDateFormat formatter = new SimpleDateFormat("MMM dd yyyy");
         for (int i = counter; i < tables2.size(); i += 1) {
-
-            String stringDate = tables2.get(i).select(".date").first().text() + " 2016";
-            if (stringDate.length() < 11) {
-                String day = stringDate.substring(4);
-                stringDate = stringDate.substring(0, 4) + day;
+            datePublished = null;
+            String stringDate = tables2.get(i).select(".created").text();
+            if (!stringDate.contains("Wochen")) {
+                if ((!stringDate.contains("Tag")) && (stringDate.contains("Min") || stringDate.contains("Stund"))) {
+                    datePublished = new Date();
+                } else if (stringDate.contains("1 Tag")) {
+                    datePublished = new Date(new Date().getTime() - 1 * 24 * 3600 * 1000);
+                } else if (stringDate.contains("2 Tag")) {
+                    datePublished = new Date(new Date().getTime() - 2 * 24 * 3600 * 1000);
+                } else if (stringDate.contains("3 Tag")) {
+                    datePublished = new Date(new Date().getTime() - 3 * 24 * 3600 * 1000);
+                } else if (stringDate.contains("4 Tag")) {
+                    datePublished = new Date(new Date().getTime() - 4 * 24 * 3600 * 1000);
+                } else if (stringDate.contains("5 Tag")) {
+                    datePublished = new Date(new Date().getTime() - 5 * 24 * 3600 * 1000);
+                } else if (stringDate.contains("6 Tag")) {
+                    datePublished = new Date(new Date().getTime() - 6 * 24 * 3600 * 1000);
+                }
             }
 
-            try {
-                datePublished = formatter.parse(stringDate);
-                objectGenerator(tables2.get(i).select("span[itemprop=\"jobLocation\"]").first(), tables2.get(i).select(".media-heading").first(),
-                        tables2.get(i).select("div > strong").first(), datePublished, tables2.get(i).select(".media-heading a").first());
-            } catch (ParseException e) {
-                System.out.println(e.getMessage());
-            }
-
+            objectGenerator(tables2.get(i), tables2.get(i).select(".title").first(),
+                    tables2.get(i), datePublished, tables2.get(i).select(".title a").first());
         }
         return datePublished;
     }
 
     private void objectGenerator(Element place, Element headPost, Element company, Date datePublished, Element linkDescription) {
-        if (dateClass.dateChecker(datePublished)&& jobsInforms.size() < 100) {
+        if (dateClass.dateChecker(datePublished)) {
             JobsInform jobsInform = new JobsInform();
             jobsInform.setPublishedDate(datePublished);
             jobsInform.setHeadPublication(headPost.text());
-            if (company != null) {
-                jobsInform.setCompanyName(company.text());
-            } else {
-                jobsInform.setCompanyName("");
-            }
-            jobsInform.setPlace(place.text());
+            jobsInform.setCompanyName("");
+            jobsInform.setPlace("");
             jobsInform.setPublicationLink(linkDescription.attr("abs:href"));
             jobsInform = getDescription(linkDescription.attr("abs:href"), jobsInform);
             if (!jobsInforms.contains(jobsInform)) {
@@ -106,26 +106,13 @@ public class ParserWeloveangular implements ParserMain {
                     .get();
 
 
-            Elements tablesDescription = document.select("div[itemprop=\"description\"]");
+            Elements tablesDescription = document.select(".node .content").first().children();
+            Elements tablesHead = document.select(".title");
             List<ListImpl> list = new ArrayList<ListImpl>();
-            list.add(addHead(document.select(".title").first()));
-//            for (int i = 0; i < tablesDescription.size(); i++) {
-//                for (Element e : tablesDescription.get(i).getAllElements()) {
-//
-//                    if (e.tagName().contains("h")) {
-//                        list.add(null);
-//                        list.add(addHead(e));
-//                    } else if (e.tagName().equals("p")) {
-//                        list.add(addParagraph(e));
-//                    } else if (e.tagName().equals("ul")) {
-//                        list.add(addList(e));
-//                    }
-//                }
-//
-//
-//            }
 
+            list.add(addHead(tablesHead.first()));
             list.addAll(new PrintDescription().generateListImpl(tablesDescription));
+
             list.add(null);
             jobsInform.setOrder(list);
 
@@ -145,23 +132,4 @@ public class ParserWeloveangular implements ParserMain {
         return list;
     }
 
-    private static ListImpl addParagraph(Element element) {
-        if (element.select("strong").size() > 0) {
-            return addHead(element.select("strong").first());
-        } else {
-            ListImpl list = new ListImpl();
-            list.setTextFieldImpl(element.text());
-            return list;
-        }
-    }
-
-    private static ListImpl addList(Element element) {
-        ListImpl list = new ListImpl();
-        List<String> strings = new ArrayList<String>();
-        for (Element e : element.getAllElements()) {
-            strings.add(e.text());
-        }
-        list.setListItem(strings);
-        return list;
-    }
 }

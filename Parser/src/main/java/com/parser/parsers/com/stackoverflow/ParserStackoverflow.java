@@ -87,7 +87,7 @@ public class ParserStackoverflow implements ParserMain {
         System.out.println("text date : " + tables2.size());
         Date datePublished = null;
         for (int i = counter; i < tables2.size(); i += 1) {
-
+            datePublished = null;
             String stringDate = tables2.get(i).select(".posted").text();
             if (stringDate.contains("minut") || stringDate.contains("hour")) {
                 datePublished = new Date();

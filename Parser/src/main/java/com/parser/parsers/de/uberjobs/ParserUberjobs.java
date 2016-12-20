@@ -33,6 +33,7 @@ public class ParserUberjobs implements ParserMain {
         parser();
         return jobsInforms;
     }
+
     private Document renderPage(String url) {
         DesiredCapabilities caps = new DesiredCapabilities();
         caps.setJavascriptEnabled(true);
@@ -50,49 +51,14 @@ public class ParserUberjobs implements ParserMain {
     }
 
     private void parser() {
-        try {
-            doc = Jsoup.connect(startLink)
-                    .validateTLSCertificates(false)
-                    .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-                    .timeout(5000)
-                    .get();
-            doc = renderPage(startLink);
-            Elements tables2 = doc.select(".clickable");
-//            System.out.println("text : " + tables2);
-            runParse(tables2, 0);
-
-//            Date datePublished = null;
-//            int count = 2;
-////            do {
-//                try {
-//
-//
-//                    // need http protocol
-//                    doc = Jsoup.connect(startLink + "&pg=" + count)
-//                            .validateTLSCertificates(false).userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36").timeout(5000).get();
-//
-//                    Elements tables1 = doc.select(".listResults .-item");
-////            System.out.println("text : " + tables2);
-//                    datePublished = runParse(tables1, 0);
-//                    count++;
-//
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//
-//            }while(dateClass.dateChecker(datePublished));
-
-        }catch (Exception e){
-            e.printStackTrace();
-            ghostDriver.quit();
-        }
-        finally {
-            ghostDriver.quit();
-        }
+        doc = renderPage(startLink);
+        Elements tables2 = doc.select(".clickable");
+        runParse(tables2, 0);
+        ghostDriver.quit();
     }
 
     private void runParse(Elements tables2, int counter) {
-        System.out.println("Error : " +" " + tables2.size());
+        System.out.println("size : " + " " + tables2.size());
 
         for (int i = counter; i < tables2.size(); i += 1) {
             objectGenerator(tables2.get(i).select(".ort").first(), tables2.get(i).select(".job-title").first(),
@@ -103,10 +69,6 @@ public class ParserUberjobs implements ParserMain {
 
     private void objectGenerator(Element place, Element headPost, Element company, Element linkDescription) {
         if (jobsInforms.size() < 50) {
-//            System.out.println("Error : " +" " + linkDescription);
-//            System.out.println("Error : " +" " + "https://uberjobs.de/" + linkDescription.attr("href"));
-//            System.out.println("Error : " +" " + linkDescription.attr("href"));
-
             JobsInform jobsInform = new JobsInform();
             jobsInform.setPublishedDate(null);
             jobsInform.setHeadPublication(headPost.text());

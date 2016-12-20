@@ -37,41 +37,54 @@ public class ParserJobbank implements ParserMain {
     }
 
     private void parser() {
-        try {
 
-            doc = Jsoup.connect(startLink)
-                    .validateTLSCertificates(false)
-                    .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-                    .timeout(5000)
-                    .get();
+    List<String> startLinksList = new ArrayList<>();
+        startLinksList.add("http://jobbank.dk/job/?act=find&key=Drupal&virk=&oprettet=");
+        startLinksList.add("http://jobbank.dk/job/?act=find&key=Angular&virk=&oprettet=");
+        startLinksList.add("http://jobbank.dk/job/?act=find&key=React&virk=&oprettet=");
+        startLinksList.add("http://jobbank.dk/job/?act=find&key=Meteor&virk=&oprettet=");
+        startLinksList.add("http://jobbank.dk/job/?act=find&key=Node&virk=&oprettet=");
+        startLinksList.add("http://jobbank.dk/job/?act=find&key=Frontend&virk=&oprettet=");
+        startLinksList.add("http://jobbank.dk/job/?act=find&key=JavaScript&virk=&oprettet=");
+        startLinksList.add("http://jobbank.dk/job/?act=find&key=iOS&virk=&oprettet=");
+        startLinksList.add("http://jobbank.dk/job/?act=find&key=mobile&virk=&oprettet=");
 
-            Elements tables2 = doc.select(".job-item-container");
-            runParse(tables2, 0);
+        for (String link : startLinksList) {
+            try {
 
-            Date datePublished = null;
-            int count = 2;
-            do {
-                try {
+                doc = Jsoup.connect(link)
+                        .validateTLSCertificates(false)
+                        .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
+                        .timeout(5000)
+                        .get();
 
-                    datePublished = null;
-                    // need http protocol
-                    doc = Jsoup.connect(startLink + "?&page=" + count)
-                            .validateTLSCertificates(false).userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36").timeout(5000).get();
+                Elements tables2 = doc.select(".job-item-container");
+                runParse(tables2, 0);
 
-                    Elements tables1 = doc.select(".job-item-container");
-                    datePublished = runParse(tables1, 0);
-                    count++;
+                Date datePublished = null;
+                int count = 2;
+                do {
+                    try {
 
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                        datePublished = null;
+                        // need http protocol
+                        doc = Jsoup.connect(link + "?&page=" + count)
+                                .validateTLSCertificates(false).userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36").timeout(5000).get();
 
-            } while (dateClass.dateChecker(datePublished) && jobsInforms.size() < 100);
+                        Elements tables1 = doc.select(".job-item-container");
+                        datePublished = runParse(tables1, 0);
+                        count++;
 
-        } catch (IOException e) {
-            e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                } while (dateClass.dateChecker(datePublished) && jobsInforms.size() < 180);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-
     }
 
     private Date runParse(Elements tables2, int counter) {

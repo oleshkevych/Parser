@@ -55,27 +55,6 @@ public class ParserWeworkremotely implements ParserMain {
 
             Elements tables = doc.select(".jobs li");
             runParse(tables, 0);
-            Date datePublished = null;
-            int count = 2;
-//            do {
-//                try {
-//
-//
-//                    // need http protocol
-//                    doc = Jsoup.connect(startLink + "&pg=" + count)
-//                            .validateTLSCertificates(false).userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36").timeout(5000).get();
-//
-//                    Elements tables1 = doc.select(".listResults .-item");
-////            System.out.println("text : " + tables2);
-//                    datePublished = runParse(tables1, 0);
-//                    count++;
-//
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//
-//            }while(dateClass.dateChecker(datePublished));
-
         } catch (IOException e) {
             e.printStackTrace();
         }

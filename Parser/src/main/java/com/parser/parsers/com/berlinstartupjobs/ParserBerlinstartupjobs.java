@@ -4,10 +4,12 @@ import com.parser.entity.DateGenerator;
 import com.parser.entity.JobsInform;
 import com.parser.entity.ListImpl;
 import com.parser.entity.ParserMain;
+import com.parser.parsers.PrintDescription;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import sun.print.PrinterGraphicsDevice;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -133,8 +135,10 @@ public class ParserBerlinstartupjobs implements ParserMain {
             Elements tablesDescriptionJob = tablesDescription.select(".job-details").first().children();
             List<ListImpl> list = new ArrayList<ListImpl>();
             list.add(addHead(tablesDescription.select("h1").first()));
-            list.addAll(tablesCompAbout.stream().map(ParserBerlinstartupjobs::checker).collect(Collectors.toList()));
-            list.addAll(tablesDescriptionJob.stream().map(ParserBerlinstartupjobs::checker).collect(Collectors.toList()));
+            list.addAll(new PrintDescription().generateListImpl(tablesCompAbout));
+            list.addAll(new PrintDescription().generateListImpl(tablesDescriptionJob));
+//            list.addAll(tablesCompAbout.stream().map(ParserBerlinstartupjobs::checker).collect(Collectors.toList()));
+//            list.addAll(tablesDescriptionJob.stream().map(ParserBerlinstartupjobs::checker).collect(Collectors.toList()));
 
             list.add(null);
             jobsInform.setOrder(list);

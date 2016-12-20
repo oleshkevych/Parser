@@ -4,6 +4,7 @@ import com.parser.entity.DateGenerator;
 import com.parser.entity.JobsInform;
 import com.parser.entity.ListImpl;
 import com.parser.entity.ParserMain;
+import com.parser.parsers.PrintDescription;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -20,7 +21,7 @@ import java.util.List;
  * Created by rolique_pc on 12/15/2016.
  */
 public class ParserGugu implements ParserMain {
-    private String startLink = "http://www.guru.com/d/jobs/";
+    private String startLink = "http://www.guru.com/d/freelancers/q/drupal/";
     private List<JobsInform> jobsInforms = new ArrayList<JobsInform>();
     private Document doc;
     private DateGenerator dateClass;
@@ -35,78 +36,75 @@ public class ParserGugu implements ParserMain {
     }
 
     private void parser() {
-        try {
 
-
-            // need http protocol
-            doc = Jsoup.connect(startLink)
-                    .validateTLSCertificates(false)
-                    .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-                    .timeout(5000)
-                    .get();
-
-            Elements tables2 = doc.select(".serviceItem");
-//            System.out.println("text : " + tables2);
-            runParse(tables2, 0);
-
-            Date datePublished = null;
-            int count = 2;
+        List<String> startLinksList = new ArrayList<>();
+        startLinksList.add("http://www.guru.com/d/freelancers/q/drupal/pg/1/");
+        startLinksList.add("http://www.guru.com/d/freelancers/q/angular/pg/1/");
+        startLinksList.add("http://www.guru.com/d/freelancers/q/react/pg/1/");
+        startLinksList.add("http://www.guru.com/d/freelancers/q/meteor/pg/1/");
+        startLinksList.add("http://www.guru.com/d/freelancers/q/node/pg/1/");
+        startLinksList.add("http://www.guru.com/d/freelancers/q/frontend/pg/1/");
+        startLinksList.add("http://www.guru.com/d/freelancers/q/javascript/pg/1/");
+        startLinksList.add("http://www.guru.com/d/freelancers/q/ios/pg/1/");
+        startLinksList.add("http://www.guru.com/d/freelancers/q/mobile/pg/1/");
+        for (String link : startLinksList) {
+//            Date datePublished = null;
+            int count = 1;
             do {
                 try {
 
-                    datePublished = null;
+//                    datePublished = null;
                     // need http protocol
-                    doc = Jsoup.connect(startLink + "pg/" + count + "/")
+                    doc = Jsoup.connect(link + "pg/" + count + "/")
                             .validateTLSCertificates(false)
                             .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
                             .timeout(15000)
                             .get();
 
                     Elements tables1 = doc.select(".serviceItem");
-                    datePublished = runParse(tables1, 0);
+                   /* datePublished =*/ runParse(tables1, 0);
                     count++;
 
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
 
-            } while (dateClass.dateChecker(datePublished) && jobsInforms.size() < 100);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    private Date runParse(Elements tables2, int counter) {
-        System.out.println("text date : " + tables2.size());
-        Date datePublished = null;
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        for (int i = counter; i < tables2.size(); i += 1) {
-            String stringDate = tables2.get(i).select(".reltime_new").attr("data-date").substring(0, 10);
-//            System.out.println("text date : " + stringDate);
-            try {
-                datePublished = formatter.parse(stringDate);
-                objectGenerator(tables2.get(i).select(".countryInfo").first(), tables2.get(i).select(".servTitle").first(),
-                        tables2.get(i), datePublished, tables2.get(i).select(".servTitle a").first());
-            } catch (ParseException e) {
-                System.out.println(e.getMessage());
-
             }
-
+            while (/*dateClass.dateChecker(datePublished) &&*/ jobsInforms.size() < startLinksList.indexOf(link) * 20);
         }
-        return datePublished;
     }
 
-    private void objectGenerator(Element place, Element headPost, Element company, Date datePublished, Element linkDescription) {
-        if (dateClass.dateChecker(datePublished)) {
+    private /*Date*/void runParse(Elements tables2, int counter) {
+        System.out.println("text date : " + tables2.size());
+//        Date datePublished = null;
+//        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        for (int i = counter; i < tables2.size(); i += 1) {
+
+//            System.out.println("        "+tables2.get(i));
+//            String stringDate = tables2.get(i).select(".reltime_new").attr("data-date").substring(0, 10);
+//            System.out.println("text date : " + stringDate);
+//            try {
+//                datePublished = formatter.parse(stringDate);
+                objectGenerator(tables2.get(i).select(".countryInfo").first(), tables2.get(i).select(".servTitle").first(),
+                        tables2.get(i).select("[id='aSName']").first(), /*datePublished,*/ tables2.get(i).select(".servTitle a").first());
+//            } catch (ParseException e) {
+//                System.out.println(e.getMessage());
+//
+//            }
+
+        }
+//        return datePublished;
+    }
+
+    private void objectGenerator(Element place, Element headPost, Element company, /*Date datePublished,*/ Element linkDescription) {
+//        if (dateClass.dateChecker(datePublished)) {
             JobsInform jobsInform = new JobsInform();
-            jobsInform.setPublishedDate(datePublished);
+//            jobsInform.setPublishedDate(datePublished);
             jobsInform.setHeadPublication(headPost.text());
             jobsInform.setPlace(place.ownText().substring(0, place.ownText().indexOf(" $")));
-            jobsInform.setCompanyName("");
+            jobsInform.setCompanyName(company.text());
             jobsInform.setPublicationLink(linkDescription.attr("abs:href"));
-//            jobsInform = getDescription(linkDescription.attr("abs:href"), jobsInform);
+            jobsInform = getDescription(linkDescription.attr("abs:href"), jobsInform);
             List<ListImpl> list = new ArrayList<ListImpl>();
             list.add(addHead(headPost));
             list.add(null);
@@ -114,7 +112,7 @@ public class ParserGugu implements ParserMain {
             if (!jobsInforms.contains(jobsInform)) {
                 jobsInforms.add(jobsInform);
             }
-        }
+//        }
     }
 
     public static JobsInform getDescription(String linkToDescription, JobsInform jobsInform) {
@@ -127,20 +125,21 @@ public class ParserGugu implements ParserMain {
                     .get();
 
 
-            Elements tablesDescription = document.select("#job-description").first().select("p");
+            Elements tablesDescription = document.select("[itemprop='description']");
             Element tablesHead = document.select("h1").first();
-            Elements tablesPlace = document.select("#job-description").get(1).select("tr");
+//            Elements tablesPlace = document.select("#job-description").get(1).select("tr");
             List<ListImpl> list = new ArrayList<ListImpl>();
             list.add(addHead(tablesHead));
-            tablesPlace.stream().filter(e -> e.select("th").first().text().contains("Location")).forEach(e -> {
-                jobsInform.setPlace(e.select("td").first().ownText());
-            });
+//            tablesPlace.stream().filter(e -> e.select("th").first().text().contains("Location")).forEach(e -> {
+//                jobsInform.setPlace(e.select("td").first().ownText());
+//            });
 
-            for (int i = 0; i < tablesDescription.size(); i++) {
-
-
-                list.add(addParagraph(tablesDescription.get(i)));
-            }
+//            for (int i = 0; i < tablesDescription.size(); i++) {
+//
+//
+//                list.add(addParagraph(tablesDescription.get(i)));
+//            }
+            list.addAll(new PrintDescription().generateListImpl(tablesDescription));
 
             list.add(null);
             jobsInform.setOrder(list);

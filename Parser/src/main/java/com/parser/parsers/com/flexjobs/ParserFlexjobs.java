@@ -21,7 +21,7 @@ import java.util.List;
  * Created by rolique_pc on 12/9/2016.
  */
 public class ParserFlexjobs implements ParserMain {
-    private String startLink = "https://www.flexjobs.com/jobs/computer-it";
+    private String startLink = "https://www.flexjobs.com/jobs/web-software-development-programming";
     private List<JobsInform> jobsInforms = new ArrayList<JobsInform>();
     private Document doc;
     private DateGenerator dateClass;

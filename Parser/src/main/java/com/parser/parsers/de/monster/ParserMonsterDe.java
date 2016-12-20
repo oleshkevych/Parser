@@ -36,41 +36,53 @@ public class ParserMonsterDe implements ParserMain {
     }
 
     private void parser() {
-        try {
+        List<String> startLinksList = new ArrayList<>();
+        startLinksList.add("http://www.monster.de/jobs/suche/?q=Drupal+&where=&intcid=swoop_HeroSearch&cy=de&rad=20");
+        startLinksList.add("http://www.monster.de/jobs/suche/?q=Angular+&where=&intcid=swoop_HeroSearch&cy=de&rad=20");
+        startLinksList.add("http://www.monster.de/jobs/suche/?q=React+&where=&intcid=swoop_HeroSearch&cy=de&rad=20");
+        startLinksList.add("http://www.monster.de/jobs/suche/?q=Meteor+&where=&intcid=swoop_HeroSearch&cy=de&rad=20");
+        startLinksList.add("http://www.monster.de/jobs/suche/?q=Node+&where=&intcid=swoop_HeroSearch&cy=de&rad=20");
+        startLinksList.add("http://www.monster.de/jobs/suche/?q=Frontend+&where=&intcid=swoop_HeroSearch&cy=de&rad=20");
+        startLinksList.add("http://www.monster.de/jobs/suche/?q=JavaScript+&where=&intcid=swoop_HeroSearch&cy=de&rad=20");
+        startLinksList.add("http://www.monster.de/jobs/suche/?q=iOS+&where=&intcid=swoop_HeroSearch&cy=de&rad=20");
+        startLinksList.add("http://www.monster.de/jobs/suche/?q=mobile+&where=&intcid=swoop_HeroSearch&cy=de&rad=20");
+
+        for (String link : startLinksList) {
+            try {
 
 
-            // need http protocol
-            doc = Jsoup.connect(startLink)
-                    .validateTLSCertificates(false)
-                    .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-                    .timeout(5000)
-                    .get();
+                // need http protocol
+                doc = Jsoup.connect(link)
+                        .validateTLSCertificates(false)
+                        .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
+                        .timeout(5000)
+                        .get();
 
-            Elements tables2 = doc.select(".js_result_row");
-            runParse(tables2, 0);
+                Elements tables2 = doc.select(".js_result_row");
+                runParse(tables2, 0);
 
-            Date datePublished = null;
-            int count = 2;
-            do {
-                try {
+                Date datePublished = null;
+                int count = 2;
+                do {
+                    try {
 
-                    doc = Jsoup.connect(startLink + "&page=" + count)
-                            .validateTLSCertificates(false).userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36").timeout(5000).get();
+                        doc = Jsoup.connect(link + "&page=" + count)
+                                .validateTLSCertificates(false).userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36").timeout(5000).get();
 
-                    Elements tables1 = doc.select(".js_result_row");
-                    datePublished = runParse(tables1, 0);
-                    count++;
+                        Elements tables1 = doc.select(".js_result_row");
+                        datePublished = runParse(tables1, 0);
+                        count++;
 
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
 
-            } while (dateClass.dateChecker(datePublished)&& jobsInforms.size() < 100);
+                } while (dateClass.dateChecker(datePublished) && jobsInforms.size() < (startLinksList.indexOf(link)+1) * 20);
 
-        } catch (IOException e) {
-            e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-
     }
 
     private Date runParse(Elements tables2, int counter) {

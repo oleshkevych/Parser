@@ -35,6 +35,12 @@ public class DbHelper {
     private final static String DB_NAME_19 = "ParserDB19.s3db";
     private final static String DB_NAME_20 = "ParserDB20.s3db";
     private final static String DB_NAME_21 = "ParserDB21.s3db";
+    private final static String DB_NAME_22 = "ParserDB22.s3db";
+    private final static String DB_NAME_23 = "ParserDB23.s3db";
+    private final static String DB_NAME_24 = "ParserDB24.s3db";
+    private final static String DB_NAME_25 = "ParserDB25.s3db";
+    private final static String DB_NAME_26 = "ParserDB26.s3db";
+    private final static String DB_NAME_27 = "ParserDB27.s3db";
     private final static String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS ";
     private final static String DROP_TABLE = "DROP TABLE IF EXISTS ";
 
@@ -102,7 +108,7 @@ public class DbHelper {
         mapParsers.put("careerbuilder.com", DB_NAME_12);
         mapParsers.put("webentwickler-jobs.de", DB_NAME_13);
         mapParsers.put("uberjobs.de", DB_NAME_14);
-        mapParsers.put("guru.com", DB_NAME_14);
+        mapParsers.put("guru.com", DB_NAME_22);
         mapParsers.put("authenticjobs.com", DB_NAME_15);
         mapParsers.put("eurojobs.com", DB_NAME_15);
         mapParsers.put("technojobs.co.uk", DB_NAME_16);
@@ -110,6 +116,7 @@ public class DbHelper {
         mapParsers.put("canadajobs.com", DB_NAME_16);
         mapParsers.put("drupal.org.uk", DB_NAME_17);
         mapParsers.put("ziprecruiter.com", DB_NAME_19);
+        mapParsers.put("drupalcenter.de", DB_NAME_21);
     }
 
     public Connection connect(String link) {

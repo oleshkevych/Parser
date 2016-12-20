@@ -36,45 +36,38 @@ public class ParserEurojobs implements ParserMain {
     }
 
     private void parser() {
-//        try {
+
+    List<String> startLinksList = new ArrayList<>();
+        startLinksList.add("https://www.eurojobs.com/search-results-jobs/?action=search&listing_type%5Bequal%5D=Job&keywords%5Ball_words%5D=Drupal+&Location%5Blocation%5D%5Bvalue%5D=&Location%5Blocation%5D%5Bradius%5D=10");
+        startLinksList.add("https://www.eurojobs.com/search-results-jobs/?action=search&listing_type%5Bequal%5D=Job&keywords%5Ball_words%5D=Angular+&Location%5Blocation%5D%5Bvalue%5D=&Location%5Blocation%5D%5Bradius%5D=10");
+        startLinksList.add("https://www.eurojobs.com/search-results-jobs/?action=search&listing_type%5Bequal%5D=Job&keywords%5Ball_words%5D=React+&Location%5Blocation%5D%5Bvalue%5D=&Location%5Blocation%5D%5Bradius%5D=10");
+        startLinksList.add("https://www.eurojobs.com/search-results-jobs/?action=search&listing_type%5Bequal%5D=Job&keywords%5Ball_words%5D=Meteor+&Location%5Blocation%5D%5Bvalue%5D=&Location%5Blocation%5D%5Bradius%5D=10");
+        startLinksList.add("https://www.eurojobs.com/search-results-jobs/?action=search&listing_type%5Bequal%5D=Job&keywords%5Ball_words%5D=Node+&Location%5Blocation%5D%5Bvalue%5D=&Location%5Blocation%5D%5Bradius%5D=10");
+        startLinksList.add("https://www.eurojobs.com/search-results-jobs/?action=search&listing_type%5Bequal%5D=Job&keywords%5Ball_words%5D=Frontend+&Location%5Blocation%5D%5Bvalue%5D=&Location%5Blocation%5D%5Bradius%5D=10");
+        startLinksList.add("https://www.eurojobs.com/search-results-jobs/?action=search&listing_type%5Bequal%5D=Job&keywords%5Ball_words%5D=JavaScript+&Location%5Blocation%5D%5Bvalue%5D=&Location%5Blocation%5D%5Bradius%5D=10");
+        startLinksList.add("https://www.eurojobs.com/search-results-jobs/?action=search&listing_type%5Bequal%5D=Job&keywords%5Ball_words%5D=iOS+&Location%5Blocation%5D%5Bvalue%5D=&Location%5Blocation%5D%5Bradius%5D=10");
+        startLinksList.add("https://www.eurojobs.com/search-results-jobs/?action=search&listing_type%5Bequal%5D=Job&keywords%5Ball_words%5D=mobile+&Location%5Blocation%5D%5Bvalue%5D=&Location%5Blocation%5D%5Bradius%5D=10");
 
 
-            // need http protocol
-//            doc = Jsoup.connect(startLink)
-//                    .validateTLSCertificates(false)
-//                    .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-//                    .timeout(5000)
-//                    .get();
-//
-//            Elements tables2 = doc.select(".searchResultsJobs tr");
-////            System.out.println("text : " + tables2);
-//            runParse(tables2, 0);
+        for (String link : startLinksList) {
+            try {
 
-            Date datePublished = null;
-            int count = 1;
-            do {
-                try {
 
-                    datePublished = null;
-                    doc = Jsoup.connect("https://www.eurojobs.com/search-results-jobs/?searchId=1481822073.36&action=search&page=" + count + "&listings_per_page=50&view=list")
-                            .validateTLSCertificates(false)
-                            .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-                            .timeout(5000)
-                            .get();
+                doc = Jsoup.connect(link)
+                        .validateTLSCertificates(false)
+                        .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
+                        .timeout(5000)
+                        .get();
 
-                    Elements tables2 = doc.select(".searchResultsJobs tr");
-                    datePublished = runParse(tables2, 0);
-                    count++;
+                Elements tables2 = doc.select(".searchResultsJobs tr");
+                runParse(tables2, 0);
 
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
-            } while (dateClass.dateChecker(datePublished) && jobsInforms.size() < 40);
 
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
 
     }
 
