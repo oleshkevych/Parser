@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Created by rolique_pc on 12/5/2016.
  */
-public class JobsInform implements Serializable {
+public class JobsInform implements Serializable{
     private Date publishedDate;
     private String headPublication;
     private String place;

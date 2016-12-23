@@ -1,5 +1,6 @@
 package com.parser.parsers.com.themuse;
 
+import com.parser.Main;
 import com.parser.entity.DateGenerator;
 import com.parser.entity.JobsInform;
 import com.parser.entity.ListImpl;
@@ -29,7 +30,7 @@ import java.util.concurrent.TimeUnit;
  * Created by rolique_pc on 12/15/2016.
  */
 public class ParserThemuse implements ParserMain {
-    private String startLink = "https://www.themuse.com/jobs?filter=false&page=1&sort=primary_attributes_updated_at";
+    private String startLink = "https://www.themuse.com/jobs?keyword=TTTTT&filter=true&page=1&sort=primary_attributes_updated_at";
     private List<JobsInform> jobsInforms = new ArrayList<JobsInform>();
     private Document doc;
 
@@ -43,27 +44,55 @@ public class ParserThemuse implements ParserMain {
         return jobsInforms;
     }
 
-    private Document renderPage(String url) {
+    private void startPhantom() {
+        String path = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath().substring(1);
+        path = path.substring(0, path.lastIndexOf("/"))+"\\lib\\phantomjs\\phantomjs.exe";
+
         DesiredCapabilities caps = new DesiredCapabilities();
         caps.setJavascriptEnabled(true);
-        caps.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, "C:\\Users\\rolique_pc\\Desktop\\ParserApp\\Parser\\Libs\\phantomjs.exe");
+        caps.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, path);
         caps.setCapability("phantomjs.page.settings.userAgent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.60 Safari/537.17");
-        caps.setCapability("phantomjs.page.settings.host", "www.sportslogos.net");
-        caps.setCapability(PhantomJSDriverService.PHANTOMJS_CLI_ARGS, new String[]{
-                "--web-security=false",
-                "--ssl-protocol=any",
-                "--ignore-ssl-errors=true"
-        });
+//        caps.setCapability("phantomjs.page.settings.host", "https://www.themuse.com/jobs?keyword=drupal&filter=true&page=1&sort=primary_attributes_updated_at");
+//        caps.setCapability(PhantomJSDriverService.PHANTOMJS_CLI_ARGS, new String[]{
+//                "--web-security=false",
+//                "--ssl-protocol=any",
+//                "--ignore-ssl-errors=true"
+//        });
         ghostDriver = new PhantomJSDriver(caps);
+
+    }
+
+    private Document startParser(String url){
         ghostDriver.get(url);
+//        System.out.println("text date : " + ghostDriver.getPageSource());
+        try {
+            WebDriverWait wait = new WebDriverWait(ghostDriver, 10);
+            wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("job-element")));
+        }catch (Exception e){
+            System.out.println("themuse");
+            e.printStackTrace();
+        }
         return Jsoup.parse(ghostDriver.getPageSource());
     }
 
     private void parser() {
         try {
-            doc = renderPage(startLink);
-            Elements tables2 = doc.select(".job-element");
-            runParse(tables2, 0);
+            startPhantom();
+            List<String> stringCat = new ArrayList<>();
+            stringCat.add("drupal");
+            stringCat.add("angular");
+            stringCat.add("react");
+            stringCat.add("meteor");
+            stringCat.add("node");
+            stringCat.add("frontend");
+            stringCat.add("javascript");
+            stringCat.add("ios");
+            stringCat.add("mobile");
+            for (String s: stringCat) {
+                doc = startParser(startLink.replace("TTTTT", s));
+                Elements tables2 = doc.select(".job-element");
+                runParse(tables2, 0);
+            }
             ghostDriver.quit();
         }catch (Exception e){
             e.printStackTrace();
@@ -84,7 +113,7 @@ public class ParserThemuse implements ParserMain {
     }
 
     private void objectGenerator(Element place, Element headPost, Element company, Element linkDescription) {
-        if (jobsInforms.size() < 30) {
+//        if (jobsInforms.size() < 30) {
             JobsInform jobsInform = new JobsInform();
             jobsInform.setPublishedDate(null);
             jobsInform.setHeadPublication(headPost.ownText());
@@ -95,7 +124,7 @@ public class ParserThemuse implements ParserMain {
             if (!jobsInforms.contains(jobsInform)) {
                 jobsInforms.add(jobsInform);
             }
-        }
+//        }
     }
 
     public JobsInform getDescription(String linkToDescription, JobsInform jobsInform) {

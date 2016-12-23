@@ -43,45 +43,18 @@ public class ParserRemote implements ParserMain {
     }
 
     private void parser() {
-//        try {
-
-//
-//            // need http protocol
-//            doc = Jsoup.connect(startLink)
-//                    .validateTLSCertificates(false)
-//                    .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-//                    .timeout(5000)
-//                    .get();
-//            Elements tables2 = doc.select(".see_all_link a");
-        Date datePublished = null;
-//            for (Element element : tables2) {
-//                do {
         try {
-
-            datePublished = null;
-            // need http protocol
-
-//                        doc = Jsoup.connect(element.attr("href"))
-
             doc = Jsoup.connect(startLink)
                     .validateTLSCertificates(false)
                     .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
                     .timeout(5000)
                     .get();
             Elements tables1 = doc.select(".job_listings .job_listing");
-            datePublished = runParse(tables1, 0);
+            runParse(tables1, 0);
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-//                } while (dateClass.dateChecker(datePublished) && jobsInforms.size() < 100);
-//            }
-//
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
     }
 
     private Date runParse(Elements tables2, int counter) {
@@ -142,7 +115,7 @@ public class ParserRemote implements ParserMain {
 
             while (tablesDescription.size() < 2 && c < 10) {
                 tablesDescription = tablesDescription.first().children();
-                System.out.println("in"+tablesDescription.size());
+                System.out.println("in" + tablesDescription.size());
 
                 c++;
             }
@@ -151,24 +124,6 @@ public class ParserRemote implements ParserMain {
 
             list.add(addHead(tablesHead.first()));
             System.out.println("addhead");
-
-//            for (int i = 0; i < tablesDescription.size(); i++) {
-//
-//
-//                if (tablesDescription.get(i).tagName().equals("div")) {
-//                    for (Element element : tablesDescription.get(i).children()) {
-//                        if (element.tagName().equals("p")) {
-//                            list.add(addParagraph(element));
-//                        } else if (element.tagName().equals("ul")) {
-//                            list.add(addList(element));
-//                        }
-//                    }
-//                } else if (tablesDescription.get(i).tagName().equals("p")) {
-//                    list.add(addParagraph(tablesDescription.get(i)));
-//                } else if (tablesDescription.get(i).tagName().equals("ul")) {
-//                    list.add(addList(tablesDescription.get(i)));
-//                }
-//            }
             list.addAll(new PrintDescription().generateListImpl(tablesDescription));
 
             list.add(null);
@@ -188,28 +143,6 @@ public class ParserRemote implements ParserMain {
     private static ListImpl addHead(Element element) {
         ListImpl list = new ListImpl();
         list.setListHeader(element.text());
-        return list;
-    }
-
-    private static ListImpl addParagraph(Element element) {
-        if (element.select("strong").size() > 0) {
-            return addHead(element.select("strong").first());
-        } else {
-
-
-            ListImpl list = new ListImpl();
-            list.setTextFieldImpl(element.text());
-            return list;
-        }
-    }
-
-    private static ListImpl addList(Element element) {
-        ListImpl list = new ListImpl();
-        List<String> strings = new ArrayList<String>();
-        for (Element e : element.getAllElements()) {
-            strings.add(e.text());
-        }
-        list.setListItem(strings);
         return list;
     }
 }

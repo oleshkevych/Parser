@@ -95,7 +95,7 @@ public class ParserWebentwicklerJobs implements ParserMain {
 
         try {
             Document document = Jsoup.connect(linkToDescription)
-                    .validateTLSCertificates(false)
+                    .validateTLSCertificates(true)
                     .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
                     .timeout(5000)
                     .get();

@@ -44,43 +44,55 @@ public class ParserRandstad implements ParserMain {
     }
 
     private void parser() {
-        try {
+        List<String> startLinksList = new ArrayList<>();
+        startLinksList.add("https://www.randstad.com/jobs/q-drupal/");
+        startLinksList.add("https://www.randstad.com/jobs/q-angular/");
+        startLinksList.add("https://www.randstad.com/jobs/q-react/");
+        startLinksList.add("https://www.randstad.com/jobs/q-meteor/");
+        startLinksList.add("https://www.randstad.com/jobs/q-node/");
+        startLinksList.add("https://www.randstad.com/jobs/q-frontend/");
+        startLinksList.add("https://www.randstad.com/jobs/q-javascript/");
+        startLinksList.add("https://www.randstad.com/jobs/q-ios/");
+        startLinksList.add("https://www.randstad.com/jobs/q-mobile/");
+
+        for (String link : startLinksList) {
+            try {
 
 
-            // need http protocol
-            doc = Jsoup.connect(startLink)
-                    .validateTLSCertificates(false)
-                    .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-                    .timeout(5000)
-                    .get();
-            Elements tables2 = doc.select("article");
-            runParse(tables2, 0);
-            Date datePublished = null;
-            int count = 2;
-            do {
-                try {
+                // need http protocol
+                doc = Jsoup.connect(link)
+                        .validateTLSCertificates(false)
+                        .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
+                        .timeout(5000)
+                        .get();
+                Elements tables2 = doc.select("article");
+                Date datePublished = runParse(tables2, 0);
+                int count = 2;
+                while (dateClass.dateChecker(datePublished) && jobsInforms.size() < (startLinksList.indexOf(link) + 1) * 20) {
+                    try {
 
-                    datePublished = null;
+                        datePublished = null;
 
-                    doc = Jsoup.connect(startLink + "page-" + count + "/")
-                            .validateTLSCertificates(false)
-                            .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-                            .timeout(5000)
-                            .get();
-                    Elements tables1 = doc.select("article");
-                    datePublished = runParse(tables1, 0);
-                    count += 20;
+                        doc = Jsoup.connect(link + "page-" + count + "/")
+                                .validateTLSCertificates(false)
+                                .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
+                                .timeout(5000)
+                                .get();
+                        Elements tables1 = doc.select("article");
+                        datePublished = runParse(tables1, 0);
+                        count += 20;
 
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
                 }
 
-            } while (dateClass.dateChecker(datePublished) && jobsInforms.size() < 100);
 
-        } catch (IOException e) {
-            e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-
     }
 
     private Date runParse(Elements tables2, int counter) {

@@ -22,6 +22,7 @@ import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -83,12 +84,14 @@ public class ParserAuthenticjobs implements ParserMain {
                     JsonObject jsonObject = jsonElement.getAsJsonObject();
                     JsonArray jArray = (JsonArray) jsonObject.get("listings");
                     JsonObject jobJson;
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(new Date());
                     for (int i = 0; i < jArray.size(); i++) {
                         datePublished = null;
                         jobJson = (jArray.get(i).getAsJsonObject());
                         String title = jobJson.get("title").getAsString();
                         String place = jobJson.get("loc").getAsString();
-                        String link = startLink + jobJson.get("url_relative").getAsString() + title.toLowerCase().replaceAll("  ", " ").replaceAll(" ", "-").replaceAll("[()/\"'.@]", "");
+                        String link = startLink + jobJson.get("url_relative").getAsString() + title.toLowerCase().replaceAll("  ", " ").replaceAll(" ", "-").replaceAll("[()/\"'.@,]", "");
                         String company = jobJson.get("company").getAsString();
                         String stringDate = jobJson.get("post_date_relative").getAsString();
                         if (stringDate.equals("Today") || stringDate.contains("minut") || stringDate.contains("hour")) {
@@ -96,9 +99,15 @@ public class ParserAuthenticjobs implements ParserMain {
                         } else if (stringDate.contains("Yesterday") || stringDate.contains("1 day")) {
                             datePublished = new Date(new Date().getTime() - 1 * 24 * 3600 * 1000);
                         } else {
-                            datePublished = formatter.parse(stringDate + " " + 2016);
+                            datePublished = formatter.parse(stringDate + " " + calendar.get(Calendar.YEAR));
+                            Calendar calendarPublished = Calendar.getInstance();
+                            calendarPublished.setTime(datePublished);
+                            if(calendar.get(Calendar.MONTH)<calendarPublished.get(Calendar.MONTH)){
+                                stringDate = stringDate.replace(calendar.get(Calendar.YEAR)+"", (calendar.get(Calendar.YEAR)-1)+"");
+                                datePublished = formatter.parse(stringDate);
+                            }
                         }
-//                        System.out.println("Error : " +datePublished);
+//                        System.out.println("text date : Parser" + datePublished);
 
                         if (dateClass.dateChecker(datePublished) && jobsInforms.size() < startLinksList.indexOf(linkS) * 20) {
 

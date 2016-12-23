@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class ParserWorkopolis implements ParserMain {
 
-    private String startLink = "http://www.workopolis.com/jobsearch/find-jobs#lg=en&st=POSTDATE%20%20%20%20&lr=50&pn=";
+    //    private String startLink = "http://www.workopolis.com/jobsearch/find-jobs#lg=en&st=POSTDATE%20%20%20%20&lr=50&pn=";
     private List<JobsInform> jobsInforms = new ArrayList<JobsInform>();
     private Document doc;
     private DateGenerator dateClass;
@@ -36,24 +36,26 @@ public class ParserWorkopolis implements ParserMain {
     }
 
     private void parser() {
-        try {
+        List<String> startLinksList = new ArrayList<>();
+        startLinksList.add("http://www.workopolis.com/jobsearch/find-jobs#lg=EN&ak=%7Cdrupal%7C&st=POSTDATE%20%20%20%20&lr=50&pn=");
+        startLinksList.add("http://www.workopolis.com/jobsearch/find-jobs#lg=EN&ak=%7Cangular%7C&st=POSTDATE%20%20%20%20&lr=50&pn=");
+        startLinksList.add("http://www.workopolis.com/jobsearch/find-jobs#lg=EN&ak=%7Creact%7C&st=POSTDATE%20%20%20%20&lr=50&pn=");
+        startLinksList.add("http://www.workopolis.com/jobsearch/find-jobs#lg=EN&ak=%7Cmeteor%7C&st=POSTDATE%20%20%20%20&lr=50&pn=");
+        startLinksList.add("http://www.workopolis.com/jobsearch/find-jobs#lg=EN&ak=%7Cnode%7C&st=POSTDATE%20%20%20%20&lr=50&pn=");
+        startLinksList.add("http://www.workopolis.com/jobsearch/find-jobs#lg=EN&ak=%7Cfrontend%7C&st=POSTDATE%20%20%20%20&lr=50&pn=");
+        startLinksList.add("http://www.workopolis.com/jobsearch/find-jobs#lg=EN&ak=%7Cjavascript%7C&st=POSTDATE%20%20%20%20&lr=50&pn=");
+        startLinksList.add("http://www.workopolis.com/jobsearch/find-jobs#lg=EN&ak=%7Cios%7C&st=POSTDATE%20%20%20%20&lr=50&pn=");
+        startLinksList.add("http://www.workopolis.com/jobsearch/find-jobs#lg=EN&ak=%7Cmobile%7C&st=POSTDATE%20%20%20%20&lr=50&pn=");
 
-            doc = Jsoup.connect(startLink + 1)
-                    .validateTLSCertificates(false)
-                    .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-                    .timeout(5000)
-                    .get();
-            Elements tables2 = doc.select("article");
-            runParse(tables2, 0);
-//
+        for (String link : startLinksList) {
             Date datePublished = null;
-            int count = 2;
+            int count = 1;
             do {
                 try {
 
                     datePublished = null;
 
-                    doc = Jsoup.connect(startLink + count)
+                    doc = Jsoup.connect(link + count)
                             .validateTLSCertificates(false)
                             .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
                             .timeout(5000)
@@ -65,13 +67,8 @@ public class ParserWorkopolis implements ParserMain {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                System.out.println("text date : Workopolice" + jobsInforms.size());
-
-            } while (dateClass.dateChecker(datePublished) && jobsInforms.size() < 40);
-//            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
+            }
+            while (count < 2 && dateClass.dateChecker(datePublished) && jobsInforms.size() < (startLinksList.indexOf(link) + 1) * 20);
         }
 
     }
@@ -97,7 +94,7 @@ public class ParserWorkopolis implements ParserMain {
     }
 
     private void objectGenerator(Element place, Element headPost, Element company, Date datePublished, Element linkDescription) {
-        if (dateClass.dateChecker(datePublished) && jobsInforms.size() < 100) {
+        if (dateClass.dateChecker(datePublished)) {
             JobsInform jobsInform = new JobsInform();
             jobsInform.setPublishedDate(datePublished);
             jobsInform.setHeadPublication(headPost.text());
@@ -144,6 +141,7 @@ public class ParserWorkopolis implements ParserMain {
                     list.add(addParagraph(tablesDescription.get(i)));
                 }
             }
+
 
             list.add(null);
             jobsInform.setOrder(list);

@@ -22,7 +22,7 @@ import java.util.List;
 public class ParserEluta implements ParserMain {
 
 
-    private String startLink = "http://www.eluta.ca/search?q=&pg=";
+    private String startLink = "http://www.eluta.ca/search?q=TTTTTT&pg=";
     private List<JobsInform> jobsInforms = new ArrayList<JobsInform>();
     private Document doc;
     private DateGenerator dateClass;
@@ -37,44 +37,55 @@ public class ParserEluta implements ParserMain {
     }
 
     private void parser() {
-        try {
-
-            doc = Jsoup.connect(startLink + 1)
-                    .validateTLSCertificates(false)
-                    .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-                    .timeout(5000)
-                    .get();
-            Elements tables2 = doc.select(".organic-job");
-            runParse(tables2, 0);
+        List<String> stringCat = new ArrayList<>();
+        stringCat.add("drupal");
+        stringCat.add("angular");
+        stringCat.add("react");
+        stringCat.add("meteor");
+        stringCat.add("node");
+        stringCat.add("frontend");
+        stringCat.add("javascript");
+        stringCat.add("ios");
+        stringCat.add("mobile");
+        for(String s: stringCat) {
+//            try {
 //
-            Date datePublished = null;
-            int count = 2;
-            do {
-                try {
+//                doc = Jsoup.connect(startLink + 1)
+//                        .validateTLSCertificates(false)
+//                        .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
+//                        .timeout(5000)
+//                        .get();
+//                Elements tables2 = doc.select(".organic-job");
+//                runParse(tables2, 0);
+//
+                Date datePublished = null;
+                int count = 1;
+                do {
+                    try {
 
-                    datePublished = null;
-                    doc = Jsoup.connect(startLink + count)
-                            .validateTLSCertificates(false)
-                            .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-                            .timeout(5000)
-                            .get();
+                        datePublished = null;
+                        doc = Jsoup.connect(startLink.replace("TTTTTT", s) + count)
+                                .validateTLSCertificates(false)
+                                .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
+                                .timeout(5000)
+                                .get();
 
-                    Elements tables3 = doc.select(".organic-job");
-                    datePublished = runParse(tables3, 0);
+                        Elements tables3 = doc.select(".organic-job");
+                        datePublished = runParse(tables3, 0);
 
-                    count++;
+                        count++;
 
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
 
-            } while (dateClass.dateChecker(datePublished) && jobsInforms.size() < 100);
+                } while (dateClass.dateChecker(datePublished) && jobsInforms.size() < 100);
 //            }
 
-        } catch (IOException e) {
-            e.printStackTrace();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
         }
-
     }
 
     private Date runParse(Elements tables2, int counter) {

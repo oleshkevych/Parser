@@ -11,6 +11,13 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriverService;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
@@ -31,7 +38,7 @@ import static javafx.css.StyleOrigin.USER_AGENT;
  * Created by rolique_pc on 12/16/2016.
  */
 public class ParserLearn4good implements ParserMain {
-    private String startLink = "https://www.learn4good.com/jobs/index.php?controller=job_list&action=display_search_results&page_number=";
+    private String startLink = "https://www.learn4good.com/schools/frontend/index.php?controller=listing_search&action=display_results&page_number=1";
     private List<JobsInform> jobsInforms = new ArrayList<JobsInform>();
     private Document doc;
     private DateGenerator dateClass;
@@ -44,73 +51,29 @@ public class ParserLearn4good implements ParserMain {
         parser();
         return jobsInforms;
     }
+    private static Document renderPage(String url) {
+        DesiredCapabilities caps = new DesiredCapabilities();
+        caps.setJavascriptEnabled(true);
+        caps.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, "C:\\Users\\rolique_pc\\Desktop\\ParserApp\\Parser\\Libs\\phantomjs.exe");
 
-    private void parser() {
+        WebDriver ghostDriver = new PhantomJSDriver(caps);
         try {
-
-
-        // need http protocol
-//            doc = Jsoup.connect(startLink)
-//                    .validateTLSCertificates(false)
-//                    .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-//                    .timeout(5000)
-//                    .get();
+            ghostDriver.get(url);
+//            WebDriverWait wait = new WebDriverWait(ghostDriver, 15);
 //
-//            Elements tables2 = doc.select(".searchResultsJobs tr");
-////            System.out.println("text : " + tables2);
-//            runParse(tables2, 0);
-
-            String url = ("https://www.learn4good.com/jobs/index.php?controller=job_search&action=full_search");
-//            String url = "https://selfsolve.apple.com/wcResults.do";
-            String urlParameters = "country_id=0&state_id=0&city_id=0&online_status[]=onsite&online_status[]=online&job_category_ids[]=174&keywords=&min_edu_level_id=0&time_period=5&has_js=has_js";
-            URL obj = new URL(url + "country_id=0&state_id=0&city_id=0&online_status%5B%5D=onsite&online_status%5B%5D=online&job_category_ids%5B%5D=174&keywords=&min_edu_level_id=0&time_period=0&has_js=has_js");
-            HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
-
-            //add reuqest header
-            con.setRequestMethod("POST");
-            con.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36");
-            con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
-            con.setRequestProperty("Upgrade-Insecure-Requests", "1");
+//                wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("job_list")));
+            return Jsoup.parse(ghostDriver.getPageSource());
+        } finally {
+            ghostDriver.quit();
+        }
+    }
+    private void parser() {
 
 
-            // Send post request
-//            con.setDoOutput(true);
-//            DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-//            wr.writeBytes(urlParameters);
-//            wr.flush();
-//            wr.close();
+        doc = renderPage(startLink);
+        System.out.println("text date : " + doc);
 
-            int responseCode = con.getResponseCode();
-            System.out.println("\nSending 'POST' request to URL : " + url);
-            System.out.println("Post parameters : " + urlParameters);
-            System.out.println("Response Code : " + responseCode);
 
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(con.getInputStream()));
-            String inputLine;
-            StringBuffer response = new StringBuffer();
-
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
-            }
-            in.close();
-//
-//            //print result
-            System.out.println(response.toString());
-//
-//
-//        URL url = new URL(urlS);
-//        BufferedReader r = new BufferedReader(new InputStreamReader(
-//                ((HttpURLConnection) url.openConnection()).getInputStream()));
-//
-//        JsonParser jp = new JsonParser();
-//
-//            while (r.readLine()!=null) {
-//                System.out.println(r.readLine());
-//            }
-//            JsonElement jsonElement = jp.parse(r);
-//
-//        r.close();
 
 //        Date datePublished = null;
 //        int count = 1;
@@ -135,9 +98,6 @@ public class ParserLearn4good implements ParserMain {
 //
 //        } while (dateClass.dateChecker(datePublished) /*&& jobsInforms.size() < 40*/);
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
     }
 

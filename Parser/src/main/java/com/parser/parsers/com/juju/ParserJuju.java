@@ -133,23 +133,28 @@ public class ParserJuju implements ParserMain {
 
 
 //            int count = 0;
-            Elements tablesDescription = document.select(".description");
+            Elements tablesDescription = document.select("[data-caption='Show Full Description']").first().children();
 //            if (tablesDescription.select("p").first().hasClass("simple_line")) {
 //                jobsInform.setPlace(tablesDescription.select("p").first().text());
 //                count++;
 //            }
             List<ListImpl> list = new ArrayList<ListImpl>();
 
-            list.add(addHead(document.select("h1").first()));
-//            for (int i = count; i < tablesDescription.size(); i++) {
-//
-//                if (tablesDescription.get(i).hasClass("item"))
-//                    list.add(addHead(tablesDescription.get(i)));
-//
-//                if (tablesDescription.get(i).hasClass("simple_line")) {
-//                    list.add(addParagraph(tablesDescription.get(i)));
-//                }
-//            }
+            list.add(addHead(document.select(".title").first()));
+            for (int i = 0; i < tablesDescription.size(); i++) {
+
+                if (tablesDescription.get(i).tagName().equals("span")) {
+                    list.add(addParagraph(tablesDescription.get(i)));
+                } else if (tablesDescription.get(i).tagName().equals("ul")) {
+                    list.add(addList(tablesDescription.get(i)));
+                } else if (tablesDescription.get(i).tagName().contains("strong")) {
+                    list.add(addHead(tablesDescription.get(i)));
+                } else if (tablesDescription.get(i).tagName().equals("div")) {
+                    ListImpl list1 = new ListImpl();
+                    list1.setTextFieldImpl(tablesDescription.get(i).ownText());
+                    list.add(list1);
+                }
+            }
 
             list.add(null);
             jobsInform.setOrder(list);
@@ -166,7 +171,12 @@ public class ParserJuju implements ParserMain {
 
     private static ListImpl addHead(Element element) {
         ListImpl list = new ListImpl();
-        list.setListHeader(element.text());
+        try {
+            list.setListHeader(element.text());
+        }catch (NullPointerException e){
+            System.out.println("Error : Juju");
+            e.printStackTrace();
+        }
         return list;
     }
 

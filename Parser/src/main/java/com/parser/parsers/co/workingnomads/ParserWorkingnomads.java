@@ -5,6 +5,7 @@ import com.parser.entity.DateGenerator;
 import com.parser.entity.JobsInform;
 import com.parser.entity.ListImpl;
 import com.parser.entity.ParserMain;
+import com.parser.parsers.PrintDescription;
 import com.parser.parsers.jobs.landing.ParserLandingJobs;
 import jdk.nashorn.internal.runtime.ParserException;
 import org.json.JSONArray;

@@ -97,9 +97,9 @@ public class ParserDrupal implements ParserMain {
         if (dateClass.dateChecker(datePublished)) {
             JobsInform jobsInform = new JobsInform();
             jobsInform.setPublishedDate(datePublished);
-            jobsInform.setHeadPublication(headPost.text());
-            jobsInform.setCompanyName(company.ownText());
-            jobsInform.setPlace(place.text());
+            jobsInform.setHeadPublication(headPost!=null ? headPost.text() : "");
+            jobsInform.setCompanyName(company!=null ? company.ownText() : "");
+            jobsInform.setPlace(place !=null ? place.text() : "");
             jobsInform.setPublicationLink(linkDescription.attr("abs:href"));
             jobsInform = getDescription(linkDescription.attr("abs:href"), jobsInform);
             if (!jobsInforms.contains(jobsInform)) {

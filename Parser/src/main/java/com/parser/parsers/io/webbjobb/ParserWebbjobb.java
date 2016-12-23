@@ -44,18 +44,23 @@ public class ParserWebbjobb implements ParserMain {
     }
 
     private void parser() {
-        try {
+//        List<String> stringCat = new ArrayList<>();
+//        stringCat.add("drupal");
+//        stringCat.add("angular");
+//        stringCat.add("react");
+//        stringCat.add("meteor");
+//        stringCat.add("node");
+//        stringCat.add("frontend");
+//        stringCat.add("javascript");
+//        stringCat.add("ios");
+//        stringCat.add("mobile");
+//        for (String s : stringCat) {
+//            try {
 
-            doc = Jsoup.connect(startLink)
-                    .validateTLSCertificates(true)
-                    .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-                    .timeout(5000)
-                    .get();
-            Elements tables2 = doc.select(".job");
-            runParse(tables2, 0);
-            Date datePublished = null;
-            int count = 2;
-            do try {
+        Date datePublished = null;
+        int count = 1;
+        do
+            try {
 
                 datePublished = null;
                 // need http protocol
@@ -72,12 +77,13 @@ public class ParserWebbjobb implements ParserMain {
 
             } catch (IOException e) {
                 e.printStackTrace();
-            } while (dateClass.dateChecker(datePublished) && jobsInforms.size() < 100);
+            }
+        while (dateClass.dateChecker(datePublished) && jobsInforms.size() < 400);
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
     }
 
     private Date runParse(Elements tables2, int counter) {

@@ -32,6 +32,7 @@ public class ParserTechjobs implements ParserMain {
     private Document doc;
 
     private WebDriver ghostDriver;
+
     public ParserTechjobs() {
     }
 
@@ -65,8 +66,7 @@ public class ParserTechjobs implements ParserMain {
         } catch (Exception e) {
             e.printStackTrace();
             ghostDriver.quit();
-        }
-        finally {
+        } finally {
             ghostDriver.quit();
         }
     }
@@ -85,23 +85,32 @@ public class ParserTechjobs implements ParserMain {
     }
 
     private void objectGenerator(Element place, Element headPost, Element company, Element linkDescription) {
-        if (jobsInforms.size() < 50) {
-            JobsInform jobsInform = new JobsInform();
+//        if (jobsInforms.size() < 50) {
+        JobsInform jobsInform = new JobsInform();
 //            System.out.println("text place : " + place.text());
 //            System.out.println("text headPost : " + headPost.text());
 //            System.out.println("text company : " + company.text());
 //            System.out.println("text link data : " + linkDescription);
 //            System.out.println("text link : " + linkDescription.attr("href"));
-            jobsInform.setPublishedDate(null);
-            jobsInform.setHeadPublication(headPost.text());
-            jobsInform.setCompanyName(company.text());
-            jobsInform.setPlace(place.text());
-//            jobsInform.setPublicationLink("http://www.techjobs.com/SearchResults.aspx?" + linkDescription.attr("href"));
+        jobsInform.setPublishedDate(null);
+        jobsInform.setHeadPublication(headPost.text());
+        jobsInform.setCompanyName(company.text());
+        jobsInform.setPlace(place.text());
+        List<ListImpl> list = new ArrayList<ListImpl>();
+        ListImpl list1 = new ListImpl();
+        list1.setListHeader("Link Is Not valid");
+        ListImpl list2 = new ListImpl();
+        list2.setTextFieldImpl(headPost.text());
+        list.add(list1);
+        list.add(list2);
+        jobsInform.setOrder(list);
+//        System.out.println("Error : " + "http://www.techjobs.com/SearchResults.aspx?" + linkDescription.attr("href"));
+            jobsInform.setPublicationLink("http://www.techjobs.com/SearchResults.aspx?" + linkDescription.attr("href"));
 //            jobsInform = getDescription("http://www.techjobs.com/SearchResults.aspx?" + linkDescription.attr("href"), jobsInform);
-            if (!jobsInforms.contains(jobsInform)) {
-                jobsInforms.add(jobsInform);
-            }
+        if (!jobsInforms.contains(jobsInform)) {
+            jobsInforms.add(jobsInform);
         }
+//        }
     }
 
     private JobsInform getDescription(String linkToDescription, JobsInform jobsInform) {

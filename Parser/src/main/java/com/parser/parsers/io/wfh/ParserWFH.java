@@ -5,6 +5,7 @@ import com.parser.entity.DateGenerator;
 import com.parser.entity.JobsInform;
 import com.parser.entity.ListImpl;
 import com.parser.entity.ParserMain;
+import com.parser.parsers.PrintDescription;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -102,10 +103,14 @@ public class ParserWFH implements ParserMain{
 
     public static JobsInform getDescription(String linkToDescription, JobsInform jobsInform){
         try {
-            Document document = Jsoup.connect(linkToDescription).userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36").timeout(5000).get();
+            Document document = Jsoup.connect(linkToDescription)
+                    .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
+                    .timeout(5000)
+                    .get();
             Elements tables = document.select(".col-md-9 dd");
             Elements description = tables.get(2).children();
 
+            Element tableHead = document.select("h1").first();
             String company = document.select(".panel-body dd").get(1).text();
             if(company.length()>0){
                 jobsInform.setCompanyName(company);
@@ -113,18 +118,19 @@ public class ParserWFH implements ParserMain{
 
             jobsInform.setCompanyName(document.select(".page-header small").text());
             List<ListImpl> list = new ArrayList<ListImpl>();
-            for (Element aDescription: description) {
+            list.add(addHead(tableHead));
+//            for (Element aDescription: description) {
+//
+//                if (aDescription.getElementsByTag("li").size() > 0) {
+//                    list.add(addList(aDescription));
+//                } else if (aDescription.getElementsByTag("strong").size() > 0) {
+//                    list.add(null);
+//                } else {
+//                    list.add(addParagraph(aDescription));
+//                }
+//            }
 
-                if (aDescription.getElementsByTag("li").size() > 0) {
-                    list.add(addList(aDescription));
-                } else if (aDescription.getElementsByTag("strong").size() > 0) {
-                    list.add(null);
-                    list.add(addHead(aDescription));
-                } else {
-                    list.add(addParagraph(aDescription));
-                }
-            }
-
+            list.addAll(new PrintDescription().generateListImpl(description));
             list.add(null);
             jobsInform.setOrder(list);
             return jobsInform;

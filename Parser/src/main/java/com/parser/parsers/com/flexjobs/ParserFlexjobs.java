@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -83,10 +84,18 @@ public class ParserFlexjobs implements ParserMain {
         System.out.println("text date : " + tables2.size());
         Date datePublished = null;
         SimpleDateFormat formatter = new SimpleDateFormat("MMM dd yyyy");
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
         for (int i = counter; i < tables2.size(); i += 1) {
-            String stringDate = tables2.get(i).select("small").last().text() + " " + 2016;
+            String stringDate = tables2.get(i).select("small").last().text() + " " + calendar.get(Calendar.YEAR);
             try {
                 datePublished = formatter.parse(stringDate);
+                Calendar calendarPublished = Calendar.getInstance();
+                calendarPublished.setTime(datePublished);
+                if(calendar.get(Calendar.MONTH)<calendarPublished.get(Calendar.MONTH)){
+                    stringDate = stringDate.replace(calendar.get(Calendar.YEAR)+"", (calendar.get(Calendar.YEAR)-1)+"");
+                    datePublished = formatter.parse(stringDate);
+                }
                 objectGenerator(tables2.get(i).select(".location").first(), tables2.get(i).select("a").first(),
                         tables2.get(i).select(".job-type-info .text-danger").first(), datePublished, tables2.get(i).select("a").first());
             } catch (ParseException e) {

@@ -45,9 +45,12 @@ public class ParserLandingJobs implements ParserMain {
 
 
     private Document renderPage(String url) {
+        String path = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath().substring(1);
+        path = path.substring(0, path.lastIndexOf("/"))+"\\lib\\phantomjs\\phantomjs.exe";
+
         DesiredCapabilities caps = new DesiredCapabilities();
         caps.setJavascriptEnabled(true);
-        caps.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, "C:\\Users\\rolique_pc\\Desktop\\ParserApp\\Parser\\Libs\\phantomjs.exe");
+        caps.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, path);
 
         WebDriver ghostDriver = new PhantomJSDriver(caps);
         try {

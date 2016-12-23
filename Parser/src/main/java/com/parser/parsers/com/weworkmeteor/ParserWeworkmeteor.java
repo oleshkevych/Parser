@@ -42,10 +42,13 @@ public class ParserWeworkmeteor implements ParserMain {
         return jobsInforms;
     }
 
-    private static Document renderPage(String url, boolean description) {
+    private Document renderPage(String url, boolean description) {
+        String path = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath().substring(1);
+        path = path.substring(0, path.lastIndexOf("/"))+"\\lib\\phantomjs\\phantomjs.exe";
+
         DesiredCapabilities caps = new DesiredCapabilities();
         caps.setJavascriptEnabled(true);
-        caps.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, "C:\\Users\\rolique_pc\\Desktop\\ParserApp\\Parser\\Libs\\phantomjs.exe");
+        caps.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, path);
 
         WebDriver ghostDriver = new PhantomJSDriver(caps);
         try {
@@ -114,7 +117,7 @@ public class ParserWeworkmeteor implements ParserMain {
         }
     }
 
-    public static JobsInform getDescription(String linkToDescription, JobsInform jobsInform) {
+    public JobsInform getDescription(String linkToDescription, JobsInform jobsInform) {
 
         Document document = renderPage(linkToDescription, true);
         Elements tablesDescription = document.select(".col-sm-9").first().children();

@@ -4,6 +4,7 @@ import com.parser.entity.DateGenerator;
 import com.parser.entity.JobsInform;
 import com.parser.entity.ListImpl;
 import com.parser.entity.ParserMain;
+import com.parser.parsers.PrintDescription;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -35,64 +36,44 @@ public class ParserTechnojobs implements ParserMain {
     }
 
     private void parser() {
-//        try {
 
+        Date datePublished = null;
+        List<String> startLinksList = new ArrayList<>();
+        startLinksList.add("https://www.technojobs.co.uk/search.phtml?page=0&row_offset=10&keywords=Drupal&salary=0&jobtype=all&postedwithin=all&radius=100");
+        startLinksList.add("https://www.technojobs.co.uk/search.phtml?page=0&row_offset=10&keywords=Angular&salary=0&jobtype=all&postedwithin=all&radius=100");
+        startLinksList.add("https://www.technojobs.co.uk/search.phtml?page=0&row_offset=10&keywords=React&salary=0&jobtype=all&postedwithin=all&radius=100");
+        startLinksList.add("https://www.technojobs.co.uk/search.phtml?page=0&row_offset=10&keywords=Meteor&salary=0&jobtype=all&postedwithin=all&radius=100");
+        startLinksList.add("https://www.technojobs.co.uk/search.phtml?page=0&row_offset=10&keywords=Node&salary=0&jobtype=all&postedwithin=all&radius=100");
+        startLinksList.add("https://www.technojobs.co.uk/search.phtml?page=0&row_offset=10&keywords=Frontend&salary=0&jobtype=all&postedwithin=all&radius=100");
+        startLinksList.add("https://www.technojobs.co.uk/search.phtml?page=0&row_offset=10&keywords=JavaScript&salary=0&jobtype=all&postedwithin=all&radius=100");
+        startLinksList.add("https://www.technojobs.co.uk/search.phtml?page=0&row_offset=10&keywords=iOS&salary=0&jobtype=all&postedwithin=all&radius=100");
+        startLinksList.add("https://www.technojobs.co.uk/search.phtml?page=0&row_offset=10&keywords=mobile&salary=0&jobtype=all&postedwithin=all&radius=100");
 
-            Date datePublished = null;
-//            // need http protocol
-//            doc = Jsoup.connect(startLink)
-//                    .validateTLSCertificates(false)
-//                    .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-//                    .timeout(5000)
-//                    .get();
-//
-//            Elements tablesLinks = doc.select("#content .info-box tbody").first().select("a");
-//            System.out.println("text : " + tablesLinks.size());
-//            for(Element element: tablesLinks){
-//                String link = element.attr("abs:href");
-//                int count = 1;
-                do {
-                    try {
+        for (String link : startLinksList) {
+            int count = 1;
+            String loadLink = link;
+            do {
+                try {
+                    loadLink = loadLink.replaceFirst(("page=" + (count - 1)), ("page=" + (count)));
 
-                        datePublished = null;
-                        doc = Jsoup.connect("https://www.technojobs.co.uk/search.phtml/searchfield/location/radius25/salary0/postedwithin5")
-                                .validateTLSCertificates(false)
-                                .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-                                .timeout(5000)
-                                .get();
+                    datePublished = null;
+                    doc = Jsoup.connect(loadLink)
+                            .validateTLSCertificates(false)
+                            .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
+                            .timeout(5000)
+                            .get();
 
-                        Elements tables2 = doc.select(".jobs-list .jobbox");
-                        datePublished = runParse(tables2, 0);
-                        Element nextLink = doc.select(".pagination .content a").last();
-                        do {
-                            try {
+                    count++;
+                    Elements tables = doc.select(".jobs-list .jobbox");
+                    datePublished = runParse(tables, 0);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
-                                datePublished = null;
-                                doc = Jsoup.connect(nextLink.attr("abs:href"))
-                                        .validateTLSCertificates(false)
-                                        .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-                                        .timeout(5000)
-                                        .get();
+            }
+            while (count < 4 && dateClass.dateChecker(datePublished) && jobsInforms.size() < (startLinksList.indexOf(link) + 1) * 20);
+        }
 
-                                Elements tables = doc.select(".jobs-list .jobbox");
-                                datePublished = runParse(tables, 0);
-
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-
-                        } while (dateClass.dateChecker(datePublished) /*&& jobsInforms.size() < 40*/);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                } while (dateClass.dateChecker(datePublished) /*&& jobsInforms.size() < 40*/);
-//            }
-
-//
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
 
     }
 
@@ -101,24 +82,21 @@ public class ParserTechnojobs implements ParserMain {
         Date datePublished = null;
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         for (int i = counter; i < tables2.size(); i += 1) {
-//            System.out.println("text date : " + 11111111);
-//            System.out.println("text date : " + tables2.get(i));
-
-                String stringDate = tables2.get(i).select("time").attr("datetime");
-                try {
-                    datePublished = formatter.parse(stringDate);
-                    objectGenerator(tables2.get(i).select("[itemprop='jobLocation']").first(), tables2.get(i).select(".job-ti").first(),
-                            tables2.get(i), datePublished, tables2.get(i).select(".job-ti a").last());
-                } catch (ParseException e) {
-                    System.out.println(e.getMessage());
-                }
+            String stringDate = tables2.get(i).select("time").attr("datetime");
+            try {
+                datePublished = formatter.parse(stringDate);
+                objectGenerator(tables2.get(i).select("[itemprop='jobLocation']").first(), tables2.get(i).select(".job-ti").first(),
+                        tables2.get(i), datePublished, tables2.get(i).select(".job-ti a").last());
+            } catch (ParseException e) {
+                System.out.println(e.getMessage());
+            }
 
         }
         return datePublished;
     }
 
     private void objectGenerator(Element place, Element headPost, Element company, Date datePublished, Element linkDescription) {
-        if (dateClass.dateChecker(datePublished) /*&& jobsInforms.size() < 40*/) {
+        if (dateClass.dateChecker(datePublished)) {
             JobsInform jobsInform = new JobsInform();
             jobsInform.setPublishedDate(datePublished);
             jobsInform.setHeadPublication(headPost.text());
@@ -150,48 +128,49 @@ public class ParserTechnojobs implements ParserMain {
             list.add(addHead(tablesHead));
 
 
-            for (int i = 0; i < tablesDescription.size(); i++) {
-
-                if(tablesDescription.get(i).tagName().equals("div")){
-                    for (Element e : tablesDescription.get(i).children()){
-                        if (e.tagName().equals("p")) {
-                            list.add(addParagraph(e));
-                        } else if (e.tagName().equals("ul")) {
-                            list.add(addList(e));
-                        } else if (e.tagName().contains("h")) {
-                            list.add(addHead(e));
-                        }else  if(e.tagName().contains("di")){
-                            for (Element e1 : e.children()){
-                                if (e1.tagName().equals("p")) {
-                                    list.add(addParagraph(e1));
-                                } else if (e1.tagName().equals("ul")) {
-                                    list.add(addList(e1));
-                                } else if (e1.tagName().contains("h")) {
-                                    list.add(addHead(e1));
-                                }else if(e1.tagName().equals("div")) {
-                                    ListImpl list1 = new ListImpl();
-                                    list1.setTextFieldImpl(e1.text());
-                                    list.add(list1);
-                                }
-                            }
-                            ListImpl list1 = new ListImpl();
-                            list1.setTextFieldImpl(e.ownText());
-                            list.add(list1);
-                        }
-                    }
-                }
-                if (tablesDescription.get(i).tagName().equals("p")) {
-                    list.add(addParagraph(tablesDescription.get(i)));
-                } else if (tablesDescription.get(i).tagName().equals("ul")) {
-                    list.add(addList(tablesDescription.get(i)));
-                } else if (tablesDescription.get(i).tagName().contains("h")) {
-                    list.add(addHead(tablesDescription.get(i)));
-                }else if(tablesDescription.get(i).tagName().equals("div")) {
-                    ListImpl list1 = new ListImpl();
-                    list1.setTextFieldImpl(tablesDescription.get(i).ownText());
-                    list.add(list1);
-                }
-            }
+//            for (int i = 0; i < tablesDescription.size(); i++) {
+//
+//                if (tablesDescription.get(i).tagName().equals("div")) {
+//                    for (Element e : tablesDescription.get(i).children()) {
+//                        if (e.tagName().equals("p")) {
+//                            list.add(addParagraph(e));
+//                        } else if (e.tagName().equals("ul")) {
+//                            list.add(addList(e));
+//                        } else if (e.tagName().contains("h")) {
+//                            list.add(addHead(e));
+//                        } else if (e.tagName().contains("di")) {
+//                            for (Element e1 : e.children()) {
+//                                if (e1.tagName().equals("p")) {
+//                                    list.add(addParagraph(e1));
+//                                } else if (e1.tagName().equals("ul")) {
+//                                    list.add(addList(e1));
+//                                } else if (e1.tagName().contains("h")) {
+//                                    list.add(addHead(e1));
+//                                } else if (e1.tagName().equals("div")) {
+//                                    ListImpl list1 = new ListImpl();
+//                                    list1.setTextFieldImpl(e1.text());
+//                                    list.add(list1);
+//                                }
+//                            }
+//                            ListImpl list1 = new ListImpl();
+//                            list1.setTextFieldImpl(e.ownText());
+//                            list.add(list1);
+//                        }
+//                    }
+//                }
+//                if (tablesDescription.get(i).tagName().equals("p")) {
+//                    list.add(addParagraph(tablesDescription.get(i)));
+//                } else if (tablesDescription.get(i).tagName().equals("ul")) {
+//                    list.add(addList(tablesDescription.get(i)));
+//                } else if (tablesDescription.get(i).tagName().contains("h")) {
+//                    list.add(addHead(tablesDescription.get(i)));
+//                } else if (tablesDescription.get(i).tagName().equals("div")) {
+//                    ListImpl list1 = new ListImpl();
+//                    list1.setTextFieldImpl(tablesDescription.get(i).ownText());
+//                    list.add(list1);
+//                }
+//            }
+            list.addAll(new PrintDescription().generateListImpl(tablesDescription));
 
             list.add(null);
             jobsInform.setOrder(list);
