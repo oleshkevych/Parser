@@ -9,13 +9,12 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
 
 
 public class Main extends Application {
     private JFrame jFrame;
     private ParserApp parserApp;
-    private ExecutorService executorForStart =  Executors.newFixedThreadPool(3);
+    private ExecutorService executorForStart = Executors.newFixedThreadPool(3);
 
 
     public static void main(String[] args) {
@@ -36,9 +35,7 @@ public class Main extends Application {
 
             @Override
             public void windowClosing(WindowEvent e) {
-
-                    stopApp();
-
+                stopApp();
             }
         };
         jFrame.addWindowListener(exitListener);
@@ -48,18 +45,27 @@ public class Main extends Application {
 
     }
 
-    private void stopApp(){
+    private void stopApp() {
         System.out.println("Stop");
-        if(!executorForStart.isShutdown()){
+        if (!executorForStart.isShutdown()) {
             executorForStart.shutdown();
         }
-        if(!parserApp.getExecutor().isShutdown()) {
-            parserApp.getExecutor().shutdown();
+        try {
+            if (!parserApp.getExecutor().isShutdown()) {
+                parserApp.getExecutor().shutdown();
+            }
+        } catch (NullPointerException n) {
+            System.out.println("parserApp.getExecutor()");
+            n.printStackTrace();
         }
-        if(!parserApp.getExecutorDB().isShutdown()) {
-            parserApp.getExecutorDB().shutdown();
+        try {
+            if (!parserApp.getExecutorDB().isShutdown()) {
+                parserApp.getExecutorDB().shutdown();
+            }
+        } catch (NullPointerException n) {
+            System.out.println("parserApp.getExecutor()");
+            n.printStackTrace();
         }
-//        jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
 }

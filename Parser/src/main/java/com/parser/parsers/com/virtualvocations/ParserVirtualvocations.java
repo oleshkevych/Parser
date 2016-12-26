@@ -64,7 +64,7 @@ public class ParserVirtualvocations implements ParserMain {
                         .timeout(5000)
                         .get();
 
-                Elements tables2 = doc.select(".col-sm-6 .list-unstyled li");
+                Elements tables2 = doc.select(".card-item");
                 runParse(tables2, 0);
 
                 Date datePublished = null;

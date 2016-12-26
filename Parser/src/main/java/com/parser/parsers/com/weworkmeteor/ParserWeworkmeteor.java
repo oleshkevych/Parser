@@ -48,6 +48,7 @@ public class ParserWeworkmeteor implements ParserMain {
 
         DesiredCapabilities caps = new DesiredCapabilities();
         caps.setJavascriptEnabled(true);
+        caps.setCapability("takesScreenshot", false);
         caps.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, path);
 
         WebDriver ghostDriver = new PhantomJSDriver(caps);

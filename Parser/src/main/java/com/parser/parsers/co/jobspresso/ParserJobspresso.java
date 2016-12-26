@@ -42,12 +42,8 @@ public class ParserJobspresso implements ParserMain {
 
     private void parser() {
 
-        Date datePublished = null;
-//        do
-
         try {
-//            System.out.println("text date : ParserJobspresso" + jobsInforms.size());
-            datePublished = null;
+
             String urlS = ("https://jobspresso.co/jm-ajax/get_listings/");
             URL url = new URL(urlS);
             BufferedReader r = new BufferedReader(new InputStreamReader(
@@ -60,13 +56,11 @@ public class ParserJobspresso implements ParserMain {
             JsonObject jsonObject = jsonElement.getAsJsonObject();
             doc = Jsoup.parse(jsonObject.get("html").getAsString());
             Elements tables3 = doc.select(".job_listing");
-            datePublished = runParse(tables3,/* jobsInforms.size()*/0);
-//            System.out.println("text date : ParserJobspresso" + jobsInforms.size());
+            runParse(tables3,/* jobsInforms.size()*/0);
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-// while (dateClass.dateChecker(datePublished) && jobsInforms.size() < 100);
 
     }
 
@@ -98,7 +92,7 @@ public class ParserJobspresso implements ParserMain {
     }
 
     private void objectGenerator(Element place, Element headPost, Element company, Date datePublished, Element linkDescription) {
-        if (dateClass.dateChecker(datePublished) && jobsInforms.size() < 100) {
+        if (dateClass.dateChecker(datePublished)) {
             JobsInform jobsInform = new JobsInform();
             jobsInform.setPublishedDate(datePublished);
             jobsInform.setHeadPublication(headPost.text());

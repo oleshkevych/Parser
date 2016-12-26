@@ -3,10 +3,10 @@ package com.parser.dbmanager;
 import com.parser.entity.JobsInform;
 import com.parser.entity.ListImpl;
 
-import java.io.File;
 import java.sql.*;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by vov4ik on 12/11/2016.
@@ -68,10 +68,11 @@ public class DbHelper {
 
     private Connection connection = null;
     private Statement statement = null;
+    private PreparedStatement preparedStatement = null;
     private ResultSet rs = null;
     private List<String> listParsers = new ArrayList<>();
 
-    public DbHelper(){
+    public DbHelper() {
 
         listParsers.add("wfh.io");
         listParsers.add("remoteok.io");
@@ -117,6 +118,8 @@ public class DbHelper {
         listParsers.add("drupalcenter.de");
         listParsers.add("indeed.com");
         listParsers.add("wowjobs.ca");
+        listParsers.add("builtinaustin.com");
+        listParsers.add("betalist.com");
     }
 
     public Connection connect(String link) {
@@ -125,9 +128,9 @@ public class DbHelper {
             String path = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath().substring(1);
 
 //            System.out.println(path+"  "+ new File(path+"lib").mkdir());
-            if(link != null) {
+            if (link != null) {
                 connection = DriverManager.getConnection("jdbc:sqlite:" + "lib/" + "ParserDB" + listParsers.indexOf(link) + ".s3db");
-            }else{
+            } else {
                 connection = DriverManager.getConnection("jdbc:sqlite:" + "lib/" + "ParserDBDate.s3db");
             }
 
@@ -143,9 +146,9 @@ public class DbHelper {
 
     private void open(String link) {
         try {
-            if(link !=null) {
+            if (link != null) {
                 statement = connect(link).createStatement();
-            }else{
+            } else {
                 statement = connect(null).createStatement();
             }
             createTables(link);
@@ -153,9 +156,10 @@ public class DbHelper {
             e.printStackTrace();
         }
     }
-    private void createTables(String link){
+
+    private void createTables(String link) {
         try {
-            if(link !=null) {
+            if (link != null) {
                 statement.execute(CREATE_TABLE + "'" + JOB_INFORM + "' (" +
                         ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                         PLACE + " STRING, " +
@@ -176,7 +180,7 @@ public class DbHelper {
                         LIST_ITEM + " STRING);");
                 statement.close();
                 System.out.println("created");
-            }else{
+            } else {
                 statement.execute(CREATE_TABLE + "'" + DATEUPDATE + "' (" +
                         DATE_LAST_UPDATE + " LONG);");
                 System.out.println("created DATE table");
@@ -186,7 +190,7 @@ public class DbHelper {
         }
     }
 
-    public void setDateLastUpdate(){
+    public void setDateLastUpdate() {
         open(null);
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(DROP_TABLE + DATEUPDATE);
@@ -196,12 +200,13 @@ public class DbHelper {
                     .prepareStatement("INSERT INTO '" + DATEUPDATE + "' ('" + DATE_LAST_UPDATE + "') VALUES ('" + new Date().getTime() + "'); ",
                             Statement.RETURN_GENERATED_KEYS);
             preparedStatement.executeUpdate();
-        }catch (SQLException e){
+        } catch (SQLException e) {
             System.out.println("    FAIL: DateSET");
             e.printStackTrace();
         }
     }
-    public long getDateLastUpdate(){
+
+    public long getDateLastUpdate() {
         open(null);
         try {
             long date = 0;
@@ -214,7 +219,7 @@ public class DbHelper {
             preparedStatement.close();
             connection.close();
             return date;
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             System.out.println("    FAIL: DateGET");
             e.printStackTrace();
             return 0;
@@ -225,106 +230,95 @@ public class DbHelper {
         open(siteName);
 
         try {
-
-
-            PreparedStatement preparedStatement = null;
-//            int siteID = 0;
+            // counting new results
             int newResults = jobsInforms.size();
-//            preparedStatement = connection.prepareStatement("SELECT * FROM " + SITE);
-//            rs = preparedStatement.executeQuery();
-//            boolean isExists = false;
-//            while (rs.next()) {
-//                if (rs.getString(SITE_NAME).equals(siteName)) {
-//                    siteID = rs.getInt(ID);
-//                    isExists = true;
-//                }
-//            }
-//            if (isExists) {
-                preparedStatement = connection.prepareStatement("SELECT * FROM " + JOB_INFORM);
-                rs = preparedStatement.executeQuery();
-                List<JobsInform> oldJobsInforms = new ArrayList<>();
-                while (rs.next()) {
-                    JobsInform jobsInform = new JobsInform();
-                    jobsInform.setHeadPublication(rs.getString(HEAD_PUBLICATION));
-                    jobsInform.setSeen(rs.getInt(IS_SEEN) == 1);
-                    jobsInform.setPublicationLink(rs.getString(PUBLICATION_LINK));
-                    jobsInform.setCompanyName(rs.getString(COMPANY_NAME));
-                    jobsInform.setPlace(rs.getString(PLACE));
-                    oldJobsInforms.add(jobsInform);
-                }
-                for (JobsInform jobsInform : oldJobsInforms) {
-                    if (jobsInforms.contains(jobsInform)) {
-                        if(jobsInform.isSeen()) {
-                            newResults--;
-                        }
-                        jobsInforms.get(jobsInforms.indexOf(jobsInform)).setSeen(jobsInform.isSeen());
-                    }
-                }
-//                if(newResults == 0 && writeTrigger){
-//                    return 0;
-//                }
-//            }
-            System.out.println("    SITE: " + siteName);
 
-            System.out.println("    NEW RESULTS: " + newResults);
-//            preparedStatement = connection.prepareStatement("SELECT * FROM '" + JOB_INFORM + "'");
-//            rs = preparedStatement.executeQuery();
-//            int count = 0;
-//            while (rs.next()) {
-//                count++;
-//            }
-
-            preparedStatement = connection.prepareStatement(DROP_TABLE + JOB_INFORM);
-            preparedStatement.executeUpdate();
-            preparedStatement = connection.prepareStatement(DROP_TABLE + DESCRIPTION);
-            preparedStatement.executeUpdate();
-            preparedStatement = connection.prepareStatement(DROP_TABLE + LIST);
-            preparedStatement.executeUpdate();
-            createTables(siteName);
-            for (JobsInform jobsInform : jobsInforms) {
-
-                preparedStatement = connection.prepareStatement("INSERT INTO '" + JOB_INFORM + "' ('" + PLACE + "', '"
-                                + COMPANY_NAME + "', '" + HEAD_PUBLICATION + "','" + PUBLICATION_LINK + "', '" + DATE_PUBLICATION + "', '" + IS_SEEN + "') VALUES ( ?, ?, ?, ?, ?, ?); ",
-                        Statement.RETURN_GENERATED_KEYS);
-
-                preparedStatement.setString(1, jobsInform.getPlace());
-                preparedStatement.setString(2, jobsInform.getCompanyName());
-                preparedStatement.setString(3, jobsInform.getHeadPublication());
-                preparedStatement.setString(4, jobsInform.getPublicationLink());
-                preparedStatement.setLong(5,  jobsInform.getPublishedDate()!=null ? jobsInform.getPublishedDate().getTime() : 0);
-                preparedStatement.setInt(6, (jobsInform.isSeen() ? 1 : 0));
-                preparedStatement.executeUpdate();
-
-                int jobInformId = jobsInforms.indexOf(jobsInform)+1;
-
-                if (jobsInform.getOrder() != null)
-                    for (ListImpl list : jobsInform.getOrder()) {
-                        if (list != null) {
-                            preparedStatement = connection.prepareStatement("INSERT INTO '" + DESCRIPTION + "' ('" + JOB_ID + "', '"
-                                            + TEXT_FIELD + "', '" + LIST_HEADER + "', '" + IS_NULL +  "') VALUES ("
-                                            + jobInformId + ", '" + (list.getTextFieldImpl() != null ? list.getTextFieldImpl().replaceAll("'", "*") : list.getTextFieldImpl()) + "', '"
-                                            + (list.getListHeader() != null ? list.getListHeader().replaceAll("'", "*") : list.getListHeader()) + "', " + (list != null ? 1 : 0) + "); ",
-                                    Statement.RETURN_GENERATED_KEYS);
-                            preparedStatement.executeUpdate();
-                            int listImplId = jobsInform.getOrder().indexOf(list)+1;
-                            if (list.getListItem() != null && list.getListItem().size() > 0) {
-                                for (String s : list.getListItem()) {
-                                    preparedStatement = connection.prepareStatement("INSERT INTO '" + LIST + "' ('" + DESCRIPTION_ID + "', '"
-                                            + LIST_ITEM  + "') VALUES ("
-                                            + listImplId + ", '" + s.replaceAll("'", "*") + "'); ");
-                                    preparedStatement.executeUpdate();
-                                }
-                            }
-                        } else {
-                            preparedStatement = connection.prepareStatement("INSERT INTO '" + DESCRIPTION + "' ('" + JOB_ID + "', '"
-                                            + IS_NULL + "') VALUES ("
-                                            + jobInformId + ", '" + (list != null ? 1 : 0) + "'); ",
-                                    Statement.RETURN_GENERATED_KEYS);
-                            preparedStatement.executeUpdate();
-                        }
-                    }
-
+            preparedStatement = connection.prepareStatement("SELECT * FROM " + JOB_INFORM);
+            rs = preparedStatement.executeQuery();
+            List<JobsInform> oldJobsInforms = new ArrayList<>();
+            while (rs.next()) {
+                JobsInform jobsInform = new JobsInform();
+                jobsInform.setHeadPublication(rs.getString(HEAD_PUBLICATION));
+                jobsInform.setSeen(rs.getInt(IS_SEEN) == 1);
+                jobsInform.setPublicationLink(rs.getString(PUBLICATION_LINK));
+                jobsInform.setCompanyName(rs.getString(COMPANY_NAME));
+                jobsInform.setPlace(rs.getString(PLACE));
+                oldJobsInforms.add(jobsInform);
             }
+            for (JobsInform jobsInform : oldJobsInforms) {
+                if (jobsInforms.contains(jobsInform)) {
+                    if (jobsInform.isSeen()) {
+                        newResults--;
+                    }
+                    jobsInforms.get(jobsInforms.indexOf(jobsInform)).setSeen(jobsInform.isSeen());
+                }
+            }
+
+            System.out.println("    SITE: " + siteName);
+            System.out.println("    NEW RESULTS: " + newResults);
+
+            if (jobsInforms.size() != 0 && newResults != 0) {
+                //dropping DB
+                preparedStatement = connection.prepareStatement(DROP_TABLE + JOB_INFORM);
+                preparedStatement.executeUpdate();
+                preparedStatement = connection.prepareStatement(DROP_TABLE + DESCRIPTION);
+                preparedStatement.executeUpdate();
+                preparedStatement = connection.prepareStatement(DROP_TABLE + LIST);
+                preparedStatement.executeUpdate();
+                createTables(siteName);
+
+                //writing Jobs to JobInform Table
+                writeJobsInform(jobsInforms);
+            }
+//            for (JobsInform jobsInform : jobsInforms) {
+//
+//                preparedStatement = connection.prepareStatement("INSERT INTO '" + JOB_INFORM + "' ('" + PLACE + "', '"
+//                                + COMPANY_NAME + "', '" + HEAD_PUBLICATION + "','" + PUBLICATION_LINK + "', '" + DATE_PUBLICATION + "', '" + IS_SEEN + "') VALUES ( ?, ?, ?, ?, ?, ?); ",
+//                        Statement.RETURN_GENERATED_KEYS);
+//
+//                preparedStatement.setString(1, jobsInform.getPlace() != null ? jobsInform.getPlace() : "");
+//                preparedStatement.setString(2, jobsInform.getCompanyName()!= null ? jobsInform.getCompanyName() : "");
+//                preparedStatement.setString(3, jobsInform.getHeadPublication());
+//                preparedStatement.setString(4, jobsInform.getPublicationLink());
+//                preparedStatement.setLong(5,  (jobsInform.getPublishedDate()!=null && jobsInform.getPublishedDate().getTime() == new Date(0).getTime())? jobsInform.getPublishedDate().getTime() : 0);
+//                preparedStatement.setInt(6, (jobsInform.isSeen() ? 1 : 0));
+//                preparedStatement.executeUpdate();
+//
+//                int jobInformId = jobsInforms.indexOf(jobsInform)+1;
+//
+//                // writing OrderList to Description table
+//                if (jobsInform.getOrder() != null)
+//                    for (ListImpl list : jobsInform.getOrder()) {
+//                        if (list != null) {
+//                            preparedStatement = connection.prepareStatement("INSERT INTO '" + DESCRIPTION + "' ('" + JOB_ID + "', '"
+//                                            + TEXT_FIELD + "', '" + LIST_HEADER + "', '" + IS_NULL +  "') VALUES ("
+//                                            + jobInformId + ", '" + (list.getTextFieldImpl() != null ? list.getTextFieldImpl().replaceAll("'", "*") : list.getTextFieldImpl()) + "', '"
+//                                            + (list.getListHeader() != null ? list.getListHeader().replaceAll("'", "*") : list.getListHeader()) + "', " + (list != null ? 1 : 0) + "); ",
+//                                    Statement.RETURN_GENERATED_KEYS);
+//                            preparedStatement.executeUpdate();
+//                            int listImplId = jobsInform.getOrder().indexOf(list)+1;
+//                            if (list.getListItem() != null && list.getListItem().size() > 0) {
+//                                //writing ListImplementation to List table
+//                                for (String s : list.getListItem()) {
+//                                    preparedStatement = connection.prepareStatement("INSERT INTO '" + LIST + "' ('" + DESCRIPTION_ID + "', '"
+//                                            + LIST_ITEM  + "') VALUES ("
+//                                            + listImplId + ", '" + s.replaceAll("'", "*") + "'); ");
+//                                    preparedStatement.executeUpdate();
+//                                }
+//                            }
+//                        } else {
+//                            preparedStatement = connection.prepareStatement("INSERT INTO '" + DESCRIPTION + "' ('" + JOB_ID + "', '"
+//                                            + IS_NULL + "') VALUES ("
+//                                            + jobInformId + ", '" + (list != null ? 1 : 0) + "'); ",
+//                                    Statement.RETURN_GENERATED_KEYS);
+//                            preparedStatement.executeUpdate();
+//                        }
+//                    }
+//
+//            }
+//            rs.close();
+//            preparedStatement.close();
+
             rs.close();
             preparedStatement.close();
             connection.close();
@@ -335,8 +329,77 @@ public class DbHelper {
             e.printStackTrace();
             return 0;
         }
+    }
+
+    private void writeJobsInform(List<JobsInform> jobsInforms) {
+        for (JobsInform jobsInform : jobsInforms) {
+            try {
+                preparedStatement = connection.prepareStatement("INSERT INTO '" + JOB_INFORM + "' ('" + PLACE + "', '"
+                                + COMPANY_NAME + "', '" + HEAD_PUBLICATION + "','" + PUBLICATION_LINK + "', '" + DATE_PUBLICATION + "', '" + IS_SEEN + "') VALUES ( ?, ?, ?, ?, ?, ?); ",
+                        Statement.RETURN_GENERATED_KEYS);
+
+                preparedStatement.setString(1, jobsInform.getPlace() != null ? jobsInform.getPlace() : "");
+                preparedStatement.setString(2, jobsInform.getCompanyName() != null ? jobsInform.getCompanyName() : "");
+                preparedStatement.setString(3, jobsInform.getHeadPublication());
+                preparedStatement.setString(4, jobsInform.getPublicationLink());
+                preparedStatement.setLong(5, (jobsInform.getPublishedDate() != null && jobsInform.getPublishedDate().getTime() != new Date(0).getTime()) ? jobsInform.getPublishedDate().getTime() : 0);
+                preparedStatement.setInt(6, (jobsInform.isSeen() ? 1 : 0));
+                preparedStatement.executeUpdate();
+
+                int jobInformId = jobsInforms.indexOf(jobsInform) + 1;
+
+                // writing OrderList to Description table
+                if(jobsInform.getOrder()!=null) {
+                    writingOrderList(jobsInform.getOrder(), jobInformId);
+                }else{
+                    List<ListImpl> list = new ArrayList<>();
+                    ListImpl l = new ListImpl();
+                    l.setListHeader(jobsInform.getHeadPublication());
+                    list.add(l);
+                    writingOrderList(list, jobInformId);
+                }
+            } catch (SQLException e) {
+                System.out.println("    FAIL: JobsInformWriting");
+                e.printStackTrace();
+            }
 
 
+        }
+
+    }
+
+    private void writingOrderList(List<ListImpl> jobsInformList, int jobInformId) {
+        for (ListImpl list : jobsInformList) {
+            try {
+                if (list != null) {
+                    preparedStatement = connection.prepareStatement("INSERT INTO '" + DESCRIPTION + "' ('" + JOB_ID + "', '"
+                                    + TEXT_FIELD + "', '" + LIST_HEADER + "', '" + IS_NULL + "') VALUES ("
+                                    + jobInformId + ", '" + (list.getTextFieldImpl() != null ? list.getTextFieldImpl().replaceAll("'", "*") : list.getTextFieldImpl()) + "', '"
+                                    + (list.getListHeader() != null ? list.getListHeader().replaceAll("'", "*") : list.getListHeader()) + "', " + (list != null ? 1 : 0) + "); ",
+                            Statement.RETURN_GENERATED_KEYS);
+                    preparedStatement.executeUpdate();
+                    int listImplId = jobsInformList.indexOf(list) + 1;
+                    if (list.getListItem() != null && list.getListItem().size() > 0) {
+                        //writing ListImplementation to List table
+                        for (String s : list.getListItem()) {
+                            preparedStatement = connection.prepareStatement("INSERT INTO '" + LIST + "' ('" + DESCRIPTION_ID + "', '"
+                                    + LIST_ITEM + "') VALUES ("
+                                    + listImplId + ", '" + s.replaceAll("'", "*") + "'); ");
+                            preparedStatement.executeUpdate();
+                        }
+                    }
+                } else {
+                    preparedStatement = connection.prepareStatement("INSERT INTO '" + DESCRIPTION + "' ('" + JOB_ID + "', '"
+                                    + IS_NULL + "') VALUES ("
+                                    + jobInformId + ", '" + (list != null ? 1 : 0) + "'); ",
+                            Statement.RETURN_GENERATED_KEYS);
+                    preparedStatement.executeUpdate();
+                }
+            } catch (SQLException e) {
+                System.out.println("    FAIL: OrderListWriting");
+                e.printStackTrace();
+            }
+        }
     }
 
     public List<JobsInform> getJobsInformFromDb(String siteName) {
@@ -403,34 +466,34 @@ public class DbHelper {
         return jobsInforms;
     }
 
-    public void setIsSeen(String siteName){
+    public void setIsSeen(String siteName) {
         open(siteName);
-        try{
-            PreparedStatement preparedStatement = connection.prepareStatement("UPDATE " + JOB_INFORM + " SET " + IS_SEEN + "="+1);
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement("UPDATE " + JOB_INFORM + " SET " + IS_SEEN + "=" + 1);
             preparedStatement.executeUpdate();
             preparedStatement.close();
             connection.close();
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public int getNewResults(String siteName){
+    public int getNewResults(String siteName) {
         open(siteName);
 
         try {
             int newResults = 0;
             PreparedStatement preparedStatement = null;
-            preparedStatement = connection.prepareStatement("SELECT * FROM " + JOB_INFORM + " WHERE "+ IS_SEEN + "=" + 0);
+            preparedStatement = connection.prepareStatement("SELECT * FROM " + JOB_INFORM + " WHERE " + IS_SEEN + "=" + 0);
             rs = preparedStatement.executeQuery();
             while (rs.next()) {
-              newResults++;
+                newResults++;
             }
             preparedStatement.close();
             rs.close();
             connection.close();
             return newResults;
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
             return 0;
         }

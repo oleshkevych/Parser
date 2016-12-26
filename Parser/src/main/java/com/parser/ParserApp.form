@@ -56,7 +56,6 @@
               <foreground color="-16777216"/>
               <horizontalAlignment value="0"/>
               <horizontalTextPosition value="2"/>
-              <labelFor value="3177a"/>
               <maximumSize width="300" height="15"/>
               <minimumSize width="300" height="15"/>
               <opaque value="false"/>
@@ -69,7 +68,7 @@
       </grid>
       <grid id="3bdc7" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
         <constraints>
-          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+          <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
             <preferred-size width="550" height="60"/>
           </grid>
         </constraints>
@@ -134,9 +133,9 @@
           </component>
         </children>
       </grid>
-      <scrollpane id="3177a">
+      <scrollpane id="ad4ac">
         <constraints>
-          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false">
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false">
             <minimum-size width="440" height="530"/>
             <preferred-size width="440" height="530"/>
             <maximum-size width="440" height="530"/>
@@ -147,7 +146,7 @@
         </properties>
         <border type="none"/>
         <children>
-          <grid id="eb5df" binding="linkPanel" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
+          <grid id="fd11a" binding="linkPanel" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
             <constraints/>
             <properties>
               <autoscrolls value="true"/>
@@ -165,7 +164,7 @@
               <color color="-16777216"/>
             </border>
             <children>
-              <grid id="e414a" binding="wfhLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="3bd89" binding="wfhLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
@@ -180,7 +179,7 @@
                   <title-color color="-16777216"/>
                 </border>
                 <children>
-                  <component id="50743" class="javax.swing.JLabel" binding="wfhLink">
+                  <component id="5dec5" class="javax.swing.JLabel" binding="wfhLink">
                     <constraints/>
                     <properties>
                       <autoscrolls value="false"/>
@@ -204,7 +203,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="f7792" binding="remoteokLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="68f01" binding="remoteokLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
@@ -219,7 +218,7 @@
                   <title-color color="-16777216"/>
                 </border>
                 <children>
-                  <component id="82537" class="javax.swing.JLabel" binding="remoteokLabel">
+                  <component id="d06da" class="javax.swing.JLabel" binding="remoteokLabel">
                     <constraints/>
                     <properties>
                       <autoscrolls value="false"/>
@@ -243,7 +242,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="532b0" binding="landingJobsPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="6800e" binding="landingJobsPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
@@ -258,7 +257,7 @@
                   <title-color color="-16777216"/>
                 </border>
                 <children>
-                  <component id="178e6" class="javax.swing.JLabel" binding="landingJobsLabel">
+                  <component id="89111" class="javax.swing.JLabel" binding="landingJobsLabel">
                     <constraints/>
                     <properties>
                       <autoscrolls value="false"/>
@@ -282,7 +281,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="d1808" binding="startusLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="d807a" binding="startusLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
@@ -297,7 +296,7 @@
                   <title-color color="-16777216"/>
                 </border>
                 <children>
-                  <component id="da52a" class="javax.swing.JLabel" binding="startusLabel">
+                  <component id="49366" class="javax.swing.JLabel" binding="startusLabel">
                     <constraints/>
                     <properties>
                       <autoscrolls value="false"/>
@@ -321,7 +320,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="ed85a" binding="virtualvocationsLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="a27cf" binding="virtualvocationsLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
@@ -336,7 +335,7 @@
                   <title-color color="-16777216"/>
                 </border>
                 <children>
-                  <component id="b7f54" class="javax.swing.JLabel" binding="virtualvocationsLabel">
+                  <component id="188f9" class="javax.swing.JLabel" binding="virtualvocationsLabel">
                     <constraints/>
                     <properties>
                       <autoscrolls value="false"/>
@@ -360,7 +359,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="62718" binding="simplyhiredLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="439f" binding="simplyhiredLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
@@ -375,7 +374,7 @@
                   <title-color color="-16777216"/>
                 </border>
                 <children>
-                  <component id="925e7" class="javax.swing.JLabel" binding="simplyhiredLabel">
+                  <component id="a73ec" class="javax.swing.JLabel" binding="simplyhiredLabel">
                     <constraints/>
                     <properties>
                       <autoscrolls value="false"/>
@@ -399,7 +398,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="7fcbf" binding="stackoverflowLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="41a70" binding="stackoverflowLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
@@ -414,7 +413,7 @@
                   <title-color color="-16777216"/>
                 </border>
                 <children>
-                  <component id="e050d" class="javax.swing.JLabel" binding="stackoverflowLabel">
+                  <component id="2af54" class="javax.swing.JLabel" binding="stackoverflowLabel">
                     <constraints/>
                     <properties>
                       <autoscrolls value="false"/>
@@ -438,7 +437,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="a8dc7" binding="jujuLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="ee61a" binding="jujuLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
@@ -453,7 +452,7 @@
                   <title-color color="-16777216"/>
                 </border>
                 <children>
-                  <component id="6ce35" class="javax.swing.JLabel" binding="jujuLabel">
+                  <component id="3f67c" class="javax.swing.JLabel" binding="jujuLabel">
                     <constraints/>
                     <properties>
                       <autoscrolls value="false"/>
@@ -477,7 +476,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="252af" binding="drupalLubelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="82c7b" binding="drupalLubelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
@@ -492,7 +491,7 @@
                   <title-color color="-16777216"/>
                 </border>
                 <children>
-                  <component id="bdf28" class="javax.swing.JLabel" binding="drupalLabel">
+                  <component id="fc755" class="javax.swing.JLabel" binding="drupalLabel">
                     <constraints/>
                     <properties>
                       <autoscrolls value="false"/>
@@ -516,7 +515,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="73e6e" binding="dutchstartupjobsLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="9b4b" binding="dutchstartupjobsLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
@@ -531,7 +530,7 @@
                   <title-color color="-16777216"/>
                 </border>
                 <children>
-                  <component id="f90b5" class="javax.swing.JLabel" binding="dutchstartupjobsLabel">
+                  <component id="ceaab" class="javax.swing.JLabel" binding="dutchstartupjobsLabel">
                     <constraints/>
                     <properties>
                       <autoscrolls value="false"/>
@@ -555,7 +554,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="54313" binding="monsterDeLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="b4874" binding="monsterDeLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
@@ -570,7 +569,7 @@
                   <title-color color="-16777216"/>
                 </border>
                 <children>
-                  <component id="20f4e" class="javax.swing.JLabel" binding="monsterDeLabel">
+                  <component id="e999e" class="javax.swing.JLabel" binding="monsterDeLabel">
                     <constraints/>
                     <properties>
                       <autoscrolls value="false"/>
@@ -594,7 +593,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="aaf92" binding="weloveangularLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="f56db" binding="weloveangularLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
@@ -609,7 +608,7 @@
                   <title-color color="-16777216"/>
                 </border>
                 <children>
-                  <component id="ac1b0" class="javax.swing.JLabel" binding="weloveangularLabel">
+                  <component id="6b165" class="javax.swing.JLabel" binding="weloveangularLabel">
                     <constraints/>
                     <properties>
                       <autoscrolls value="false"/>
@@ -633,7 +632,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="1753a" binding="weworkremotelyLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="9e46d" binding="weworkremotelyLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
@@ -648,7 +647,7 @@
                   <title-color color="-16777216"/>
                 </border>
                 <children>
-                  <component id="7c102" class="javax.swing.JLabel" binding="weworkremotelyLabel">
+                  <component id="82f8c" class="javax.swing.JLabel" binding="weworkremotelyLabel">
                     <constraints/>
                     <properties>
                       <autoscrolls value="false"/>
@@ -672,7 +671,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="589c1" binding="startupjobsLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="4f569" binding="startupjobsLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
@@ -687,7 +686,7 @@
                   <title-color color="-16777216"/>
                 </border>
                 <children>
-                  <component id="eb424" class="javax.swing.JLabel" binding="startupjobsLabel">
+                  <component id="78efa" class="javax.swing.JLabel" binding="startupjobsLabel">
                     <constraints/>
                     <properties>
                       <autoscrolls value="false"/>
@@ -711,7 +710,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="49206" binding="berlinstartupjobsLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="2e4e" binding="berlinstartupjobsLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
@@ -726,7 +725,7 @@
                   <title-color color="-16777216"/>
                 </border>
                 <children>
-                  <component id="a3041" class="javax.swing.JLabel" binding="berlinstartupjobsLabel">
+                  <component id="93ce" class="javax.swing.JLabel" binding="berlinstartupjobsLabel">
                     <constraints/>
                     <properties>
                       <autoscrolls value="false"/>
@@ -750,7 +749,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="e1d41" binding="jobsChLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="a3d67" binding="jobsChLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
@@ -765,7 +764,7 @@
                   <title-color color="-16777216"/>
                 </border>
                 <children>
-                  <component id="6c489" class="javax.swing.JLabel" binding="jobsChLabel">
+                  <component id="de68a" class="javax.swing.JLabel" binding="jobsChLabel">
                     <constraints/>
                     <properties>
                       <autoscrolls value="false"/>
@@ -789,7 +788,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="7c6ac" binding="flexjobslabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="abadc" binding="flexjobslabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
@@ -804,7 +803,7 @@
                   <title-color color="-16777216"/>
                 </border>
                 <children>
-                  <component id="53dd1" class="javax.swing.JLabel" binding="flexjobsLabel">
+                  <component id="81175" class="javax.swing.JLabel" binding="flexjobsLabel">
                     <constraints/>
                     <properties>
                       <autoscrolls value="false"/>
@@ -828,7 +827,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="c18c8" binding="builtinnodeLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="b265b" binding="builtinnodeLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
@@ -843,7 +842,7 @@
                   <title-color color="-16777216"/>
                 </border>
                 <children>
-                  <component id="fc5cf" class="javax.swing.JLabel" binding="builtinnodeLabel">
+                  <component id="cc9f5" class="javax.swing.JLabel" binding="builtinnodeLabel">
                     <constraints/>
                     <properties>
                       <autoscrolls value="false"/>
@@ -867,7 +866,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="522f7" binding="weworkmeteorLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="7e7b3" binding="weworkmeteorLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
@@ -882,7 +881,7 @@
                   <title-color color="-16777216"/>
                 </border>
                 <children>
-                  <component id="f449e" class="javax.swing.JLabel" binding="weworkmeteorLabel">
+                  <component id="2ee89" class="javax.swing.JLabel" binding="weworkmeteorLabel">
                     <constraints/>
                     <properties>
                       <autoscrolls value="false"/>
@@ -906,7 +905,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="303d" binding="jobbankLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="77891" binding="jobbankLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
@@ -921,7 +920,7 @@
                   <title-color color="-16777216"/>
                 </border>
                 <children>
-                  <component id="2dbd" class="javax.swing.JLabel" binding="jobbankLabel">
+                  <component id="d8d6d" class="javax.swing.JLabel" binding="jobbankLabel">
                     <constraints/>
                     <properties>
                       <autoscrolls value="false"/>
@@ -945,7 +944,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="9076c" binding="workingnomadsLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="c043b" binding="workingnomadsLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
@@ -960,7 +959,7 @@
                   <title-color color="-16777216"/>
                 </border>
                 <children>
-                  <component id="7486" class="javax.swing.JLabel" binding="workingnomadsLabel">
+                  <component id="b235d" class="javax.swing.JLabel" binding="workingnomadsLabel">
                     <constraints/>
                     <properties>
                       <autoscrolls value="false"/>
@@ -984,7 +983,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="102f8" binding="remoteLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="afb6c" binding="remoteLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
@@ -999,7 +998,7 @@
                   <title-color color="-16777216"/>
                 </border>
                 <children>
-                  <component id="de220" class="javax.swing.JLabel" binding="remoteLabel">
+                  <component id="cd1c5" class="javax.swing.JLabel" binding="remoteLabel">
                     <constraints/>
                     <properties>
                       <autoscrolls value="false"/>
@@ -1023,7 +1022,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="a69a5" binding="randstadLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="cb9d8" binding="randstadLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
@@ -1038,7 +1037,7 @@
                   <title-color color="-16777216"/>
                 </border>
                 <children>
-                  <component id="10ea" class="javax.swing.JLabel" binding="randstadLabel">
+                  <component id="293a4" class="javax.swing.JLabel" binding="randstadLabel">
                     <constraints/>
                     <properties>
                       <autoscrolls value="false"/>
@@ -1062,7 +1061,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="ef654" binding="workopolisLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="d0c6b" binding="workopolisLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
@@ -1077,7 +1076,7 @@
                   <title-color color="-16777216"/>
                 </border>
                 <children>
-                  <component id="73201" class="javax.swing.JLabel" binding="workopolisLabel">
+                  <component id="8bca4" class="javax.swing.JLabel" binding="workopolisLabel">
                     <constraints/>
                     <properties>
                       <autoscrolls value="false"/>
@@ -1101,7 +1100,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="647cb" binding="elutaLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="30f54" binding="elutaLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
@@ -1116,7 +1115,7 @@
                   <title-color color="-16777216"/>
                 </border>
                 <children>
-                  <component id="cc2cb" class="javax.swing.JLabel" binding="elutaLabel">
+                  <component id="bd289" class="javax.swing.JLabel" binding="elutaLabel">
                     <constraints/>
                     <properties>
                       <autoscrolls value="false"/>
@@ -1140,7 +1139,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="361a0" binding="jobspressoLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="c9d07" binding="jobspressoLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
@@ -1155,7 +1154,7 @@
                   <title-color color="-16777216"/>
                 </border>
                 <children>
-                  <component id="8b7dc" class="javax.swing.JLabel" binding="jobspressoLabel">
+                  <component id="9d9ba" class="javax.swing.JLabel" binding="jobspressoLabel">
                     <constraints/>
                     <properties>
                       <autoscrolls value="false"/>
@@ -1179,7 +1178,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="76896" binding="webbjobbLabelPrser" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="6c7b8" binding="webbjobbLabelPrser" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
@@ -1194,7 +1193,7 @@
                   <title-color color="-16777216"/>
                 </border>
                 <children>
-                  <component id="fca7c" class="javax.swing.JLabel" binding="webbjobbLabel">
+                  <component id="b7ec9" class="javax.swing.JLabel" binding="webbjobbLabel">
                     <constraints/>
                     <properties>
                       <autoscrolls value="false"/>
@@ -1218,7 +1217,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="b22de" binding="jobsSmashingmagazineLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="33992" binding="jobsSmashingmagazineLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
@@ -1233,7 +1232,7 @@
                   <title-color color="-16777216"/>
                 </border>
                 <children>
-                  <component id="eab89" class="javax.swing.JLabel" binding="jobsSmashingmagazineLabel">
+                  <component id="86410" class="javax.swing.JLabel" binding="jobsSmashingmagazineLabel">
                     <constraints/>
                     <properties>
                       <autoscrolls value="false"/>
@@ -1257,7 +1256,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="d2605" binding="themuseLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="1c0af" binding="themuseLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
@@ -1272,7 +1271,7 @@
                   <title-color color="-16777216"/>
                 </border>
                 <children>
-                  <component id="c980d" class="javax.swing.JLabel" binding="themuseLabel">
+                  <component id="cc804" class="javax.swing.JLabel" binding="themuseLabel">
                     <constraints/>
                     <properties>
                       <autoscrolls value="false"/>
@@ -1296,7 +1295,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="6ffcf" binding="techjobsLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="fdf22" binding="techjobsLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
@@ -1311,7 +1310,7 @@
                   <title-color color="-16777216"/>
                 </border>
                 <children>
-                  <component id="70454" class="javax.swing.JLabel" binding="techjobsLabel">
+                  <component id="c7aa3" class="javax.swing.JLabel" binding="techjobsLabel">
                     <constraints/>
                     <properties>
                       <autoscrolls value="false"/>
@@ -1335,7 +1334,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="5729" binding="careerbuilderLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="e5890" binding="careerbuilderLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
@@ -1350,7 +1349,7 @@
                   <title-color color="-16777216"/>
                 </border>
                 <children>
-                  <component id="7763" class="javax.swing.JLabel" binding="careerbuilderLabel">
+                  <component id="8b264" class="javax.swing.JLabel" binding="careerbuilderLabel">
                     <constraints/>
                     <properties>
                       <autoscrolls value="false"/>
@@ -1374,7 +1373,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="e9938" binding="webentwicklerJobsLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="10ac2" binding="webentwicklerJobsLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
@@ -1389,7 +1388,7 @@
                   <title-color color="-16777216"/>
                 </border>
                 <children>
-                  <component id="f8951" class="javax.swing.JLabel" binding="webentwicklerJobsLabel">
+                  <component id="90757" class="javax.swing.JLabel" binding="webentwicklerJobsLabel">
                     <constraints/>
                     <properties>
                       <autoscrolls value="false"/>
@@ -1413,7 +1412,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="8b37" binding="uberjobsLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="c830" binding="uberjobsLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
@@ -1428,7 +1427,7 @@
                   <title-color color="-16777216"/>
                 </border>
                 <children>
-                  <component id="556b8" class="javax.swing.JLabel" binding="uberjobsLabel">
+                  <component id="131a7" class="javax.swing.JLabel" binding="uberjobsLabel">
                     <constraints/>
                     <properties>
                       <autoscrolls value="false"/>
@@ -1452,7 +1451,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="61ead" binding="guruLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="c8ff1" binding="guruLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
@@ -1467,7 +1466,7 @@
                   <title-color color="-16777216"/>
                 </border>
                 <children>
-                  <component id="97905" class="javax.swing.JLabel" binding="guruLabel">
+                  <component id="6e36c" class="javax.swing.JLabel" binding="guruLabel">
                     <constraints/>
                     <properties>
                       <autoscrolls value="false"/>
@@ -1491,7 +1490,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="90b4" binding="authenticjobsLabelParser" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="c0a2" binding="authenticjobsLabelParser" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
@@ -1506,7 +1505,7 @@
                   <title-color color="-16777216"/>
                 </border>
                 <children>
-                  <component id="947d9" class="javax.swing.JLabel" binding="authenticjobsLabel">
+                  <component id="f38ca" class="javax.swing.JLabel" binding="authenticjobsLabel">
                     <constraints/>
                     <properties>
                       <autoscrolls value="false"/>
@@ -1530,7 +1529,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="1fb51" binding="eurojobsLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="b68a5" binding="eurojobsLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
@@ -1545,7 +1544,7 @@
                   <title-color color="-16777216"/>
                 </border>
                 <children>
-                  <component id="91772" class="javax.swing.JLabel" binding="eurojobsLabel">
+                  <component id="89c" class="javax.swing.JLabel" binding="eurojobsLabel">
                     <constraints/>
                     <properties>
                       <autoscrolls value="false"/>
@@ -1569,7 +1568,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="a471f" binding="technojobsCoUkLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="680f7" binding="technojobsCoUkLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
@@ -1584,7 +1583,7 @@
                   <title-color color="-16777216"/>
                 </border>
                 <children>
-                  <component id="deaec" class="javax.swing.JLabel" binding="technojobsCoUaLabel">
+                  <component id="d5f5d" class="javax.swing.JLabel" binding="technojobsCoUaLabel">
                     <constraints/>
                     <properties>
                       <autoscrolls value="false"/>
@@ -1608,7 +1607,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="93702" binding="canadajobsLabelParser" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="7d4db" binding="canadajobsLabelParser" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
@@ -1623,7 +1622,7 @@
                   <title-color color="-16777216"/>
                 </border>
                 <children>
-                  <component id="3f585" class="javax.swing.JLabel" binding="canadajobsLabel">
+                  <component id="961ef" class="javax.swing.JLabel" binding="canadajobsLabel">
                     <constraints/>
                     <properties>
                       <autoscrolls value="false"/>
@@ -1647,7 +1646,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="31d78" binding="drupalOrgUkLabelParser" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="4fc35" binding="drupalOrgUkLabelParser" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
@@ -1662,7 +1661,7 @@
                   <title-color color="-16777216"/>
                 </border>
                 <children>
-                  <component id="b3b3d" class="javax.swing.JLabel" binding="drupalOrgUkLabel">
+                  <component id="fc1a5" class="javax.swing.JLabel" binding="drupalOrgUkLabel">
                     <constraints/>
                     <properties>
                       <autoscrolls value="false"/>
@@ -1686,7 +1685,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="787fd" binding="ziprecruiterLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="4c3e8" binding="ziprecruiterLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
@@ -1701,7 +1700,7 @@
                   <title-color color="-16777216"/>
                 </border>
                 <children>
-                  <component id="993de" class="javax.swing.JLabel" binding="ziprecruiterLabel">
+                  <component id="d1379" class="javax.swing.JLabel" binding="ziprecruiterLabel">
                     <constraints/>
                     <properties>
                       <autoscrolls value="false"/>
@@ -1725,7 +1724,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="773b" binding="drupalcenterLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="98b84" binding="drupalcenterLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
@@ -1740,7 +1739,7 @@
                   <title-color color="-16777216"/>
                 </border>
                 <children>
-                  <component id="6c5a9" class="javax.swing.JLabel" binding="drupalcenterLabel">
+                  <component id="d44b4" class="javax.swing.JLabel" binding="drupalcenterLabel">
                     <constraints/>
                     <properties>
                       <autoscrolls value="false"/>
@@ -1764,7 +1763,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="561af" binding="indeedLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="ea5a4" binding="indeedLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
@@ -1779,7 +1778,7 @@
                   <title-color color="-16777216"/>
                 </border>
                 <children>
-                  <component id="840aa" class="javax.swing.JLabel" binding="indeedLabel">
+                  <component id="ed414" class="javax.swing.JLabel" binding="indeedLabel">
                     <constraints/>
                     <properties>
                       <autoscrolls value="false"/>
@@ -1803,7 +1802,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="31be3" binding="wowjobsLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="10cd9" binding="wowjobsLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
@@ -1818,7 +1817,7 @@
                   <title-color color="-16777216"/>
                 </border>
                 <children>
-                  <component id="a74eb" class="javax.swing.JLabel" binding="wowjobsLabel">
+                  <component id="e6b96" class="javax.swing.JLabel" binding="wowjobsLabel">
                     <constraints/>
                     <properties>
                       <autoscrolls value="false"/>
@@ -1834,6 +1833,84 @@
                       <preferredSize width="170" height="30"/>
                       <text value="wowjobs.ca"/>
                       <toolTipText value="http://www.wowjobs.ca"/>
+                      <verifyInputWhenFocusTarget value="false"/>
+                    </properties>
+                    <clientProperties>
+                      <html.disable class="java.lang.Boolean" value="true"/>
+                    </clientProperties>
+                  </component>
+                </children>
+              </grid>
+              <grid id="5f07e" binding="builtinaustinLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+                <constraints/>
+                <properties>
+                  <alignmentX value="0.0"/>
+                  <alignmentY value="0.0"/>
+                  <autoscrolls value="true"/>
+                  <background color="-721665"/>
+                  <maximumSize width="210" height="30"/>
+                  <minimumSize width="180" height="30"/>
+                  <preferredSize width="180" height="30"/>
+                </properties>
+                <border type="empty" title-position="1">
+                  <title-color color="-16777216"/>
+                </border>
+                <children>
+                  <component id="e7bb4" class="javax.swing.JLabel" binding="builtinaustinLabel">
+                    <constraints/>
+                    <properties>
+                      <autoscrolls value="false"/>
+                      <enabled value="true"/>
+                      <focusable value="false"/>
+                      <font name="Times New Roman" size="12"/>
+                      <foreground color="-16777216"/>
+                      <horizontalAlignment value="2"/>
+                      <horizontalTextPosition value="2"/>
+                      <maximumSize width="170" height="30"/>
+                      <minimumSize width="-1" height="-1"/>
+                      <opaque value="false"/>
+                      <preferredSize width="170" height="30"/>
+                      <text value="builtinaustin.com"/>
+                      <toolTipText value="http://www.builtinaustin.com"/>
+                      <verifyInputWhenFocusTarget value="false"/>
+                    </properties>
+                    <clientProperties>
+                      <html.disable class="java.lang.Boolean" value="true"/>
+                    </clientProperties>
+                  </component>
+                </children>
+              </grid>
+              <grid id="e69d7" binding="betalistLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+                <constraints/>
+                <properties>
+                  <alignmentX value="0.0"/>
+                  <alignmentY value="0.0"/>
+                  <autoscrolls value="true"/>
+                  <background color="-721665"/>
+                  <maximumSize width="210" height="30"/>
+                  <minimumSize width="180" height="30"/>
+                  <preferredSize width="180" height="30"/>
+                </properties>
+                <border type="empty" title-position="1">
+                  <title-color color="-16777216"/>
+                </border>
+                <children>
+                  <component id="adb25" class="javax.swing.JLabel" binding="betalistLabel">
+                    <constraints/>
+                    <properties>
+                      <autoscrolls value="false"/>
+                      <enabled value="true"/>
+                      <focusable value="false"/>
+                      <font name="Times New Roman" size="12"/>
+                      <foreground color="-16777216"/>
+                      <horizontalAlignment value="2"/>
+                      <horizontalTextPosition value="2"/>
+                      <maximumSize width="170" height="30"/>
+                      <minimumSize width="-1" height="-1"/>
+                      <opaque value="false"/>
+                      <preferredSize width="170" height="30"/>
+                      <text value="betalist.com"/>
+                      <toolTipText value="http://www.betalist.com"/>
                       <verifyInputWhenFocusTarget value="false"/>
                     </properties>
                     <clientProperties>
