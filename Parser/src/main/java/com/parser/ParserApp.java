@@ -2,8 +2,10 @@ package com.parser;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.parser.async_tasks.*;
-import com.parser.dbmanager.DbHelper;
+import com.parser.async_tasks.TaskDBWriteSeen;
+import com.parser.async_tasks.TaskReadDb;
+import com.parser.async_tasks.TaskReparse;
+import com.parser.entity.ExportJob;
 import com.parser.entity.JobsInform;
 import com.parser.entity.ListImpl;
 import com.parser.entity.ParserMain;
@@ -52,20 +54,32 @@ import com.parser.parsers.jobs.landing.ParserLandingJobs;
 import com.parser.parsers.org.drupal.jobs.ParserDrupal;
 import com.parser.parsers.se.startupjobs.ParserStartupjobsSe;
 import com.parser.parsers.uk.org.drupal.ParserDrupalOrgUk;
+import javafx.scene.layout.Border;
+import org.jxls.template.SimpleExporter;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Collectors;
+
+import static java.awt.BorderLayout.EAST;
+import static java.awt.BorderLayout.SOUTH;
+import static java.awt.BorderLayout.WEST;
 
 public class ParserApp implements MouseListener {
 
@@ -313,11 +327,11 @@ public class ParserApp implements MouseListener {
 //            }
 //        }
 
-        JPanel labelPanel = (JPanel) linkPanel.getComponents()[44];
-        labelPanel.setBackground(new Color(0x717184));
-        JLabel label = (JLabel) labelPanel.getComponent(0);
-        String homeLink = label.getText();
-        executor.execute(new TaskStartParser(labelPanel, mapParsers.get(homeLink), homeLink, getParserApp()));
+//        JPanel labelPanel = (JPanel) linkPanel.getComponents()[44];
+//        labelPanel.setBackground(new Color(0x717184));
+//        JLabel label = (JLabel) labelPanel.getComponent(0);
+//        String homeLink = label.getText();
+//        executor.execute(new TaskStartParser(labelPanel, mapParsers.get(homeLink), homeLink, getParserApp()));
 
         c = wfhLink;
         wfhLink.addMouseListener(this);
@@ -376,6 +390,8 @@ public class ParserApp implements MouseListener {
                 try {
                     allJobs = taskJobsInforms.get();
                     System.out.println(" reading all " + allJobs.size());
+
+                    writeExcel(allJobs, "VOVA");
 //                    testSearchWord = "";
 //                    testCorrectJobsList = allJobs;
                     searchTextField.setVisible(true);
@@ -440,6 +456,39 @@ public class ParserApp implements MouseListener {
                 executor.execute(new TaskReparse(key, mapParsers.get(key), getParserApp(), c.getParent()));
             }
         });
+    }
+
+    private static String templateFileName = "examples/templates/department.xls";
+    private static String destFileName = "target/classes/lib/builtin_template.xls";
+
+    private void writeExcel(List<JobsInform> jobs, String siteName) {
+        List<ExportJob> exportJobs = jobs.stream().map(j -> new ExportJob(j, siteName)).collect(Collectors.toList());
+//        List<ExportJob> exportJobs = new ArrayList<>();
+//        exportJobs.add(new ExportJob(jobs.get(0), siteName));
+        String stringDate = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
+        String fileName = "JobsExport" + stringDate;
+        File f = new File(fileName + ".xls");
+        if (f.exists()) {
+            for (int i = 1; i < Integer.MAX_VALUE; i++) {
+                String fileName1 = fileName + "(" + i + ")";
+                f = new File(fileName1 + ".xls");
+                if (!f.exists()) {
+                    fileName = fileName1;
+                    break;
+                }
+            }
+        }
+        try (OutputStream os1 = new FileOutputStream(fileName + ".xls")) {
+//            try (InputStream is = /*new FileInputStream*/ ParserApp.class.getResourceAsStream(destFileName)) {
+            List<String> headers = Arrays.asList("postingDate", "jobTitle", "companyName", "sourceName", "jobLink", "location");
+            SimpleExporter exporter = new SimpleExporter();
+            exporter.gridExport(headers, exportJobs, "postingDate, jobTitle, companyName, sourceName, jobLink, location", os1);
+            System.out.println("Excel crated");
+
+            os1.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private JScrollPane generateSingForJobPanel(String s) {
@@ -526,9 +575,8 @@ public class ParserApp implements MouseListener {
         JPanel mainJobPanel = new JPanel();
         for (int i = 0; i < jobsInformList.size(); i++) {
             JobsInform ji = jobsInformList.get(i);
-            JPanel label1Panel = new JPanel();
             String stringDate = ji.getPublishedDate() != new Date(1) ? new SimpleDateFormat("dd-MM-yyyy").format(ji.getPublishedDate()) : "";
-            JLabel label1 = new JLabel("VOCATION: " + ji.getHeadPublication());
+            JLabel label1 = new JLabel("TITLE: " + ji.getHeadPublication());
             if (ji.isSeen()) {
                 label1.setForeground(new Color(213123));
             } else {
@@ -547,6 +595,7 @@ public class ParserApp implements MouseListener {
             label2.setHorizontalAlignment(SwingConstants.LEFT);
             label3.setHorizontalAlignment(SwingConstants.LEFT);
 
+            JPanel label1Panel = new JPanel();
             label1Panel.setVisible(true);
             label1Panel.setName("" + i);
             label1Panel.setLayout(new BoxLayout(label1Panel, BoxLayout.Y_AXIS));
@@ -683,7 +732,12 @@ public class ParserApp implements MouseListener {
             label1Panel.setMaximumSize(new Dimension(540, 60));
             label1Panel.setMinimumSize(new Dimension(540, 60));
             label1Panel.setPreferredSize(new Dimension(540, 60));
-            mainJobPanel.add(label1Panel);
+            JPanel singleJobPanel = new JPanel(new BorderLayout());
+            singleJobPanel.add(label1Panel, WEST);
+            JCheckBox checkBox = new JCheckBox();
+            checkBox.setName("" + i);
+            singleJobPanel.add(checkBox, EAST);
+            mainJobPanel.add(singleJobPanel);
             label1Panel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
 
         }
@@ -716,11 +770,47 @@ public class ParserApp implements MouseListener {
         pane.setMaximumSize(new Dimension(580, 440));
         pane.setMinimumSize(mainJobPanel.getMinimumSize());
         pane.setPreferredSize(new Dimension(580, 440));
-        jobPanel.add(pane);
+        jobPanel.add(pane, BorderLayout.CENTER);
+        JButton exportButton = new JButton();
+        exportButton.setBackground(new Color(-2960187));
+        exportButton.setBorderPainted(false);
+        exportButton.setContentAreaFilled(true);
+        exportButton.setForeground(new Color(-11579315));
+        exportButton.setHideActionText(false);
+        exportButton.setHorizontalAlignment(0);
+        exportButton.setHorizontalTextPosition(0);
+        exportButton.setMaximumSize(new Dimension(300, 36));
+        exportButton.setMinimumSize(new Dimension(300, 36));
+        exportButton.setPreferredSize(new Dimension(300, 36));
+        exportButton.setText("Export Selected Offers");
+        exportButton.setVisible(true);
+        exportButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                onClickExportButton(jobsInformList);
+            }
+        });
+        JPanel exportPanel = new JPanel(new BorderLayout());
+        exportPanel.add(exportButton, BorderLayout.EAST);
+        jobPanel.add(exportPanel, SOUTH);
         jobPanel.setVisible(true);
-        panelMain.setSize(652, 632);
+        panelMain.setSize(652, 682);
     }
 
+    private void onClickExportButton(List<JobsInform> jobsInformList) {
+        List<JobsInform> exportList = new ArrayList<>();
+        for (int i = 0; i < jobsInformList.size(); i++) {
+            JScrollPane jobsPane = (JScrollPane) jobPanel.getComponent(0);
+            JViewport jobsListPanel = (JViewport) jobsPane.getComponent(0);
+            JPanel singleJobPanel = (JPanel) jobsListPanel.getComponent(0);
+            JPanel checkBoxPanel = (JPanel) singleJobPanel.getComponent(i);
+            JCheckBox checkBox = (JCheckBox) checkBoxPanel.getComponent(1);
+            if (checkBox.isSelected()) {
+                exportList.add(jobsInformList.get(i));
+            }
+        }
+        writeExcel(exportList, ((JLabel) c).getText());
+    }
 
     private int getContentHeight(String content) {
         JTextPane dummyEditorPane = new JTextPane();
@@ -823,12 +913,12 @@ public class ParserApp implements MouseListener {
         panelMain.setFocusable(false);
         panelMain.setInheritsPopupMenu(false);
         panelMain.setMaximumSize(new Dimension(1600, 1000));
-        panelMain.setMinimumSize(new Dimension(1150, 632));
-        panelMain.setPreferredSize(new Dimension(1150, 632));
+        panelMain.setMinimumSize(new Dimension(1150, 682));
+        panelMain.setPreferredSize(new Dimension(1150, 682));
         panelMain.setVisible(true);
         panelMain.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), "ParserApp", TitledBorder.CENTER, TitledBorder.DEFAULT_POSITION, new Font(panelMain.getFont().getName(), panelMain.getFont().getStyle(), 16), new Color(-16777216)));
         jobPanel = new JPanel();
-        jobPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5));
+        jobPanel.setLayout(new BorderLayout(0, 0));
         jobPanel.setAutoscrolls(false);
         jobPanel.setBackground(new Color(-4473925));
         jobPanel.setEnabled(false);
@@ -854,7 +944,7 @@ public class ParserApp implements MouseListener {
         jobLabel.setPreferredSize(new Dimension(300, 15));
         jobLabel.setText("");
         jobLabel.setToolTipText("");
-        jobPanel.add(jobLabel);
+        jobPanel.add(jobLabel, BorderLayout.CENTER);
         final JPanel panel1 = new JPanel();
         panel1.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
         panel1.setBackground(new Color(-7631989));
