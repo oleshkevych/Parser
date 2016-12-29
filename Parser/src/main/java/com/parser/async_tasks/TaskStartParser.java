@@ -26,9 +26,14 @@ public class TaskStartParser implements Runnable {
     @Override
     public void run() {
 
-        List<JobsInform> jobsInforms = classParser.startParse();
+        try {
+            List<JobsInform> jobsInforms = classParser.startParse();
 
-        parserApp.getExecutorDB().execute(new TaskDB(labelPanel, jobsInforms, homeLink));
+            parserApp.getExecutorDB().execute(new TaskDB(labelPanel, jobsInforms, homeLink));
+        }catch (Exception e){
+            parserApp.getExecutorDB().execute(new TaskDB(e.getMessage(), labelPanel));
+            e.printStackTrace();
+        }
 
     }
 }

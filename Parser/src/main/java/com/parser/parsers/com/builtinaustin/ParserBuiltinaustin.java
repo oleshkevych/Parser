@@ -4,6 +4,7 @@ import com.parser.entity.DateGenerator;
 import com.parser.entity.JobsInform;
 import com.parser.entity.ListImpl;
 import com.parser.entity.ParserMain;
+import com.parser.parsers.PhantomJSStarter;
 import com.parser.parsers.PrintDescription;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -15,6 +16,7 @@ import org.openqa.selenium.phantomjs.PhantomJSDriverService;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -28,7 +30,6 @@ public class ParserBuiltinaustin implements ParserMain {
     private List<JobsInform> jobsInforms = new ArrayList<JobsInform>();
     private Document doc;
     private DateGenerator dateClass;
-    private WebDriver ghostDriver;
 
     public ParserBuiltinaustin() {
     }
@@ -40,24 +41,7 @@ public class ParserBuiltinaustin implements ParserMain {
         return jobsInforms;
     }
 
-    private Document startGhost(String link) {
-        String path = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath().substring(1);
-        path = path.substring(0, path.lastIndexOf("/")) + "\\lib\\phantomjs\\phantomjs.exe";
 
-        DesiredCapabilities caps = new DesiredCapabilities();
-        caps.setJavascriptEnabled(true);
-        caps.setCapability("takesScreenshot", false);
-        caps.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, path);
-
-        try {
-            ghostDriver = new PhantomJSDriver(caps);
-            ghostDriver.get(link);
-            new WebDriverWait(ghostDriver, 15);
-            return Jsoup.parse(ghostDriver.getPageSource());
-        }finally {
-            ghostDriver.quit();
-        }
-    }
 
     private void parser() {
         List<String> stringCat = new ArrayList<>();
@@ -75,7 +59,7 @@ public class ParserBuiltinaustin implements ParserMain {
         for (String category : stringCat) {
             try {
 
-                doc = startGhost(startLink+category);
+                doc = PhantomJSStarter.startGhost(startLink+category);
                 Elements tables2 = doc.select(".view-content .views-row");
                 runParse(tables2, 0);
 

@@ -131,34 +131,35 @@ public class ParserJuju implements ParserMain {
                     .timeout(5000)
                     .get();
 
+            List<ListImpl> list = new ArrayList<ListImpl>();
 
+            list.add(addHead(document.select(".title").first()));
+            if(document.hasAttr("data-caption")) {
 //            int count = 0;
-            Elements tablesDescription = document.select("[data-caption='Show Full Description']").first().children();
+                Elements tablesDescription = document.select("[data-caption='Show Full Description']").first().children();
 //            if (tablesDescription.select("p").first().hasClass("simple_line")) {
 //                jobsInform.setPlace(tablesDescription.select("p").first().text());
 //                count++;
 //            }
-            List<ListImpl> list = new ArrayList<ListImpl>();
 
-            list.add(addHead(document.select(".title").first()));
-            for (int i = 0; i < tablesDescription.size(); i++) {
+                for (int i = 0; i < tablesDescription.size(); i++) {
 
-                if (tablesDescription.get(i).tagName().equals("span")) {
-                    list.add(addParagraph(tablesDescription.get(i)));
-                } else if (tablesDescription.get(i).tagName().equals("ul")) {
-                    list.add(addList(tablesDescription.get(i)));
-                } else if (tablesDescription.get(i).tagName().contains("strong")) {
-                    list.add(addHead(tablesDescription.get(i)));
-                } else if (tablesDescription.get(i).tagName().equals("div")) {
-                    ListImpl list1 = new ListImpl();
-                    list1.setTextFieldImpl(tablesDescription.get(i).ownText());
-                    list.add(list1);
+                    if (tablesDescription.get(i).tagName().equals("span")) {
+                        list.add(addParagraph(tablesDescription.get(i)));
+                    } else if (tablesDescription.get(i).tagName().equals("ul")) {
+                        list.add(addList(tablesDescription.get(i)));
+                    } else if (tablesDescription.get(i).tagName().contains("strong")) {
+                        list.add(addHead(tablesDescription.get(i)));
+                    } else if (tablesDescription.get(i).tagName().equals("div")) {
+                        ListImpl list1 = new ListImpl();
+                        list1.setTextFieldImpl(tablesDescription.get(i).ownText());
+                        list.add(list1);
+                    }
                 }
+
+                list.add(null);
+                jobsInform.setOrder(list);
             }
-
-            list.add(null);
-            jobsInform.setOrder(list);
-
 
             return jobsInform;
         } catch (Exception e) {

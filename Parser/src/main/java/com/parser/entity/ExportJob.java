@@ -15,14 +15,16 @@ public class ExportJob {
     private String jobLink;
     private String location;
 
+    public ExportJob() {
+    }
 
-    public ExportJob(JobsInform j, String sourceName) {
+    public ExportJob(JobsInformForSearch j) {
         jobTitle = j.getHeadPublication();
-        companyName = j.getCompanyName();
+        companyName = (j.getCompanyName() != null && j.getCompanyName().length()>1) ? j.getCompanyName() : "No company name";
         jobLink = j.getPublicationLink();
-        location = j.getPlace();
-        postingDate = (j.getPublishedDate() != new Date(1) && j.getPublishedDate() != null) ? new SimpleDateFormat("dd-MM-yyyy").format(j.getPublishedDate()) : "";
-        this.sourceName = sourceName;
+        location = (j.getPlace() != null&& j.getPlace().length()>1) ? j.getPlace() : "No location";
+        postingDate = (j.getPublishedDate() != null && j.getPublishedDate().getTime() > 1970) ? new SimpleDateFormat("dd-MM-yyyy").format(j.getPublishedDate()) : "No Date";
+        sourceName = j.getSiteName();
     }
 
     public String getPostingDate() {

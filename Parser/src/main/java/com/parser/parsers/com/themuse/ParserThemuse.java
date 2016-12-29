@@ -5,6 +5,7 @@ import com.parser.entity.DateGenerator;
 import com.parser.entity.JobsInform;
 import com.parser.entity.ListImpl;
 import com.parser.entity.ParserMain;
+import com.parser.parsers.PhantomJSStarter;
 import com.parser.parsers.jobs.landing.ParserLandingJobs;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -18,6 +19,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -44,24 +46,7 @@ public class ParserThemuse implements ParserMain {
         return jobsInforms;
     }
 
-    private void startPhantom() {
-        String path = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath().substring(1);
-        path = path.substring(0, path.lastIndexOf("/"))+"\\lib\\phantomjs\\phantomjs.exe";
 
-        DesiredCapabilities caps = new DesiredCapabilities();
-        caps.setJavascriptEnabled(true);
-        caps.setCapability("takesScreenshot", false);
-        caps.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, path);
-        caps.setCapability("phantomjs.page.settings.userAgent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.60 Safari/537.17");
-//        caps.setCapability("phantomjs.page.settings.host", "https://www.themuse.com/jobs?keyword=drupal&filter=true&page=1&sort=primary_attributes_updated_at");
-//        caps.setCapability(PhantomJSDriverService.PHANTOMJS_CLI_ARGS, new String[]{
-//                "--web-security=false",
-//                "--ssl-protocol=any",
-//                "--ignore-ssl-errors=true"
-//        });
-        ghostDriver = new PhantomJSDriver(caps);
-
-    }
 
     private Document startParser(String url){
         ghostDriver.get(url);
@@ -78,7 +63,7 @@ public class ParserThemuse implements ParserMain {
 
     private void parser() {
         try {
-            startPhantom();
+            ghostDriver = PhantomJSStarter.startPhantom();
             List<String> stringCat = new ArrayList<>();
             stringCat.add("drupal");
             stringCat.add("angular");
@@ -121,7 +106,7 @@ public class ParserThemuse implements ParserMain {
             jobsInform.setCompanyName(company.text());
             jobsInform.setPlace(place.text());
             jobsInform.setPublicationLink("https://www.themuse.com" + linkDescription.attr("href"));
-            jobsInform = getDescription("https://www.themuse.com" + linkDescription.attr("href"), jobsInform);
+//            jobsInform = getDescription("https://www.themuse.com" + linkDescription.attr("href"), jobsInform);
             if (!jobsInforms.contains(jobsInform)) {
                 jobsInforms.add(jobsInform);
             }
@@ -151,6 +136,10 @@ public class ParserThemuse implements ParserMain {
             return jobsInform;
         } catch (Exception e) {
             System.out.println("Error : " + e.getMessage() + " " + jobsInform.getPublicationLink());
+            if(e.getMessage().contains("RemoteWebDriver")){
+                ghostDriver.close();
+                ghostDriver = PhantomJSStarter.startPhantom();
+            }
             e.printStackTrace();
             return jobsInform;
         }

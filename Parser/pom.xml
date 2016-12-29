@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -59,32 +59,22 @@
             <artifactId>jxls-jexcel</artifactId>
             <version>1.0.6</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml -->
-        <!--<dependency>-->
-            <!--<groupId>org.apache.poi</groupId>-->
-            <!--<artifactId>poi-ooxml</artifactId>-->
-            <!--<version>3.14</version>-->
-        <!--</dependency>-->
-        <!--&lt;!&ndash; https://mvnrepository.com/artifact/org.apache.poi/poi &ndash;&gt;-->
-        <!--<dependency>-->
-            <!--<groupId>org.apache.poi</groupId>-->
-            <!--<artifactId>poi</artifactId>-->
-            <!--<version>3.14</version>-->
-        <!--</dependency>-->
-        <!--&lt;!&ndash; https://mvnrepository.com/artifact/org.slf4j/slf4j-api &ndash;&gt;-->
-        <!--<dependency>-->
-            <!--<groupId>org.slf4j</groupId>-->
-            <!--<artifactId>slf4j-api</artifactId>-->
-            <!--<version>1.7.7</version>-->
-        <!--</dependency>-->
-        <!--&lt;!&ndash; https://mvnrepository.com/artifact/org.apache.commons/commons-jexl &ndash;&gt;-->
-        <!--<dependency>-->
-            <!--<groupId>org.apache.commons</groupId>-->
-            <!--<artifactId>commons-jexl</artifactId>-->
-            <!--<version>2.1.1</version>-->
-        <!--</dependency>-->
-
-
+        <dependency>
+            <groupId>org.jxls</groupId>
+            <artifactId>jxls-reader</artifactId>
+            <version>2.0.2</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
+        <!--<dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.21</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.5</version>
+        </dependency>-->
 
     </dependencies>
     <build>
@@ -101,7 +91,8 @@
                         </goals>
                         <configuration>
                             <transformers>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <manifestEntries>
                                         <Main-Class>com.parser.Main</Main-Class>
                                         <Build-Number>123</Build-Number>
@@ -150,23 +141,23 @@
                     </descriptorRefs>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>ideauidesigner-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>javac2</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <fork>true</fork>
-                    <debug>true</debug>
-                    <failOnError>true</failOnError>
-                    ...
-                </configuration>
-            </plugin>
+            <!-- <plugin>
+                 <groupId>org.codehaus.mojo</groupId>
+                 <artifactId>ideauidesigner-maven-plugin</artifactId>
+                 <executions>
+                     <execution>
+                         <goals>
+                             <goal>javac2</goal>
+                         </goals>
+                     </execution>
+                 </executions>
+                 <configuration>
+                     <fork>true</fork>
+                     <debug>true</debug>
+                     <failOnError>true</failOnError>
+                     ...
+                 </configuration>
+             </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -186,6 +177,98 @@
                     </execution>
                 </executions>
             </plugin>
+
+
+            <!--build sh-->
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.2.1</version>
+                <executions>
+                    <execution>
+                        <id>Regression_Test</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <executable>java</executable>
+                    <workingDirectory>${project.build.directory}</workingDirectory>
+                    <arguments>
+                        <argument>-cp</argument>
+                        <argument>${project.build.directory}/parser-1.0-SNAPSHOT.jar</argument>
+                        <argument>com.parser.Main</argument>
+                    </arguments>
+                </configuration>
+            </plugin>
+
+            <!--build app-->
+
+            <plugin>
+                <groupId>sh.tak.appbundler</groupId>
+                <artifactId>appbundle-maven-plugin</artifactId>
+                <version>1.2.0</version>
+                <configuration>
+                    <mainClass>com.parser.Main</mainClass>
+                    <!--<jrePath>C:/Program Files/Java/jdk1.8.0_101</jrePath>-->
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>bundle</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+          <!--  &lt;!&ndash;build exe&ndash;&gt;
+
+             <plugin>
+                 <groupId>com.akathist.maven.plugins.launch4j</groupId>
+                 <artifactId>launch4j-maven-plugin</artifactId>
+                 <version>1.7.15</version>
+                 <executions>
+                     <execution>
+                         <id>l4j-clui</id>
+                         <phase>package</phase>
+                         <goals>
+                             <goal>launch4j</goal>
+                         </goals>
+                         <configuration>
+                             <headerType>console</headerType>
+                             <outfile>target/SearcherApp.exe</outfile>
+                             <jar>target/parser-1.0-SNAPSHOT.jar</jar>
+                             <errTitle>encc</errTitle>
+                             <classPath>
+                                 <mainClass>com.parser.Main</mainClass>
+                                 <addDependencies>false</addDependencies>
+                                 <preCp>anything</preCp>
+                             </classPath>
+                             <jre>
+                                 <minVersion>1.5.0</minVersion>
+                                 <opts>
+                                     <opt>-Djava.endorsed.dirs=./endorsed</opt>
+                                 </opts>
+                             </jre>
+                             <versionInfo>
+                                 <fileVersion>1.2.3.4</fileVersion>
+                                 <txtFileVersion>txt file version?</txtFileVersion>
+                                 <fileDescription>a description</fileDescription>
+                                 <copyright>my copyright</copyright>
+                                 <productVersion>4.3.2.1</productVersion>
+                                 <txtProductVersion>txt product version</txtProductVersion>
+                                 <productName>E-N-C-C</productName>
+                                 <internalName>ccne</internalName>
+                                 <originalFilename>original.exe</originalFilename>
+                             </versionInfo>
+                         </configuration>
+                     </execution>
+                 </executions>
+             </plugin>-->
         </plugins>
     </build>
 

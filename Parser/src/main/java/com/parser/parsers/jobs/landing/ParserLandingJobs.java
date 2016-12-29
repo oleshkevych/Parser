@@ -5,6 +5,7 @@ import com.parser.entity.DateGenerator;
 import com.parser.entity.JobsInform;
 import com.parser.entity.ListImpl;
 import com.parser.entity.ParserMain;
+import com.parser.parsers.PhantomJSStarter;
 import com.parser.parsers.PrintDescription;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -44,23 +45,7 @@ public class ParserLandingJobs implements ParserMain {
     }
 
 
-    private Document renderPage(String url) {
-        String path = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath().substring(1);
-        path = path.substring(0, path.lastIndexOf("/"))+"\\lib\\phantomjs\\phantomjs.exe";
 
-        DesiredCapabilities caps = new DesiredCapabilities();
-        caps.setJavascriptEnabled(true);
-        caps.setCapability("takesScreenshot", false);
-        caps.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, path);
-
-        WebDriver ghostDriver = new PhantomJSDriver(caps);
-        try {
-            ghostDriver.get(url);
-            return Jsoup.parse(ghostDriver.getPageSource());
-        } finally {
-            ghostDriver.quit();
-        }
-    }
 
 
     public List<JobsInform> getJobsInforms() {
@@ -68,7 +53,7 @@ public class ParserLandingJobs implements ParserMain {
     }
 
     private void parser() {
-        Document doc = renderPage(startLink);
+        Document doc = PhantomJSStarter.startGhost(startLink);
         Elements tables2 = doc.select(".ld-job-offer");
         runParse(tables2, 0);
     }

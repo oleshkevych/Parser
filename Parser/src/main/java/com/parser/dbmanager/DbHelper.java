@@ -1,6 +1,7 @@
 package com.parser.dbmanager;
 
 import com.parser.entity.JobsInform;
+import com.parser.entity.JobsInformForSearch;
 import com.parser.entity.ListImpl;
 
 import java.sql.*;
@@ -120,6 +121,7 @@ public class DbHelper {
         listParsers.add("wowjobs.ca");
         listParsers.add("builtinaustin.com");
         listParsers.add("betalist.com");
+        listParsers.add("unicornhunt.io");
     }
 
     public Connection connect(String link) {
@@ -349,9 +351,9 @@ public class DbHelper {
                 int jobInformId = jobsInforms.indexOf(jobsInform) + 1;
 
                 // writing OrderList to Description table
-                if(jobsInform.getOrder()!=null) {
+                if (jobsInform.getOrder() != null) {
                     writingOrderList(jobsInform.getOrder(), jobInformId);
-                }else{
+                } else {
                     List<ListImpl> list = new ArrayList<>();
                     ListImpl l = new ListImpl();
                     l.setListHeader(jobsInform.getHeadPublication());
@@ -445,6 +447,7 @@ public class DbHelper {
                     orderList.add(list);
                 }
                 jobsInform.setOrder(orderList);
+                jobsInform.setId(rs.getInt(ID));
                 jobsInform.setPublishedDate(rs.getLong(DATE_PUBLICATION) != 0 ? new Date(rs.getLong(DATE_PUBLICATION)) : null);
                 jobsInform.setCompanyName(rs.getString(COMPANY_NAME));
                 jobsInform.setHeadPublication(rs.getString(HEAD_PUBLICATION));
@@ -466,10 +469,10 @@ public class DbHelper {
         return jobsInforms;
     }
 
-    public void setIsSeen(String siteName) {
-        open(siteName);
+    public void setIsSeen(JobsInformForSearch j) {
+        open(j.getSiteName());
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("UPDATE " + JOB_INFORM + " SET " + IS_SEEN + "=" + 1);
+            PreparedStatement preparedStatement = connection.prepareStatement("UPDATE " + JOB_INFORM + " SET " + IS_SEEN + "=" + 1 + " WHERE " + ID + "=" + j.getId());
             preparedStatement.executeUpdate();
             preparedStatement.close();
             connection.close();

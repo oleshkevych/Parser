@@ -88,11 +88,11 @@ public class ParserUberjobs implements ParserMain {
             ghostDriver.get(linkToDescription);
             Document document = Jsoup.parse(ghostDriver.getPageSource());
 
-            Elements tablesDescription = document.select(".job-info").first().children();
             Elements tablesHead = document.select(".job-title");
             List<ListImpl> list = new ArrayList<ListImpl>();
 
             list.add(addHead(tablesHead.first()));
+            Elements tablesDescription = document.select(".job-info").first().children();
 
 
             for (Element element : tablesDescription) {

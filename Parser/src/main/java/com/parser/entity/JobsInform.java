@@ -1,8 +1,6 @@
 package com.parser.entity;
 
 
-import com.parser.entity.ListImpl;
-
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -11,7 +9,8 @@ import java.util.List;
 /**
  * Created by rolique_pc on 12/5/2016.
  */
-public class JobsInform implements Serializable{
+public class JobsInform implements Serializable {
+    private int id;
     private Date publishedDate;
     private String headPublication;
     private String place;
@@ -22,6 +21,14 @@ public class JobsInform implements Serializable{
 
     public JobsInform() {
         setSeen(false);
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getCompanyName() {

@@ -2,13 +2,9 @@ package com.parser;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.parser.async_tasks.TaskDBWriteSeen;
-import com.parser.async_tasks.TaskReadDb;
-import com.parser.async_tasks.TaskReparse;
-import com.parser.entity.ExportJob;
-import com.parser.entity.JobsInform;
-import com.parser.entity.ListImpl;
-import com.parser.entity.ParserMain;
+import com.parser.async_tasks.*;
+import com.parser.dbmanager.DbHelper;
+import com.parser.entity.*;
 import com.parser.parsers.ca.eluta.ParserEluta;
 import com.parser.parsers.ca.wowjobs.ParserWowjobs;
 import com.parser.parsers.cc.startus.ParserStartus;
@@ -48,13 +44,15 @@ import com.parser.parsers.de.uberjobs.ParserUberjobs;
 import com.parser.parsers.de.webentwicklerJobs.ParserWebentwicklerJobs;
 import com.parser.parsers.dk.jobbank.ParserJobbank;
 import com.parser.parsers.io.remoteok.ParserRemoteok;
+import com.parser.parsers.io.unicornhunt.ParserUnicornhunt;
 import com.parser.parsers.io.webbjobb.ParserWebbjobb;
 import com.parser.parsers.io.wfh.ParserWFH;
 import com.parser.parsers.jobs.landing.ParserLandingJobs;
 import com.parser.parsers.org.drupal.jobs.ParserDrupal;
 import com.parser.parsers.se.startupjobs.ParserStartupjobsSe;
 import com.parser.parsers.uk.org.drupal.ParserDrupalOrgUk;
-import javafx.scene.layout.Border;
+import org.jxls.reader.ReaderBuilder;
+import org.jxls.reader.XLSReader;
 import org.jxls.template.SimpleExporter;
 
 import javax.swing.*;
@@ -62,10 +60,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
@@ -77,9 +72,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Collectors;
 
-import static java.awt.BorderLayout.EAST;
-import static java.awt.BorderLayout.SOUTH;
-import static java.awt.BorderLayout.WEST;
+import static java.awt.BorderLayout.*;
 
 public class ParserApp implements MouseListener {
 
@@ -181,12 +174,14 @@ public class ParserApp implements MouseListener {
     private JLabel builtinaustinLabel;
     private JPanel betalistLabelPanel;
     private JLabel betalistLabel;
+    private JPanel unicornhuntLabelPanel;
+    private JLabel unicornhuntLabel;
     private JLabel europeremotelyLabel;
     private JFrame jFrame = new JFrame();
     private Component c;
     private ExecutorService executorDB = Executors.newFixedThreadPool(1);
     private ThreadPoolExecutor executor;
-    private List<JobsInform> allJobs;
+    private List<JobsInformForSearch> allJobs;
 
     public ExecutorService getExecutorDB() {
         return executorDB;
@@ -306,32 +301,35 @@ public class ParserApp implements MouseListener {
         mapParsers.put("builtinaustin.com", new ParserBuiltinaustin());
 /*44*/
         mapParsers.put("betalist.com", new ParserBetalist());
+/*45*/
+        mapParsers.put("unicornhunt.io", new ParserUnicornhunt());
 
-        executor = (ThreadPoolExecutor) Executors.newScheduledThreadPool(2)/*newFixedThreadPool(2)*/;
-//        if (System.currentTimeMillis() > (new DbHelper().getDateLastUpdate() + 8 * 3600 * 1000)) {
-//            for (int i = 0; i < linkPanel.getComponents().length; i++) {
-//                JPanel labelPanel = (JPanel) linkPanel.getComponents()[i];
-//                labelPanel.setBackground(new Color(0x717184));
-//                JLabel label = (JLabel) labelPanel.getComponent(0);
-//                String homeLink = label.getText();
-//                executor.execute(new TaskStartParser(labelPanel, mapParsers.get(homeLink), homeLink, getParserApp()));
-//            }
-//            executorDB.execute(new TaskSetDateUpdateDb());
-//        } else {
-//            for (int i = 0; i < linkPanel.getComponents().length; i++) {
-//                JPanel labelPanel = (JPanel) linkPanel.getComponents()[i];
-//                labelPanel.setBackground(new Color(0x717184));
-//                JLabel label = (JLabel) labelPanel.getComponent(0);
-//                String homeLink = label.getText();
-//                executorDB.execute(new TaskDB(labelPanel, homeLink));
-//            }
-//        }
-
-//        JPanel labelPanel = (JPanel) linkPanel.getComponents()[44];
+        executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(7);
+        if (System.currentTimeMillis() > (new DbHelper().getDateLastUpdate() + 8 * 3600 * 1000)) {
+            for (int i = 0; i < linkPanel.getComponents().length; i++) {
+                JPanel labelPanel = (JPanel) linkPanel.getComponents()[i];
+                labelPanel.setBackground(new Color(0x717184));
+                JLabel label = (JLabel) labelPanel.getComponent(0);
+                String homeLink = label.getText();
+                executor.execute(new TaskStartParser(labelPanel, mapParsers.get(homeLink), homeLink, getParserApp()));
+            }
+            executorDB.execute(new TaskSetDateUpdateDb());
+        } else {
+            for (int i = 0; i < linkPanel.getComponents().length; i++) {
+                JPanel labelPanel = (JPanel) linkPanel.getComponents()[i];
+                labelPanel.setBackground(new Color(0x717184));
+                JLabel label = (JLabel) labelPanel.getComponent(0);
+                String homeLink = label.getText();
+                executorDB.execute(new TaskDB(labelPanel, homeLink));
+            }
+        }
+//
+//        JPanel labelPanel = (JPanel) linkPanel.getComponents()[28];
 //        labelPanel.setBackground(new Color(0x717184));
 //        JLabel label = (JLabel) labelPanel.getComponent(0);
 //        String homeLink = label.getText();
 //        executor.execute(new TaskStartParser(labelPanel, mapParsers.get(homeLink), homeLink, getParserApp()));
+
 
         c = wfhLink;
         wfhLink.addMouseListener(this);
@@ -380,18 +378,17 @@ public class ParserApp implements MouseListener {
         wowjobsLabel.addMouseListener(this);
         builtinaustinLabel.addMouseListener(this);
         betalistLabel.addMouseListener(this);
+        unicornhuntLabel.addMouseListener(this);
 
         openSearchButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 reparseButton.setVisible(false);
                 openSearchButton.setVisible(false);
-                Future<List<JobsInform>> taskJobsInforms = executorDB.submit(new TaskReadDb(linkPanel));
+                Future<List<JobsInformForSearch>> taskJobsInforms = executorDB.submit(new TaskReadDb(linkPanel));
                 try {
                     allJobs = taskJobsInforms.get();
                     System.out.println(" reading all " + allJobs.size());
-
-                    writeExcel(allJobs, "VOVA");
 //                    testSearchWord = "";
 //                    testCorrectJobsList = allJobs;
                     searchTextField.setVisible(true);
@@ -458,31 +455,100 @@ public class ParserApp implements MouseListener {
         });
     }
 
-    private static String templateFileName = "examples/templates/department.xls";
-    private static String destFileName = "target/classes/lib/builtin_template.xls";
+//    private static final Logger logger = LoggerFactory.getLogger(ParserApp.class);
 
-    private void writeExcel(List<JobsInform> jobs, String siteName) {
-        List<ExportJob> exportJobs = jobs.stream().map(j -> new ExportJob(j, siteName)).collect(Collectors.toList());
-//        List<ExportJob> exportJobs = new ArrayList<>();
-//        exportJobs.add(new ExportJob(jobs.get(0), siteName));
-        String stringDate = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
-        String fileName = "JobsExport" + stringDate;
-        File f = new File(fileName + ".xls");
-        if (f.exists()) {
-            for (int i = 1; i < Integer.MAX_VALUE; i++) {
-                String fileName1 = fileName + "(" + i + ")";
-                f = new File(fileName1 + ".xls");
-                if (!f.exists()) {
-                    fileName = fileName1;
-                    break;
-                }
+    private List<ExportJob> readXMS(String fileXLS) {
+        InputStream inputXML = null;
+        try {
+            String path = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath().substring(1);
+
+            path = path.substring(0, path.lastIndexOf("/"));
+//            System.out.println(path);
+
+//            FileWriter log = new FileWriter("logs.txt");
+//            BufferedWriter br = new BufferedWriter(log);
+//            br.write(new Date().toString() + " 1 " + path + "/lib/XLSReader.xml");
+//            br.flush();
+//            br.close();
+//            log.close();
+
+            inputXML = new BufferedInputStream(/*getClass().getResourceAsStream*/new FileInputStream(path + "/lib/XLSReader.xml"));
+
+//            FileWriter log11 = new FileWriter("logs.txt");
+//            BufferedWriter br1 = new BufferedWriter(log11);
+//            br1.write(new Date().toString() + " 2 " + path + "/lib/XLSReader.xml");
+//            br1.flush();
+//            br1.close();
+//            log11.close();
+
+            XLSReader mainReader = ReaderBuilder.buildFromXML(inputXML);
+            InputStream inputXLS = new BufferedInputStream(new FileInputStream(fileXLS));
+
+//            FileWriter log2 = new FileWriter("logs.txt");
+//            BufferedWriter br2 = new BufferedWriter(log2);
+//            br2.write(new Date().toString() + " 3 " + path + "inputXML");
+//            br2.flush();
+//            br2.close();
+//            log2.close();
+            List<ExportJob> jobsInforms = new ArrayList<>();
+            Map beans = new HashMap();
+            beans.put("jobsInforms", jobsInforms);
+            mainReader.read(inputXLS, beans);
+//            FileWriter log3 = new FileWriter("logs.txt");
+//            BufferedWriter br3 = new BufferedWriter(log3);
+//            br3.write(new Date().toString() + " 3 " + path + "size = " + jobsInforms.size());
+//            br3.flush();
+//            br3.close();
+//            log3.close();
+            System.out.println(jobsInforms.size());
+            return jobsInforms;
+        } catch (Exception e) {
+            try {
+//                FileWriter log = new FileWriter("logs.txt");
+//                BufferedWriter br = new BufferedWriter(log);
+//                br.write(new Date().toString() + " Error " + e.getMessage());
+//                br.close();
+//                log.close();
+                e.printStackTrace();
+            } catch (Exception e1) {
+            }
+            return new ArrayList<>();
+        } finally {
+            try {
+                inputXML.close();
+            } catch (IOException ignoreMe) {
             }
         }
-        try (OutputStream os1 = new FileOutputStream(fileName + ".xls")) {
-//            try (InputStream is = /*new FileInputStream*/ ParserApp.class.getResourceAsStream(destFileName)) {
-            List<String> headers = Arrays.asList("postingDate", "jobTitle", "companyName", "sourceName", "jobLink", "location");
+    }
+
+    private List<ExportJob> createListForExport(List<ExportJob> selectedOffers, String fileName) {
+        File f = new File(fileName);
+        if (f.exists()) {
+            selectedOffers.addAll(readXMS(fileName));
+
+            return selectedOffers;
+        } else {
+            return selectedOffers;
+        }
+    }
+
+    private void writeExcel(List<ExportJob> exportJobs, String fileName) {
+
+//        File f = new File(fileName + ".xls");
+//        if (f.exists()) {
+//            for (int i = 1; i < Integer.MAX_VALUE; i++) {
+//                String fileName1 = fileName + "(" + i + ")";
+//                f = new File(fileName1 + ".xls");
+//                if (!f.exists()) {
+//                    fileName = fileName1;
+//                    break;
+//                }
+//            }
+//        }
+        try (OutputStream os1 = new FileOutputStream(fileName)) {
+            List<String> headers = Arrays.asList("Company Name", "Job Title", "Job Link", "Location", "Posting date", "Source Name", "Contact name", "Position", "E-mail", "Comment");
             SimpleExporter exporter = new SimpleExporter();
-            exporter.gridExport(headers, exportJobs, "postingDate, jobTitle, companyName, sourceName, jobLink, location", os1);
+            exporter.gridExport(headers, exportJobs, "companyName,  jobTitle, jobLink, location, postingDate, sourceName", os1);
             System.out.println("Excel crated");
 
             os1.close();
@@ -491,27 +557,8 @@ public class ParserApp implements MouseListener {
         }
     }
 
-    private JScrollPane generateSingForJobPanel(String s) {
-        JLabel labelParse = new JLabel(s);
-        labelParse.setMaximumSize(new Dimension(580, 80));
-        labelParse.setMinimumSize(new Dimension(580, 80));
-        labelParse.setPreferredSize(new Dimension(580, 80));
-        labelParse.setHorizontalAlignment(SwingConstants.CENTER);
-        JScrollPane pane = new JScrollPane(labelParse,
-                ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        pane.setAutoscrolls(true);
-        pane.setBackground(new Color(-721665));
-        pane.setAlignmentX(0.0f);
-        pane.setAlignmentY(0.0f);
-        pane.setMaximumSize(new Dimension(580, 100));
-        pane.setMinimumSize(labelParse.getMinimumSize());
-        pane.setPreferredSize(new Dimension(580, 100));
-        return pane;
-    }
-
     private void formFoundJobsList() {
-        List<JobsInform> correctJobsList = new ArrayList<JobsInform>();
+        List<JobsInformForSearch> correctJobsList = new ArrayList<JobsInformForSearch>();
         String searchText = searchTextField.getText().toLowerCase();
         List<String> keyList = new ArrayList<String>();
         if (searchText.contains(" ")) {
@@ -539,9 +586,9 @@ public class ParserApp implements MouseListener {
 
         List<String> jobsStringList = new ArrayList<>();
         try {
-            jobsStringList.addAll(Arrays.asList(j.getPlace().toLowerCase().split("[ ]")));
-            jobsStringList.addAll(Arrays.asList(j.getHeadPublication().toLowerCase().split("[ ]")));
-            jobsStringList.addAll(Arrays.asList(j.getCompanyName().toLowerCase().split("[ ]")));
+            jobsStringList.addAll(Arrays.asList(j.getPlace().toLowerCase().split("[!@#/\\ ]")));
+            jobsStringList.addAll(Arrays.asList(j.getHeadPublication().toLowerCase().split("[!@#/\\ ]")));
+            jobsStringList.addAll(Arrays.asList(j.getCompanyName().toLowerCase().split("[!@#/\\ ]")));
 //                if (!(j.getCompanyName().toLowerCase().contains(keyWord) ||
 //                        j.getHeadPublication().toLowerCase().contains(keyWord) ||
 //                        j.getPlace().toLowerCase().contains(keyWord))) {
@@ -560,8 +607,27 @@ public class ParserApp implements MouseListener {
         return contains;
     }
 
+    private JScrollPane generateSingForJobPanel(String s) {
+        JLabel labelParse = new JLabel(s);
+        labelParse.setMaximumSize(new Dimension(580, 80));
+        labelParse.setMinimumSize(new Dimension(580, 80));
+        labelParse.setPreferredSize(new Dimension(580, 80));
+        labelParse.setHorizontalAlignment(SwingConstants.CENTER);
+        JScrollPane pane = new JScrollPane(labelParse,
+                ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        pane.setAutoscrolls(true);
+        pane.setBackground(new Color(-721665));
+        pane.setAlignmentX(0.0f);
+        pane.setAlignmentY(0.0f);
+        pane.setMaximumSize(new Dimension(580, 100));
+        pane.setMinimumSize(labelParse.getMinimumSize());
+        pane.setPreferredSize(new Dimension(580, 100));
+        return pane;
+    }
 
-    public void panelFiller(final List<JobsInform> jobsInformList, String homeLink) {
+
+    public void panelFiller(final List<JobsInformForSearch> jobsInformList, String homeLink) {
 //        Collections.sort(jobsInformList, new SortDate());
         jobsInformList.forEach(jobsInform -> {
             if (jobsInform.getPublishedDate() == null) {
@@ -574,8 +640,8 @@ public class ParserApp implements MouseListener {
         jobPanel.setVisible(false);
         JPanel mainJobPanel = new JPanel();
         for (int i = 0; i < jobsInformList.size(); i++) {
-            JobsInform ji = jobsInformList.get(i);
-            String stringDate = ji.getPublishedDate() != new Date(1) ? new SimpleDateFormat("dd-MM-yyyy").format(ji.getPublishedDate()) : "";
+            JobsInformForSearch ji = jobsInformList.get(i);
+            String stringDate = ji.getPublishedDate().getTime() > 1970 ? new SimpleDateFormat("dd-MM-yyyy").format(ji.getPublishedDate()) : "";
             JLabel label1 = new JLabel("TITLE: " + ji.getHeadPublication());
             if (ji.isSeen()) {
                 label1.setForeground(new Color(213123));
@@ -603,11 +669,11 @@ public class ParserApp implements MouseListener {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     try {
-                        List<ListImpl> order = jobsInformList.get(Integer.parseInt(e.getComponent().getName())).getOrder();
-                        final URI uri = new URI(jobsInformList.get(Integer.parseInt(e.getComponent().getName())).getPublicationLink());
+                        List<ListImpl> order = /*jobsInformList.get(Integer.parseInt(e.getComponent().getName()))*/ji.getOrder();
+                        final URI uri = new URI(ji.getPublicationLink());
                         JPanel container = new JPanel();
                         container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
-                        container.add(new JLabel(ji.getPublishedDate() != null ? (new SimpleDateFormat("dd-MM-yyyy").format(jobsInformList.get(Integer.parseInt(e.getComponent().getName())).getPublishedDate())) : ""));
+                        container.add(new JLabel(ji.getPublishedDate() != null ? (new SimpleDateFormat("dd-MM-yyyy").format(ji.getPublishedDate())) : ""));
                         JButton button = new JButton();
                         button.setText("<HTML><FONT size=\"3\" color=\"#000099\"><U>Run to the source site</U></FONT>"
                                 + " </HTML>");
@@ -705,6 +771,13 @@ public class ParserApp implements MouseListener {
                         jFrame.setVisible(true);
 
 
+                        if (!ji.isSeen()) {
+                            ji.setSeen(true);
+                            ((JLabel) ((JPanel) e.getComponent()).getComponent(0)).setForeground(new Color(213123));
+                            executorDB.execute(new TaskDBWriteSeen(ji));
+                        }
+
+
 //                            jFrame.add(new JScrollPane(container));
 
 
@@ -741,16 +814,8 @@ public class ParserApp implements MouseListener {
             label1Panel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
 
         }
-        boolean isChanged = false;
-        for (JobsInform j : jobsInformList) {
-            if (isChanged || !j.isSeen()) {
-                isChanged = true;
-            }
-            j.setSeen(true);
-        }
-        if (isChanged && homeLink != null) {
-            executorDB.execute(new TaskDBWriteSeen(homeLink));
-        }
+
+
         mainJobPanel.setMinimumSize(new
 
                 Dimension(580, 65 * jobsInformList.size()));
@@ -772,7 +837,7 @@ public class ParserApp implements MouseListener {
         pane.setPreferredSize(new Dimension(580, 440));
         jobPanel.add(pane, BorderLayout.CENTER);
         JButton exportButton = new JButton();
-        exportButton.setBackground(new Color(-2960187));
+        exportButton.setBackground(new Color(0xB4B49A));
         exportButton.setBorderPainted(false);
         exportButton.setContentAreaFilled(true);
         exportButton.setForeground(new Color(-11579315));
@@ -797,8 +862,8 @@ public class ParserApp implements MouseListener {
         panelMain.setSize(652, 682);
     }
 
-    private void onClickExportButton(List<JobsInform> jobsInformList) {
-        List<JobsInform> exportList = new ArrayList<>();
+    private void onClickExportButton(List<JobsInformForSearch> jobsInformList) {
+        List<JobsInformForSearch> exportList = new ArrayList<>();
         for (int i = 0; i < jobsInformList.size(); i++) {
             JScrollPane jobsPane = (JScrollPane) jobPanel.getComponent(0);
             JViewport jobsListPanel = (JViewport) jobsPane.getComponent(0);
@@ -807,9 +872,15 @@ public class ParserApp implements MouseListener {
             JCheckBox checkBox = (JCheckBox) checkBoxPanel.getComponent(1);
             if (checkBox.isSelected()) {
                 exportList.add(jobsInformList.get(i));
+                checkBox.setSelected(false);
             }
         }
-        writeExcel(exportList, ((JLabel) c).getText());
+        if (exportList.size() > 0) {
+            String stringDate = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
+            String fileName = "OffersExport" + stringDate + ".xls";
+            List<ExportJob> exportJobs = exportList.stream().map(ExportJob::new).collect(Collectors.toList());
+            writeExcel(createListForExport(exportJobs, fileName), fileName);
+        }
     }
 
     private int getContentHeight(String content) {
@@ -824,6 +895,15 @@ public class ParserApp implements MouseListener {
     @Override
     public void mouseClicked(MouseEvent e) {
         System.out.println("text speciality :111 ");
+        String previousLabel = ((JLabel) c).getText();
+        if (previousLabel.contains(" ")) {
+            previousLabel = previousLabel.substring(0, previousLabel.indexOf(" "));
+        }
+        int newResults = new DbHelper().getNewResults(previousLabel);
+        if (newResults > 0) {
+
+            ((JLabel) c).setText(previousLabel + " new " + newResults);
+        }
         openSearchButton.setVisible(true);
         searchTextField.setVisible(false);
         startSearchButton.setVisible(false);
@@ -840,7 +920,7 @@ public class ParserApp implements MouseListener {
         reparseButton.setText("Reload parsing " + label.getText());
         reparseButton.setVisible(true);
         linkPanel.setVisible(true);
-        Future<List<JobsInform>> taskJobsInforms = executorDB.submit(new TaskReadDb(label.getText()));
+        Future<List<JobsInformForSearch>> taskJobsInforms = executorDB.submit(new TaskReadDb(label.getText()));
         try {
             panelFiller(taskJobsInforms.get(), label.getText());
         } catch (Exception ex) {
@@ -2266,6 +2346,34 @@ public class ParserApp implements MouseListener {
         betalistLabel.setVerifyInputWhenFocusTarget(false);
         betalistLabel.putClientProperty("html.disable", Boolean.TRUE);
         betalistLabelPanel.add(betalistLabel);
+        unicornhuntLabelPanel = new JPanel();
+        unicornhuntLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        unicornhuntLabelPanel.setAlignmentX(0.0f);
+        unicornhuntLabelPanel.setAlignmentY(0.0f);
+        unicornhuntLabelPanel.setAutoscrolls(true);
+        unicornhuntLabelPanel.setBackground(new Color(-721665));
+        unicornhuntLabelPanel.setMaximumSize(new Dimension(210, 30));
+        unicornhuntLabelPanel.setMinimumSize(new Dimension(180, 30));
+        unicornhuntLabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(unicornhuntLabelPanel);
+        unicornhuntLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        unicornhuntLabel = new JLabel();
+        unicornhuntLabel.setAutoscrolls(false);
+        unicornhuntLabel.setEnabled(true);
+        unicornhuntLabel.setFocusable(false);
+        unicornhuntLabel.setFont(new Font("Times New Roman", unicornhuntLabel.getFont().getStyle(), 12));
+        unicornhuntLabel.setForeground(new Color(-16777216));
+        unicornhuntLabel.setHorizontalAlignment(2);
+        unicornhuntLabel.setHorizontalTextPosition(2);
+        unicornhuntLabel.setMaximumSize(new Dimension(170, 30));
+        unicornhuntLabel.setMinimumSize(new Dimension(-1, -1));
+        unicornhuntLabel.setOpaque(false);
+        unicornhuntLabel.setPreferredSize(new Dimension(170, 30));
+        unicornhuntLabel.setText("unicornhunt.io");
+        unicornhuntLabel.setToolTipText("http://unicornhunt.io");
+        unicornhuntLabel.setVerifyInputWhenFocusTarget(false);
+        unicornhuntLabel.putClientProperty("html.disable", Boolean.TRUE);
+        unicornhuntLabelPanel.add(unicornhuntLabel);
     }
 
     /**

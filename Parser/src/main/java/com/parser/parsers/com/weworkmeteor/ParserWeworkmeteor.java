@@ -5,6 +5,7 @@ import com.parser.entity.DateGenerator;
 import com.parser.entity.JobsInform;
 import com.parser.entity.ListImpl;
 import com.parser.entity.ParserMain;
+import com.parser.parsers.PhantomJSStarter;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -17,6 +18,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -42,33 +44,11 @@ public class ParserWeworkmeteor implements ParserMain {
         return jobsInforms;
     }
 
-    private Document renderPage(String url, boolean description) {
-        String path = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath().substring(1);
-        path = path.substring(0, path.lastIndexOf("/"))+"\\lib\\phantomjs\\phantomjs.exe";
 
-        DesiredCapabilities caps = new DesiredCapabilities();
-        caps.setJavascriptEnabled(true);
-        caps.setCapability("takesScreenshot", false);
-        caps.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, path);
-
-        WebDriver ghostDriver = new PhantomJSDriver(caps);
-        try {
-            ghostDriver.get(url);
-            WebDriverWait wait = new WebDriverWait(ghostDriver, 15);
-            if (description) {
-                wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("job")));
-            } else {
-                wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("jobSmall")));
-            }
-            return Jsoup.parse(ghostDriver.getPageSource());
-        } finally {
-            ghostDriver.quit();
-        }
-    }
 
     private void parser() {
 
-        doc = renderPage(startLink, false);
+        doc = PhantomJSStarter.renderPage(startLink, false);
         Elements tables2 = doc.select(".jobSmall .panel-body");
         runParse(tables2, 0);
 
@@ -120,7 +100,7 @@ public class ParserWeworkmeteor implements ParserMain {
 
     public JobsInform getDescription(String linkToDescription, JobsInform jobsInform) {
 
-        Document document = renderPage(linkToDescription, true);
+        Document document = PhantomJSStarter.renderPage(linkToDescription, true);
         Elements tablesDescription = document.select(".col-sm-9").first().children();
         Element tablesHead = document.select("h2").first();
         List<ListImpl> list = new ArrayList<ListImpl>();

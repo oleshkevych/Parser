@@ -79,6 +79,45 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.2.1</version>
+        <executions>
+          <execution>
+            <id>Regression_Test</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <executable>java</executable>
+          <workingDirectory>${project.build.directory}</workingDirectory>
+          <arguments>
+            <argument>-cp</argument>
+            <argument>${project.build.directory}/parser-1.0-SNAPSHOT.jar</argument>
+            <argument>com.parser.Main</argument>
+          </arguments>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>sh.tak.appbundler</groupId>
+        <artifactId>appbundle-maven-plugin</artifactId>
+        <version>1.2.0</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>bundle</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <mainClass>com.parser.Main</mainClass>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 </project>

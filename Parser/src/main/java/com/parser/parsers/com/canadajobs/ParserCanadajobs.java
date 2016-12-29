@@ -67,7 +67,7 @@ public class ParserCanadajobs implements ParserMain {
                     count += 10;
                     count1++;
                     loadLink = link.replace("start=" + (count - 10), "start=" + (count));
-                    System.out.println("text date : " + loadLink);
+//                    System.out.println("text date : " + loadLink);
 
                 } catch (IOException e) {
                     e.printStackTrace();

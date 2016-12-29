@@ -2,6 +2,7 @@ package com.parser.async_tasks;
 
 import com.parser.dbmanager.DbHelper;
 import com.parser.entity.JobsInform;
+import com.parser.entity.JobsInformForSearch;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import java.util.concurrent.Callable;
 /**
  * Created by rolique_pc on 12/26/2016.
  */
-public class TaskReadDb implements Callable<List<JobsInform>> {
+public class TaskReadDb implements Callable<List<JobsInformForSearch>> {
 
     private String siteName;
     private JPanel linkPanel;
@@ -24,11 +25,15 @@ public class TaskReadDb implements Callable<List<JobsInform>> {
         this.linkPanel = linkPanel;
     }
 
-    public List<JobsInform> call() {
+    public List<JobsInformForSearch> call() {
+        List<JobsInformForSearch> jobs = new ArrayList<>();
         if (siteName != null) {
-            return new DbHelper().getJobsInformFromDb(siteName);
+            for(JobsInform j: new DbHelper().getJobsInformFromDb(siteName)) {
+
+                jobs.add(new JobsInformForSearch(j, siteName));
+            }
+            return jobs;
         } else {
-            List<JobsInform> jobs = new ArrayList<>();
             for (int i = 0; i < linkPanel.getComponents().length; i++) {
                 JPanel labelPanel = (JPanel) linkPanel.getComponents()[i];
                 JLabel label = (JLabel) labelPanel.getComponent(0);
@@ -36,7 +41,10 @@ public class TaskReadDb implements Callable<List<JobsInform>> {
                 if (homeLink.contains(" ")) {
                     homeLink = label.getText().substring(0, label.getText().indexOf(" "));
                 }
-                jobs.addAll(new DbHelper().getJobsInformFromDb(homeLink));
+                for(JobsInform j: new DbHelper().getJobsInformFromDb(homeLink)) {
+
+                    jobs.add(new JobsInformForSearch(j, homeLink));
+                }
             }
             return jobs;
         }

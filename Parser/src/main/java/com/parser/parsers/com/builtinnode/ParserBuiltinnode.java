@@ -5,6 +5,7 @@ import com.parser.entity.DateGenerator;
 import com.parser.entity.JobsInform;
 import com.parser.entity.ListImpl;
 import com.parser.entity.ParserMain;
+import com.parser.parsers.PhantomJSStarter;
 import com.parser.parsers.jobs.landing.ParserLandingJobs;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -15,6 +16,7 @@ import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriverService;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -40,29 +42,11 @@ public class ParserBuiltinnode implements ParserMain {
         return jobsInforms;
     }
 
-    private Document renderPage(String url) {
-        String path = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath().substring(1);
-        path = path.substring(0, path.lastIndexOf("/"))+"\\lib\\phantomjs\\phantomjs.exe";
-
-        DesiredCapabilities caps = new DesiredCapabilities();
-        caps.setJavascriptEnabled(true);
-        caps.setCapability("takesScreenshot", false);
-        caps.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, path);
-
-        WebDriver ghostDriver = new PhantomJSDriver(caps);
-        try {
-            ghostDriver.get(url);
-            return Jsoup.parse(ghostDriver.getPageSource());
-        } finally {
-            ghostDriver.quit();
-        }
-    }
-
     private void parser() {
 //        try {
 
 
-        doc = renderPage(startLink);
+        doc = PhantomJSStarter.startGhost(startLink);
 
         Elements tables2 = doc.select(".template-perl-job-board");
         runParse(tables2, 0);

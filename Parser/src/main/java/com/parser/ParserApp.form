@@ -1919,6 +1919,45 @@
                   </component>
                 </children>
               </grid>
+              <grid id="df86f" binding="unicornhuntLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+                <constraints/>
+                <properties>
+                  <alignmentX value="0.0"/>
+                  <alignmentY value="0.0"/>
+                  <autoscrolls value="true"/>
+                  <background color="-721665"/>
+                  <maximumSize width="210" height="30"/>
+                  <minimumSize width="180" height="30"/>
+                  <preferredSize width="180" height="30"/>
+                </properties>
+                <border type="empty" title-position="1">
+                  <title-color color="-16777216"/>
+                </border>
+                <children>
+                  <component id="9d96c" class="javax.swing.JLabel" binding="unicornhuntLabel">
+                    <constraints/>
+                    <properties>
+                      <autoscrolls value="false"/>
+                      <enabled value="true"/>
+                      <focusable value="false"/>
+                      <font name="Times New Roman" size="12"/>
+                      <foreground color="-16777216"/>
+                      <horizontalAlignment value="2"/>
+                      <horizontalTextPosition value="2"/>
+                      <maximumSize width="170" height="30"/>
+                      <minimumSize width="-1" height="-1"/>
+                      <opaque value="false"/>
+                      <preferredSize width="170" height="30"/>
+                      <text value="unicornhunt.io"/>
+                      <toolTipText value="http://unicornhunt.io"/>
+                      <verifyInputWhenFocusTarget value="false"/>
+                    </properties>
+                    <clientProperties>
+                      <html.disable class="java.lang.Boolean" value="true"/>
+                    </clientProperties>
+                  </component>
+                </children>
+              </grid>
             </children>
           </grid>
         </children>
