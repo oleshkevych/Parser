@@ -79,12 +79,13 @@ public class ParserThemuse implements ParserMain {
                 Elements tables2 = doc.select(".job-element");
                 runParse(tables2, 0);
             }
-            ghostDriver.quit();
         }catch (Exception e){
             e.printStackTrace();
-            ghostDriver.quit();
+//            ghostDriver.close();
+//            ghostDriver.quit();
         }
         finally {
+            ghostDriver.close();
             ghostDriver.quit();
         }
 

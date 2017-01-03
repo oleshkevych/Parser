@@ -115,7 +115,7 @@ public class ParserJuju implements ParserMain {
             jobsInform.setCompanyName(company.ownText());
             jobsInform.setPlace(place.text());
             jobsInform.setPublicationLink(linkDescription.attr("href"));
-            jobsInform = getDescription(linkDescription.attr("href"), jobsInform);
+//            jobsInform = getDescription(linkDescription.attr("href"), jobsInform);
             if (!jobsInforms.contains(jobsInform)) {
                 jobsInforms.add(jobsInform);
             }

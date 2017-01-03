@@ -62,7 +62,7 @@ public class ParserEurojobs implements ParserMain {
                 Elements tables2 = doc.select(".searchResultsJobs tr");
                 runParse(tables2, 0);
 
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

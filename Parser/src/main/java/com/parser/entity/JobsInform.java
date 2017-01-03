@@ -93,10 +93,10 @@ public class JobsInform implements Serializable {
         if (!(o instanceof JobsInform)) return false;
         JobsInform that = (JobsInform) o;
         if (!getHeadPublication().equals(that.getHeadPublication())) return false;
-        if (getPlace() != null ? !getPlace().toLowerCase().equals(that.getPlace().toLowerCase()) : that.getPlace() != null)
+        if (getPlace() != null ? !getPlace().toLowerCase().equals(that.getPlace() != null ? that.getPlace().toLowerCase() : "") : that.getPlace() != null)
             return false;
         if (!getPublicationLink().toLowerCase().equals(that.getPublicationLink().toLowerCase())) return false;
-        return getCompanyName() != null ? getCompanyName().toLowerCase().equals(that.getCompanyName().toLowerCase()) : that.getCompanyName() == null;
+        return getCompanyName() != null ? getCompanyName().toLowerCase().equals(that.getCompanyName()!= null ? that.getCompanyName().toLowerCase() : "") : that.getCompanyName() != null;
 
     }
 

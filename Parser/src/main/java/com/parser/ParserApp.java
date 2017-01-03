@@ -25,6 +25,7 @@ import com.parser.parsers.com.eurojobs.ParserEurojobs;
 import com.parser.parsers.com.flexjobs.ParserFlexjobs;
 import com.parser.parsers.com.guru.ParserGugu;
 import com.parser.parsers.com.indeed.ParserIndeed;
+import com.parser.parsers.com.jobs_justlanded.ParserJobsJustlanded;
 import com.parser.parsers.com.jobs_smashingmagazine.ParserJobsSmashingmagazine;
 import com.parser.parsers.com.juju.ParserJuju;
 import com.parser.parsers.com.randstad.ParserRandstad;
@@ -43,6 +44,7 @@ import com.parser.parsers.de.monster.ParserMonsterDe;
 import com.parser.parsers.de.uberjobs.ParserUberjobs;
 import com.parser.parsers.de.webentwicklerJobs.ParserWebentwicklerJobs;
 import com.parser.parsers.dk.jobbank.ParserJobbank;
+import com.parser.parsers.io.jobs_remotive.ParserJobsRemotive;
 import com.parser.parsers.io.remoteok.ParserRemoteok;
 import com.parser.parsers.io.unicornhunt.ParserUnicornhunt;
 import com.parser.parsers.io.webbjobb.ParserWebbjobb;
@@ -176,12 +178,19 @@ public class ParserApp implements MouseListener {
     private JLabel betalistLabel;
     private JPanel unicornhuntLabelPanel;
     private JLabel unicornhuntLabel;
+    private JButton openSearchInSelected;
+    private JPanel jobsJustlandedLabelPanel;
+    private JLabel jobsJustlandedLabel;
+    private JPanel jobsRemotiveLabelPanel;
+    private JLabel jobsRemotiveLabel;
     private JLabel europeremotelyLabel;
     private JFrame jFrame = new JFrame();
     private Component c;
     private ExecutorService executorDB = Executors.newFixedThreadPool(1);
     private ThreadPoolExecutor executor;
     private List<JobsInformForSearch> allJobs;
+    private String testSearchWord;
+    private List<JobsInformForSearch> testCorrectJobsList;
 
     public ExecutorService getExecutorDB() {
         return executorDB;
@@ -204,6 +213,7 @@ public class ParserApp implements MouseListener {
     }
 
     public ParserApp() {
+
 
     }
 
@@ -303,32 +313,42 @@ public class ParserApp implements MouseListener {
         mapParsers.put("betalist.com", new ParserBetalist());
 /*45*/
         mapParsers.put("unicornhunt.io", new ParserUnicornhunt());
+/*46*/
+        mapParsers.put("jobs.justlanded.com", new ParserJobsJustlanded());
+/*46*/
+        mapParsers.put("jobs.remotive.io", new ParserJobsRemotive());
 
         executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(7);
-        if (System.currentTimeMillis() > (new DbHelper().getDateLastUpdate() + 8 * 3600 * 1000)) {
-            for (int i = 0; i < linkPanel.getComponents().length; i++) {
-                JPanel labelPanel = (JPanel) linkPanel.getComponents()[i];
-                labelPanel.setBackground(new Color(0x717184));
-                JLabel label = (JLabel) labelPanel.getComponent(0);
-                String homeLink = label.getText();
-                executor.execute(new TaskStartParser(labelPanel, mapParsers.get(homeLink), homeLink, getParserApp()));
+
+        try {
+            if (System.currentTimeMillis() > (new DbHelper().getDateLastUpdate() + 8 * 3600 * 1000)) {
+                for (int i = 0; i < linkPanel.getComponents().length; i++) {
+                    JPanel labelPanel = (JPanel) linkPanel.getComponents()[i];
+                    labelPanel.setBackground(new Color(0x717184));
+                    JLabel label = (JLabel) labelPanel.getComponent(0);
+                    String homeLink = label.getText();
+                    executor.execute(new TaskStartParser(labelPanel, mapParsers.get(homeLink), homeLink, getParserApp()));
+                }
+                executorDB.execute(new TaskSetDateUpdateDb());
+            } else {
+                for (int i = 0; i < linkPanel.getComponents().length; i++) {
+                    JPanel labelPanel = (JPanel) linkPanel.getComponents()[i];
+                    labelPanel.setBackground(new Color(0x717184));
+                    JLabel label = (JLabel) labelPanel.getComponent(0);
+                    String homeLink = label.getText();
+                    executorDB.execute(new TaskDB(labelPanel, homeLink));
+                }
             }
-            executorDB.execute(new TaskSetDateUpdateDb());
-        } else {
-            for (int i = 0; i < linkPanel.getComponents().length; i++) {
-                JPanel labelPanel = (JPanel) linkPanel.getComponents()[i];
-                labelPanel.setBackground(new Color(0x717184));
-                JLabel label = (JLabel) labelPanel.getComponent(0);
-                String homeLink = label.getText();
-                executorDB.execute(new TaskDB(labelPanel, homeLink));
-            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 //
-//        JPanel labelPanel = (JPanel) linkPanel.getComponents()[28];
+//        JPanel labelPanel = (JPanel) linkPanel.getComponents()[47];
 //        labelPanel.setBackground(new Color(0x717184));
 //        JLabel label = (JLabel) labelPanel.getComponent(0);
 //        String homeLink = label.getText();
 //        executor.execute(new TaskStartParser(labelPanel, mapParsers.get(homeLink), homeLink, getParserApp()));
+//        executor.execute(new TaskStartParser((JPanel) linkPanel.getComponents()[1], new ParserJobsRemotive(), "jobs.remotive.io", getParserApp()));
 
 
         c = wfhLink;
@@ -379,18 +399,21 @@ public class ParserApp implements MouseListener {
         builtinaustinLabel.addMouseListener(this);
         betalistLabel.addMouseListener(this);
         unicornhuntLabel.addMouseListener(this);
+        jobsJustlandedLabel.addMouseListener(this);
+        jobsRemotiveLabel.addMouseListener(this);
+
 
         openSearchButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 reparseButton.setVisible(false);
                 openSearchButton.setVisible(false);
+                openSearchInSelected.setVisible(false);
                 Future<List<JobsInformForSearch>> taskJobsInforms = executorDB.submit(new TaskReadDb(linkPanel));
                 try {
                     allJobs = taskJobsInforms.get();
                     System.out.println(" reading all " + allJobs.size());
-//                    testSearchWord = "";
-//                    testCorrectJobsList = allJobs;
+                    testSearchWord = "";
                     searchTextField.setVisible(true);
                     startSearchButton.setVisible(true);
                 } catch (Exception e1) {
@@ -407,29 +430,49 @@ public class ParserApp implements MouseListener {
         searchTextField.addKeyListener(new KeyAdapter() {
             @Override
             public void keyTyped(KeyEvent e) {
-//                testCorrectJobsList = new ArrayList<JobsInform>();
-//                String searchText = searchTextField.getText().toLowerCase();
-//                if (searchText.length() < testSearchWord.length() || searchText.length() > testSearchWord.length() + 1) {
-//                    testCorrectJobsList = allJobs;
-//                }
-//                testSearchWord = searchText;
-//                List<String> keyList = new ArrayList<String>();
-//                if (searchText.contains(" ")) {
-//                    keyList = Arrays.asList(searchText.split(" "));
-//                } else {
-//                    keyList.add(searchText);
-//                }
-//                List<JobsInform> testList = new ArrayList<JobsInform>();
-//                for (JobsInform j : testCorrectJobsList) {
-//                    if (searchChecker(j, keyList))
-//                        testList.add(j);
-//                }
-//                testCorrectJobsList = testList;
-//                if (testCorrectJobsList.size() > 203) {
-//                    panelFiller(testCorrectJobsList.subList(0, 200), null);
-//                } else {
-//                    panelFiller(testCorrectJobsList, null);
-//                }
+                String searchText = searchTextField.getText().toLowerCase();
+
+                if (testSearchWord.length() == searchText.length() && (Character.isLetter(e.getKeyChar()) || Character.isDigit(e.getKeyChar())) || e.getKeyChar() == ' ') {
+                    testSearchWord = searchText + e.getKeyChar();
+                } else {
+                    testSearchWord = searchText;
+                }
+
+                if (searchText.length() == testSearchWord.length() || searchText.length() == 0) {
+                    testCorrectJobsList = allJobs;
+                }
+
+                System.out.println("   " + testCorrectJobsList.size() + " " + testSearchWord);
+
+                List<String> keyList = new ArrayList<String>();
+                if (testSearchWord.contains(" ")) {
+                    keyList = Arrays.asList(testSearchWord.split(" "));
+                } else {
+                    keyList.add(testSearchWord);
+                }
+                List<JobsInformForSearch> testList = new ArrayList<JobsInformForSearch>();
+                for (JobsInformForSearch j : testCorrectJobsList) {
+                    String searchingField = j.getPlace().toLowerCase() + j.getHeadPublication().toLowerCase() +
+                            j.getCompanyName().toLowerCase();
+//                    System.out.println("   " + searchingField + " " + testSearchWord + " " + searchingField.contains(testSearchWord));
+                    boolean contains = true;
+                    for (String s : keyList) {
+                        if (!searchingField.contains(s)) {
+                            contains = false;
+                            break;
+                        }
+
+                    }
+                    if (contains) {
+                        testList.add(j);
+                    }
+                }
+                testCorrectJobsList = testList;
+                if (testCorrectJobsList.size() > 203) {
+                    panelFiller(testCorrectJobsList.subList(0, 200), null);
+                } else {
+                    panelFiller(testCorrectJobsList, null);
+                }
                 if (e.getKeyChar() == '\n') {
                     formFoundJobsList();
                 }
@@ -451,6 +494,34 @@ public class ParserApp implements MouseListener {
                 jobPanel.add(generateSingForJobPanel("Now www." + key + " is parsing..."));
                 jobPanel.setVisible(true);
                 executor.execute(new TaskReparse(key, mapParsers.get(key), getParserApp(), c.getParent()));
+            }
+        });
+        openSearchInSelected.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                reparseButton.setVisible(false);
+                openSearchButton.setVisible(false);
+                openSearchInSelected.setVisible(false);
+                testSearchWord = "";
+                JLabel label = (JLabel) c;
+                if (label.getText().contains(" ")) {
+                    String text = label.getText().substring(0, label.getText().indexOf(" "));
+                    label.setText(text);
+                }
+                Future<List<JobsInformForSearch>> taskJobsInforms = executorDB.submit(new TaskReadDb(label.getText()));
+                try {
+                    allJobs = taskJobsInforms.get();
+                    System.out.println(" reading all " + allJobs.size());
+                    searchTextField.setVisible(true);
+                    startSearchButton.setVisible(true);
+                } catch (Exception e1) {
+                    reparseButton.setVisible(true);
+                    openSearchButton.setVisible(true);
+                    searchTextField.setVisible(false);
+                    startSearchButton.setVisible(false);
+                    System.out.println("Error reading all");
+                    e1.printStackTrace();
+                }
             }
         });
     }
@@ -586,12 +657,9 @@ public class ParserApp implements MouseListener {
 
         List<String> jobsStringList = new ArrayList<>();
         try {
-            jobsStringList.addAll(Arrays.asList(j.getPlace().toLowerCase().split("[!@#/\\ ]")));
-            jobsStringList.addAll(Arrays.asList(j.getHeadPublication().toLowerCase().split("[!@#/\\ ]")));
-            jobsStringList.addAll(Arrays.asList(j.getCompanyName().toLowerCase().split("[!@#/\\ ]")));
-//                if (!(j.getCompanyName().toLowerCase().contains(keyWord) ||
-//                        j.getHeadPublication().toLowerCase().contains(keyWord) ||
-//                        j.getPlace().toLowerCase().contains(keyWord))) {
+            jobsStringList.addAll(Arrays.asList(j.getPlace().toLowerCase().split("[!@#/\\ ,]")));
+            jobsStringList.addAll(Arrays.asList(j.getHeadPublication().toLowerCase().split("[!@#/\\ ,]")));
+            jobsStringList.addAll(Arrays.asList(j.getCompanyName().toLowerCase().split("[!@#/\\ ,]")));
         } catch (NullPointerException n) {
             System.out.println("Errror getCompanyName " + j.getCompanyName());
             System.out.println("Errror getPlace " + j.getPlace());
@@ -895,27 +963,24 @@ public class ParserApp implements MouseListener {
     @Override
     public void mouseClicked(MouseEvent e) {
         System.out.println("text speciality :111 ");
-        String previousLabel = ((JLabel) c).getText();
-        if (previousLabel.contains(" ")) {
-            previousLabel = previousLabel.substring(0, previousLabel.indexOf(" "));
-        }
-        int newResults = new DbHelper().getNewResults(previousLabel);
-        if (newResults > 0) {
 
-            ((JLabel) c).setText(previousLabel + " new " + newResults);
-        }
         openSearchButton.setVisible(true);
+        openSearchInSelected.setVisible(true);
         searchTextField.setVisible(false);
         startSearchButton.setVisible(false);
         linkPanel.setVisible(false);
         JLabel label = (JLabel) e.getComponent();
-        c.setForeground(new Color(-16777216));
-        c = label;
-        c.setForeground(new Color(0x696969));
         if (label.getText().contains(" ")) {
             String text = label.getText().substring(0, label.getText().indexOf(" "));
             label.setText(text);
         }
+        if (!((JLabel) c).getText().equals(label.getText())) {
+            executorDB.execute(new TaskDB((JLabel) c));
+        }
+        c.setForeground(new Color(-16777216));
+        c = label;
+        c.setForeground(new Color(0x696969));
+        openSearchInSelected.setText("Search in " + label.getText());
         reparseButton.setVisible(true);
         reparseButton.setText("Reload parsing " + label.getText());
         reparseButton.setVisible(true);
@@ -1029,9 +1094,20 @@ public class ParserApp implements MouseListener {
         panel1.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
         panel1.setBackground(new Color(-7631989));
         panelMain.add(panel1, new GridConstraints(0, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(550, 60), null, 0, false));
+        openSearchInSelected = new JButton();
+        openSearchInSelected.setAutoscrolls(false);
+        openSearchInSelected.setBackground(new Color(-8937619));
+        openSearchInSelected.setBorderPainted(true);
+        openSearchInSelected.setForeground(new Color(-13490857));
+        openSearchInSelected.setMaximumSize(new Dimension(281, 36));
+        openSearchInSelected.setMinimumSize(new Dimension(281, 36));
+        openSearchInSelected.setPreferredSize(new Dimension(281, 36));
+        openSearchInSelected.setText("Search in ");
+        openSearchInSelected.setVisible(false);
+        panel1.add(openSearchInSelected);
         openSearchButton = new JButton();
         openSearchButton.setBackground(new Color(-2960187));
-        openSearchButton.setBorderPainted(false);
+        openSearchButton.setBorderPainted(true);
         openSearchButton.setContentAreaFilled(true);
         openSearchButton.setForeground(new Color(-11579315));
         openSearchButton.setHideActionText(false);
@@ -1040,7 +1116,7 @@ public class ParserApp implements MouseListener {
         openSearchButton.setMaximumSize(new Dimension(300, 36));
         openSearchButton.setMinimumSize(new Dimension(300, 36));
         openSearchButton.setPreferredSize(new Dimension(300, 36));
-        openSearchButton.setText("Open Search");
+        openSearchButton.setText("Open Global Search");
         openSearchButton.setVisible(true);
         panel1.add(openSearchButton);
         searchTextField = new JTextField();
@@ -1061,7 +1137,7 @@ public class ParserApp implements MouseListener {
         panel1.add(startSearchButton);
         reparseButton = new JButton();
         reparseButton.setBackground(new Color(-4867396));
-        reparseButton.setBorderPainted(false);
+        reparseButton.setBorderPainted(true);
         reparseButton.setEnabled(true);
         reparseButton.setForeground(new Color(-13355980));
         reparseButton.setHideActionText(false);
@@ -1081,9 +1157,9 @@ public class ParserApp implements MouseListener {
         linkPanel.setEnabled(true);
         linkPanel.setFocusable(false);
         linkPanel.setFont(new Font("Times New Roman", linkPanel.getFont().getStyle(), 12));
-        linkPanel.setMaximumSize(new Dimension(420, 830));
-        linkPanel.setMinimumSize(new Dimension(420, 830));
-        linkPanel.setPreferredSize(new Dimension(420, 830));
+        linkPanel.setMaximumSize(new Dimension(420, 930));
+        linkPanel.setMinimumSize(new Dimension(420, 930));
+        linkPanel.setPreferredSize(new Dimension(420, 930));
         scrollPane1.setViewportView(linkPanel);
         linkPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), "Links", TitledBorder.CENTER, TitledBorder.ABOVE_TOP, new Font("DialogInput", Font.BOLD, 18), new Color(-16777216)));
         wfhLabelPanel = new JPanel();
@@ -2374,6 +2450,62 @@ public class ParserApp implements MouseListener {
         unicornhuntLabel.setVerifyInputWhenFocusTarget(false);
         unicornhuntLabel.putClientProperty("html.disable", Boolean.TRUE);
         unicornhuntLabelPanel.add(unicornhuntLabel);
+        jobsJustlandedLabelPanel = new JPanel();
+        jobsJustlandedLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        jobsJustlandedLabelPanel.setAlignmentX(0.0f);
+        jobsJustlandedLabelPanel.setAlignmentY(0.0f);
+        jobsJustlandedLabelPanel.setAutoscrolls(true);
+        jobsJustlandedLabelPanel.setBackground(new Color(-721665));
+        jobsJustlandedLabelPanel.setMaximumSize(new Dimension(210, 30));
+        jobsJustlandedLabelPanel.setMinimumSize(new Dimension(180, 30));
+        jobsJustlandedLabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(jobsJustlandedLabelPanel);
+        jobsJustlandedLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        jobsJustlandedLabel = new JLabel();
+        jobsJustlandedLabel.setAutoscrolls(false);
+        jobsJustlandedLabel.setEnabled(true);
+        jobsJustlandedLabel.setFocusable(false);
+        jobsJustlandedLabel.setFont(new Font("Times New Roman", jobsJustlandedLabel.getFont().getStyle(), 12));
+        jobsJustlandedLabel.setForeground(new Color(-16777216));
+        jobsJustlandedLabel.setHorizontalAlignment(2);
+        jobsJustlandedLabel.setHorizontalTextPosition(2);
+        jobsJustlandedLabel.setMaximumSize(new Dimension(170, 30));
+        jobsJustlandedLabel.setMinimumSize(new Dimension(-1, -1));
+        jobsJustlandedLabel.setOpaque(false);
+        jobsJustlandedLabel.setPreferredSize(new Dimension(170, 30));
+        jobsJustlandedLabel.setText("jobs.justlanded.com");
+        jobsJustlandedLabel.setToolTipText("http://jobs.justlanded.com");
+        jobsJustlandedLabel.setVerifyInputWhenFocusTarget(false);
+        jobsJustlandedLabel.putClientProperty("html.disable", Boolean.TRUE);
+        jobsJustlandedLabelPanel.add(jobsJustlandedLabel);
+        jobsRemotiveLabelPanel = new JPanel();
+        jobsRemotiveLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        jobsRemotiveLabelPanel.setAlignmentX(0.0f);
+        jobsRemotiveLabelPanel.setAlignmentY(0.0f);
+        jobsRemotiveLabelPanel.setAutoscrolls(true);
+        jobsRemotiveLabelPanel.setBackground(new Color(-721665));
+        jobsRemotiveLabelPanel.setMaximumSize(new Dimension(210, 30));
+        jobsRemotiveLabelPanel.setMinimumSize(new Dimension(180, 30));
+        jobsRemotiveLabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(jobsRemotiveLabelPanel);
+        jobsRemotiveLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        jobsRemotiveLabel = new JLabel();
+        jobsRemotiveLabel.setAutoscrolls(false);
+        jobsRemotiveLabel.setEnabled(true);
+        jobsRemotiveLabel.setFocusable(false);
+        jobsRemotiveLabel.setFont(new Font("Times New Roman", jobsRemotiveLabel.getFont().getStyle(), 12));
+        jobsRemotiveLabel.setForeground(new Color(-16777216));
+        jobsRemotiveLabel.setHorizontalAlignment(2);
+        jobsRemotiveLabel.setHorizontalTextPosition(2);
+        jobsRemotiveLabel.setMaximumSize(new Dimension(170, 30));
+        jobsRemotiveLabel.setMinimumSize(new Dimension(-1, -1));
+        jobsRemotiveLabel.setOpaque(false);
+        jobsRemotiveLabel.setPreferredSize(new Dimension(170, 30));
+        jobsRemotiveLabel.setText("jobs.remotive.io");
+        jobsRemotiveLabel.setToolTipText("http://jobs.remotive.io/");
+        jobsRemotiveLabel.setVerifyInputWhenFocusTarget(false);
+        jobsRemotiveLabel.putClientProperty("html.disable", Boolean.TRUE);
+        jobsRemotiveLabelPanel.add(jobsRemotiveLabel);
     }
 
     /**

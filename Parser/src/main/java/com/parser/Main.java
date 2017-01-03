@@ -27,7 +27,11 @@ public class Main extends Application {
         executorForStart.execute(new Runnable() {
             @Override
             public void run() {
-                parserApp.runParser();
+                try {
+                    parserApp.runParser();
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
             }
         });
         jFrame.getContentPane().add(parserApp.getPanelMain());

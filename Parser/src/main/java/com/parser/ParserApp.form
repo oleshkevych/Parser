@@ -77,11 +77,25 @@
         </properties>
         <border type="none"/>
         <children>
+          <component id="42c0d" class="javax.swing.JButton" binding="openSearchInSelected">
+            <constraints/>
+            <properties>
+              <autoscrolls value="false"/>
+              <background color="-8937619"/>
+              <borderPainted value="true"/>
+              <foreground color="-13490857"/>
+              <maximumSize width="281" height="36"/>
+              <minimumSize width="281" height="36"/>
+              <preferredSize width="281" height="36"/>
+              <text value="Search in "/>
+              <visible value="false"/>
+            </properties>
+          </component>
           <component id="a1180" class="javax.swing.JButton" binding="openSearchButton">
             <constraints/>
             <properties>
               <background color="-2960187"/>
-              <borderPainted value="false"/>
+              <borderPainted value="true"/>
               <contentAreaFilled value="true"/>
               <foreground color="-11579315"/>
               <hideActionText value="false"/>
@@ -90,7 +104,7 @@
               <maximumSize width="300" height="36"/>
               <minimumSize width="300" height="36"/>
               <preferredSize width="300" height="36"/>
-              <text value="Open Search"/>
+              <text value="Open Global Search"/>
               <visible value="true"/>
             </properties>
           </component>
@@ -120,7 +134,7 @@
             <constraints/>
             <properties>
               <background color="-4867396"/>
-              <borderPainted value="false"/>
+              <borderPainted value="true"/>
               <enabled value="true"/>
               <foreground color="-13355980"/>
               <hideActionText value="false"/>
@@ -154,9 +168,9 @@
               <enabled value="true"/>
               <focusable value="false"/>
               <font name="Times New Roman" size="12"/>
-              <maximumSize width="420" height="830"/>
-              <minimumSize width="420" height="830"/>
-              <preferredSize width="420" height="830"/>
+              <maximumSize width="420" height="930"/>
+              <minimumSize width="420" height="930"/>
+              <preferredSize width="420" height="930"/>
             </properties>
             <border type="empty" title="Links" title-justification="2" title-position="1">
               <font name="DialogInput" size="18" style="1"/>
@@ -1950,6 +1964,84 @@
                       <preferredSize width="170" height="30"/>
                       <text value="unicornhunt.io"/>
                       <toolTipText value="http://unicornhunt.io"/>
+                      <verifyInputWhenFocusTarget value="false"/>
+                    </properties>
+                    <clientProperties>
+                      <html.disable class="java.lang.Boolean" value="true"/>
+                    </clientProperties>
+                  </component>
+                </children>
+              </grid>
+              <grid id="8ee17" binding="jobsJustlandedLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+                <constraints/>
+                <properties>
+                  <alignmentX value="0.0"/>
+                  <alignmentY value="0.0"/>
+                  <autoscrolls value="true"/>
+                  <background color="-721665"/>
+                  <maximumSize width="210" height="30"/>
+                  <minimumSize width="180" height="30"/>
+                  <preferredSize width="180" height="30"/>
+                </properties>
+                <border type="empty" title-position="1">
+                  <title-color color="-16777216"/>
+                </border>
+                <children>
+                  <component id="3306a" class="javax.swing.JLabel" binding="jobsJustlandedLabel">
+                    <constraints/>
+                    <properties>
+                      <autoscrolls value="false"/>
+                      <enabled value="true"/>
+                      <focusable value="false"/>
+                      <font name="Times New Roman" size="12"/>
+                      <foreground color="-16777216"/>
+                      <horizontalAlignment value="2"/>
+                      <horizontalTextPosition value="2"/>
+                      <maximumSize width="170" height="30"/>
+                      <minimumSize width="-1" height="-1"/>
+                      <opaque value="false"/>
+                      <preferredSize width="170" height="30"/>
+                      <text value="jobs.justlanded.com"/>
+                      <toolTipText value="http://jobs.justlanded.com"/>
+                      <verifyInputWhenFocusTarget value="false"/>
+                    </properties>
+                    <clientProperties>
+                      <html.disable class="java.lang.Boolean" value="true"/>
+                    </clientProperties>
+                  </component>
+                </children>
+              </grid>
+              <grid id="975e" binding="jobsRemotiveLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+                <constraints/>
+                <properties>
+                  <alignmentX value="0.0"/>
+                  <alignmentY value="0.0"/>
+                  <autoscrolls value="true"/>
+                  <background color="-721665"/>
+                  <maximumSize width="210" height="30"/>
+                  <minimumSize width="180" height="30"/>
+                  <preferredSize width="180" height="30"/>
+                </properties>
+                <border type="empty" title-position="1">
+                  <title-color color="-16777216"/>
+                </border>
+                <children>
+                  <component id="2b1b3" class="javax.swing.JLabel" binding="jobsRemotiveLabel">
+                    <constraints/>
+                    <properties>
+                      <autoscrolls value="false"/>
+                      <enabled value="true"/>
+                      <focusable value="false"/>
+                      <font name="Times New Roman" size="12"/>
+                      <foreground color="-16777216"/>
+                      <horizontalAlignment value="2"/>
+                      <horizontalTextPosition value="2"/>
+                      <maximumSize width="170" height="30"/>
+                      <minimumSize width="-1" height="-1"/>
+                      <opaque value="false"/>
+                      <preferredSize width="170" height="30"/>
+                      <text value="jobs.remotive.io"/>
+                      <toolTipText value="http://jobs.remotive.io/"/>
                       <verifyInputWhenFocusTarget value="false"/>
                     </properties>
                     <clientProperties>

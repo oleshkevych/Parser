@@ -4,10 +4,13 @@ import com.parser.entity.JobsInform;
 import com.parser.entity.JobsInformForSearch;
 import com.parser.entity.ListImpl;
 
+import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static jdk.nashorn.internal.runtime.regexp.joni.Syntax.Java;
 
 /**
  * Created by vov4ik on 12/11/2016.
@@ -122,14 +125,23 @@ public class DbHelper {
         listParsers.add("builtinaustin.com");
         listParsers.add("betalist.com");
         listParsers.add("unicornhunt.io");
+        listParsers.add("jobs.justlanded.com");
+        listParsers.add("jobs.remotive.io");
     }
 
     public Connection connect(String link) {
         try {
+//            String home = System.getProperty("user.home");
+//            File f = new File(home + File.separator + "Desktop" + File.separator + "Testing" + File.separator" + ".txt");
             Class.forName("org.sqlite.JDBC");
             String path = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath().substring(1);
 
-//            System.out.println(path+"  "+ new File(path+"lib").mkdir());
+            try {
+                path = path.substring(0, path.lastIndexOf("/"));
+            }catch (Exception e){
+//                e.printStackTrace();
+            }
+            System.out.println(path+"  "+ new File(path+"/lib").mkdir());
             if (link != null) {
                 connection = DriverManager.getConnection("jdbc:sqlite:" + "lib/" + "ParserDB" + listParsers.indexOf(link) + ".s3db");
             } else {

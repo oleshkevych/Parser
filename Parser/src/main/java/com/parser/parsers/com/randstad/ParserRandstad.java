@@ -68,7 +68,8 @@ public class ParserRandstad implements ParserMain {
                 Elements tables2 = doc.select("article");
                 Date datePublished = runParse(tables2, 0);
                 int count = 2;
-                while (dateClass.dateChecker(datePublished) && jobsInforms.size() < (startLinksList.indexOf(link) + 1) * 20) {
+                while (dateClass.dateChecker(datePublished) && jobsInforms.size() < (startLinksList.indexOf(link) + 1) * 20
+                        && count < 4) {
                     try {
 
                         datePublished = null;

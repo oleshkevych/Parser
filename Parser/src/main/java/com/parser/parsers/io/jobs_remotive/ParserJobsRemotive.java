@@ -1,5 +1,6 @@
 package com.parser.parsers.io.jobs_remotive;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -7,74 +8,37 @@ import com.parser.entity.DateGenerator;
 import com.parser.entity.JobsInform;
 import com.parser.entity.ListImpl;
 import com.parser.entity.ParserMain;
-import com.parser.parsers.jobs.landing.ParserLandingJobs;
+import com.parser.parsers.PhantomJSStarter;
+import com.parser.parsers.PrintDescription;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.phantomjs.PhantomJSDriver;
-import org.openqa.selenium.phantomjs.PhantomJSDriverService;
-import org.openqa.selenium.remote.DesiredCapabilities;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by rolique_pc on 12/15/2016.
  */
 public class ParserJobsRemotive implements ParserMain {
-    private String startLink = "http://jobs.remotive.io/";
+    private String startLink = "https://jobs.justlanded.com/en/TTTTT/Web-development?q_cid=10&q_ji=&q_jt=&q_k=&q_l%5B%5D=en&q_l_opt=all&q_salary_max=&q_salary_min=&q_salary_period_id=";
     private List<JobsInform> jobsInforms = new ArrayList<JobsInform>();
     private Document doc;
     private DateGenerator dateClass;
     private WebDriver ghostDriver;
 
-    public ParserJobsRemotive(){
+    public ParserJobsRemotive() {
     }
 
-    public List<JobsInform> startParse(){
+    public List<JobsInform> startParse() {
         dateClass = new DateGenerator();
         parser();
         return jobsInforms;
-    }
-
-    private static Document renderPage(String url) {
-        DesiredCapabilities caps = new DesiredCapabilities();
-        caps.setJavascriptEnabled(true);
-        caps.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, "C:\\Users\\rolique_pc\\Desktop\\ParserApp\\Parser\\Libs\\phantomjs.exe");
-        caps.setCapability("phantomjs.page.settings.userAgent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.60 Safari/537.17");
-        caps.setCapability("phantomjs.page.settings.host", "www.sportslogos.net");
-        caps.setCapability(PhantomJSDriverService.PHANTOMJS_CLI_ARGS, new String[] {
-                "--web-security=false",
-                "--ssl-protocol=any",
-                "--ignore-ssl-errors=true"
-        });
-        WebDriver ghostDriver = new PhantomJSDriver(caps);
-         try {
-//             ghostDriver.manage().timeouts().setScriptTimeout(2600l, TimeUnit.SECONDS);
-             ghostDriver.manage().timeouts().pageLoadTimeout(10600l, TimeUnit.SECONDS);
-//             ghostDriver.manage().timeouts().implicitlyWait(2600l, TimeUnit.SECONDS);
-            ghostDriver.get(url);
-            WebDriverWait wait = new WebDriverWait(ghostDriver, 25);
-            wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("filters")));
-
-            return Jsoup.parse(ghostDriver.getPageSource());
-         } finally {
-            ghostDriver.quit();
-        }
     }
 
     private void parser() {
@@ -84,7 +48,7 @@ public class ParserJobsRemotive implements ParserMain {
 //            BufferedReader r = new BufferedReader(new InputStreamReader(
 //                    ((HttpURLConnection) url.openConnection()).getInputStream()));
 //            JsonParser jp = new JsonParser();
-
+//
 //            JsonElement jsonElement = jp.parse(r);
 //
 //            JsonObject jsonObject = jsonElement.getAsJsonObject();
@@ -100,46 +64,107 @@ public class ParserJobsRemotive implements ParserMain {
 //                    .get();
 //            System.out.println("text place1 : " + doc);
 
-        doc = renderPage(startLink);
-        System.out.println("text place2 : " + doc);
+//        List<String> countries = new ArrayList<>();
+//        countries.add("Austria");
+//        countries.add("Belgium");
+//        countries.add("Canada");
+//        countries.add("Czech-Republic");
+//        countries.add("Denmark");
+//        countries.add("Finland");
+//        countries.add("Germany");
+//        countries.add("Ireland");
+//        countries.add("Israel");
+//        countries.add("Netherlands");
+//        countries.add("Norway");
+//        countries.add("Sweden");
+//        countries.add("Switzerland");
+//        countries.add("United-Kingdom");
+//        countries.add("United-States");
+//        for (String s : countries) {
+        doc = PhantomJSStarter.startGhost("http://jobs.remotive.io/?category=engineering");
+//        System.out.println("text place2 : " + doc);
 
-//        Elements tables2 = doc.select(".positions li");
-//        runParse(tables2, 0);
+        String json = doc.toString().substring(doc.toString().indexOf("entries") - 1);
+        json = "{" + json.substring(0, json.indexOf("</script>"));
+        System.out.println("text place2 : " + json);
+
+        JsonParser jp = new JsonParser();
+        JsonElement jsonElement = jp.parse(json);
+        JsonObject jsonObject = jsonElement.getAsJsonObject();
+        JsonArray jArray = (JsonArray) jsonObject.get("entries");
 
 
+        JsonObject jobJson;
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        for (int i = 0; i < jArray.size(); i++) {
+            jobJson = (jArray.get(i).getAsJsonObject());
+            String title = jobJson.get("role").getAsString();
+            String place = jobJson.get("region").getAsString();
+            String link =  jobJson.get("url").getAsString();
+            String company = jobJson.get("company").getAsString();
+
+
+            System.out.println("text place : " + place);
+            System.out.println("text headPost : " + title);
+            System.out.println("text company : " + company);
+            System.out.println("text link : " + link);
+            JobsInform jobsInform = new JobsInform();
+            jobsInform.setCompanyName(company);
+            jobsInform.setPlace(place);
+            jobsInform.setHeadPublication(title);
+            jobsInform.setPublicationLink(link);
+            List<ListImpl> list = new ArrayList<ListImpl>();
+            ListImpl list1 = new ListImpl();
+            list1.setListHeader(title);
+            list.add(list1);
+            jobsInform.setOrder(list);
+            if (!jobsInforms.contains(jobsInform)) {
+                jobsInforms.add(jobsInform);
+            }
+        }
+
+//            Elements tables2 = doc.select(".listings li");
+//            runParse(tables2, 0, s);
+
+//        }
 //        }catch (IOException e){
 //
 //            e.printStackTrace();
 //        }
     }
 
-    private void runParse(Elements tables2, int counter) {
+    private void runParse(Elements tables2, int counter, String s) {
         System.out.println("text date : " + tables2.size());
-        for (int i = counter; i<tables2.size(); i+=1) {
-                objectGenerator(tables2.get(i).select("[data-reactid='.0.2.1:$category_marketing.1.$job_1.1.3']").first(), tables2.get(i),
-                        tables2.get(i), tables2.get(i));
-            }
+        for (int i = counter; i < tables2.size(); i += 1) {
+            objectGenerator(s, tables2.get(i).select("[itemprop='title']").first(),
+                    tables2.get(i).select("a").first(), tables2.get(i).select(".title-wrapper a").first());
+        }
 
     }
 
-    private void objectGenerator(Element place, Element headPost, Element company, Element linkDescription){
-            if(jobsInforms.size() < 40) {
-            JobsInform jobsInform = new JobsInform();
-                System.out.println("text place : " + place.text());
-                System.out.println("text headPost : " + headPost.attr("data-position"));
-                System.out.println("text company : " + company.attr("data-company"));
-            jobsInform.setHeadPublication(headPost.attr("data-position"));
-            jobsInform.setCompanyName(company.attr("data-company"));
-            jobsInform.setPlace(place.text());
-            jobsInform.setPublicationLink(startLink+linkDescription.attr("data-url"));
-//            jobsInform = getDescription(startLink+linkDescription.attr("href"), jobsInform);
-            if(!jobsInforms.contains(jobsInform)) {
+    private void objectGenerator(String place, Element headPost, Element company, Element linkDescription) {
+
+        JobsInform jobsInform = new JobsInform();
+//            System.out.println("text place : " + place.text());
+//            System.out.println("text headPost : " + headPost.text());
+//            System.out.println("text company : " + company.attr("alt").replaceAll(headPost.text(), ""));
+//            jobsInform.setHeadPublication(headPost.text());
+//            jobsInform.setCompanyName(company.attr("alt").replaceAll(headPost.text(), ""));
+        jobsInform.setPlace(place);
+        System.out.println("text  : " + linkDescription);
+        if (linkDescription != null) {
+            jobsInform.setPublicationLink(linkDescription.attr("href"));
+            jobsInform = getDescription(linkDescription.attr("href"), jobsInform);
+
+            if (!jobsInforms.contains(jobsInform)) {
                 jobsInforms.add(jobsInform);
             }
         }
+
     }
 
-    public static JobsInform getDescription(String linkToDescription, JobsInform jobsInform){
+    public static JobsInform getDescription(String linkToDescription, JobsInform jobsInform) {
 //        System.out.println("text link1 : " + linkToDescription);
 
         try {
@@ -150,32 +175,46 @@ public class ParserJobsRemotive implements ParserMain {
                     .get();
 
 
-            Elements tablesDescription = document.select(".mainContainer").get(1).children();
-//            Elements tablesHead = document.select(".detail-sectionTitle");
+            Elements tablesDescription = document.select("[itemprop='description']").first().children();
+            Element tablesHead = document.select("[itemprop='title']").first();
+            Element tablesDate = document.select("time").first();
+            Element tablesCompany = document.select(".postinfo span").first();
+            Element tablesPlace = document.select("[itemprop='jobLocation']").first();
+            jobsInform.setCompanyName(tablesCompany.text());
+            jobsInform.setPlace(tablesPlace.text());
+            jobsInform.setHeadPublication(tablesHead.text());
+            System.out.println("text place : " + tablesPlace.text());
+            System.out.println("text headPost : " + jobsInform.getHeadPublication());
+            System.out.println("text company : " + tablesCompany.text());
             List<ListImpl> list = new ArrayList<ListImpl>();
+            list.add(addHead(tablesHead));
+            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+            jobsInform.setPublishedDate(formatter.parse(tablesDate.text()));
 //            System.out.println("text link1 : " + tablesDescription);
 
-            for (int i = 0; i<tablesDescription.size(); i++) {
+//            for (int i = 0; i < tablesDescription.size(); i++) {
 
-//                System.out.println("text link1 : " + tablesDescription.size());
-                if(tablesDescription.get(i).tagName().contains("h")){
-                    if(list.size()>0) {
-                        list.add(null);
-                    }
-                    list.add(addHead(tablesDescription.get(i)));
-                } else if(tablesDescription.get(i).select("p").size() > 0 || tablesDescription.get(i).select("ul").size() > 0){
-//                   System.out.println("text p/ul : " + tablesDescription.get(i));
-                    for(Element element: tablesDescription.get(i).select(".col-md-12").first().children()){
-                        if(element.tagName().equals("p")){
-                            list.add(addParagraph(element));
-//                           System.out.println("text p : " + element);
-                        }else if(element.tagName().equals("ul")){
-                            list.add(addList(element));
-                        }
-                    }
-                }
-            }
+////                System.out.println("text link1 : " + tablesDescription.size());
+//                if (tablesDescription.get(i).tagName().contains("h")) {
+//                    if (list.size() > 0) {
+//                        list.add(null);
+//                    }
+//                    list.add(addHead(tablesDescription.get(i)));
+//                } else if (tablesDescription.get(i).select("p").size() > 0 || tablesDescription.get(i).select("ul").size() > 0) {
+////                   System.out.println("text p/ul : " + tablesDescription.get(i));
+//                    for (Element element : tablesDescription.get(i).select(".col-md-12").first().children()) {
+//                        if (element.tagName().equals("p")) {
+//                            list.add(addParagraph(element));
+////                           System.out.println("text p : " + element);
+//                        } else if (element.tagName().equals("ul")) {
+//                            list.add(addList(element));
+//                        }
+//                    }
+//                }
 
+//            }
+
+            list.addAll(new PrintDescription().generateListImpl(tablesDescription));
             list.add(null);
             jobsInform.setOrder(list);
 
@@ -188,15 +227,17 @@ public class ParserJobsRemotive implements ParserMain {
         }
 
     }
-    private static ListImpl addHead(Element element){
+
+    private static ListImpl addHead(Element element) {
         ListImpl list = new ListImpl();
         list.setListHeader(element.text());
         return list;
     }
-    private static ListImpl addParagraph(Element element){
-        if(element.select("strong").size()>0){
+
+    private static ListImpl addParagraph(Element element) {
+        if (element.select("strong").size() > 0) {
             return addHead(element.select("strong").first());
-        }else {
+        } else {
 
 
             ListImpl list = new ListImpl();
@@ -204,10 +245,11 @@ public class ParserJobsRemotive implements ParserMain {
             return list;
         }
     }
-    private static ListImpl addList(Element element){
+
+    private static ListImpl addList(Element element) {
         ListImpl list = new ListImpl();
         List<String> strings = new ArrayList<String>();
-        for(Element e : element.getAllElements()) {
+        for (Element e : element.getAllElements()) {
             strings.add(e.text());
         }
         list.setListItem(strings);

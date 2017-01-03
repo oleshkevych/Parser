@@ -4,6 +4,7 @@ import com.parser.entity.DateGenerator;
 import com.parser.entity.JobsInform;
 import com.parser.entity.ListImpl;
 import com.parser.entity.ParserMain;
+import com.parser.parsers.PhantomJSStarter;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -34,27 +35,16 @@ public class ParserUberjobs implements ParserMain {
         return jobsInforms;
     }
 
-    private Document renderPage(String url) {
-        DesiredCapabilities caps = new DesiredCapabilities();
-        caps.setJavascriptEnabled(true);
-        caps.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, "C:\\Users\\rolique_pc\\Desktop\\ParserApp\\Parser\\Libs\\phantomjs.exe");
-        caps.setCapability("phantomjs.page.settings.userAgent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.60 Safari/537.17");
-        caps.setCapability("phantomjs.page.settings.host", "www.sportslogos.net");
-        caps.setCapability(PhantomJSDriverService.PHANTOMJS_CLI_ARGS, new String[]{
-                "--web-security=false",
-                "--ssl-protocol=any",
-                "--ignore-ssl-errors=true"
-        });
-        ghostDriver = new PhantomJSDriver(caps);
-        ghostDriver.get(url);
-        return Jsoup.parse(ghostDriver.getPageSource());
-    }
-
     private void parser() {
-        doc = renderPage(startLink);
-        Elements tables2 = doc.select(".clickable");
-        runParse(tables2, 0);
-        ghostDriver.quit();
+        try {
+            ghostDriver = PhantomJSStarter.startPhantom();
+            doc = PhantomJSStarter.startGhost(startLink);
+            Elements tables2 = doc.select(".clickable");
+            runParse(tables2, 0);
+        }finally {
+            ghostDriver.close();
+            ghostDriver.quit();
+        }
     }
 
     private void runParse(Elements tables2, int counter) {

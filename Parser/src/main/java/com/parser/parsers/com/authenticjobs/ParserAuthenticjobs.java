@@ -62,7 +62,7 @@ public class ParserAuthenticjobs implements ParserMain {
 
         for (String linkS : startLinksList) {
 
-//            int counter = 1;
+            int counter = 1;
             Date datePublished = null;
             SimpleDateFormat formatter = new SimpleDateFormat("MMM dd yyyy");
 
@@ -103,7 +103,7 @@ public class ParserAuthenticjobs implements ParserMain {
                             Calendar calendarPublished = Calendar.getInstance();
                             calendarPublished.setTime(datePublished);
                             if(calendar.get(Calendar.MONTH)<calendarPublished.get(Calendar.MONTH)){
-                                stringDate = stringDate.replace(calendar.get(Calendar.YEAR)+"", (calendar.get(Calendar.YEAR)-1)+"");
+                                stringDate = stringDate +" "+ (calendar.get(Calendar.YEAR)-1);
                                 datePublished = formatter.parse(stringDate);
                             }
                         }
@@ -134,11 +134,11 @@ public class ParserAuthenticjobs implements ParserMain {
                         }
                     }
 
-//                    counter++;
+                    counter++;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            while (dateClass.dateChecker(datePublished) && jobsInforms.size() < startLinksList.indexOf(linkS) * 20);
+            while (dateClass.dateChecker(datePublished) && jobsInforms.size() < startLinksList.indexOf(linkS) * 20 && counter<5);
         }
     }
 

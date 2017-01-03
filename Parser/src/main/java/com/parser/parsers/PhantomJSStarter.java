@@ -19,36 +19,33 @@ import java.io.File;
 public class PhantomJSStarter {
 
     public static Document startGhost(String link) {
-//        String path = Main.class.getProtectionDomain().getCodeSource().getLocation().getPath().substring(1);
-//        path = path.substring(0, path.lastIndexOf("/"))+File.separator+"lib"+File.separator+"phantomjs"+File.separator+"phantomjs";
-//
-//
-//        DesiredCapabilities caps = new DesiredCapabilities();
-//        caps.setJavascriptEnabled(true);
-//        caps.setCapability("takesScreenshot", false);
-//        caps.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, path);
-
-        WebDriver ghostDriver = startPhantom();/*new PhantomJSDriver(caps);*/
+        WebDriver ghostDriver = startPhantom();
         try {
             ghostDriver.get(link);
             new WebDriverWait(ghostDriver, 15);
             return Jsoup.parse(ghostDriver.getPageSource());
         }finally {
+            ghostDriver.close();
+            ghostDriver.quit();
+        }
+    }
+
+    public static Document startGhostJustlanded(String link){
+        WebDriver ghostDriver = startPhantom();
+        try {
+            ghostDriver.get(link);
+            WebDriverWait wdw = new WebDriverWait(ghostDriver, 15);
+            wdw.until(ExpectedConditions.visibilityOfElementLocated(By.className("listings")));
+            return Jsoup.parse(ghostDriver.getPageSource());
+        }finally {
+            ghostDriver.close();
             ghostDriver.quit();
         }
     }
 
     public static Document renderPage(String url, boolean description) {
-//        String path = Main.class.getProtectionDomain().getCodeSource().getLocation().getPath().substring(1);
-//        path = path.substring(0, path.lastIndexOf("/"))+File.separator+"lib"+File.separator+"phantomjs"+File.separator+"phantomjs";
-//
-//
-//        DesiredCapabilities caps = new DesiredCapabilities();
-//        caps.setJavascriptEnabled(true);
-//        caps.setCapability("takesScreenshot", false);
-//        caps.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, path);
 
-        WebDriver ghostDriver = startPhantom();/*new PhantomJSDriver(caps);*/
+        WebDriver ghostDriver = startPhantom();
         try {
             ghostDriver.get(url);
             WebDriverWait wait = new WebDriverWait(ghostDriver, 15);
@@ -59,13 +56,14 @@ public class PhantomJSStarter {
             }
             return Jsoup.parse(ghostDriver.getPageSource());
         } finally {
+            ghostDriver.close();
             ghostDriver.quit();
         }
     }
 
     public static PhantomJSDriver startPhantom() {
         String path = Main.class.getProtectionDomain().getCodeSource().getLocation().getPath().substring(1);
-        path = path.substring(0, path.lastIndexOf("/"))+File.separator+"lib"+File.separator+"phantomjs"+File.separator+"phantomjsLin";
+        path = path.substring(0, path.lastIndexOf("/"))+File.separator+"lib"+File.separator+"phantomjs"+File.separator+"phantomjs.exe";
 
         DesiredCapabilities caps = new DesiredCapabilities();
         caps.setJavascriptEnabled(true);
