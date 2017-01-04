@@ -11,7 +11,9 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by rolique_pc on 12/22/2016.
@@ -42,34 +44,39 @@ public class ParserWowjobs implements ParserMain {
         stringCat.add("javascript");
         stringCat.add("ios");
         stringCat.add("mobile");
-            for (String s : stringCat) {
-                String loadLink = startLink.replace("TTTTTT", s);
+        int c = 0;
+        for (String s : stringCat) {
+            String loadLink = startLink.replace("TTTTTT", s);
 
-                try {
+            try {
 
-                    doc = Jsoup.connect(loadLink)
+                doc = Jsoup.connect(loadLink)
+                        .validateTLSCertificates(false)
+                        .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
+                        .timeout(5000)
+                        .get();
+
+                Elements tables2 = doc.select(".result");
+                Date lastDate = runParse(tables2, 0);
+
+                if (dateClass.dateChecker(lastDate)) {
+                    doc = Jsoup.connect(loadLink + "&start=10")
                             .validateTLSCertificates(false)
                             .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
                             .timeout(5000)
                             .get();
 
-                    Elements tables2 = doc.select(".result");
-                    Date lastDate = runParse(tables2, 0);
-
-                    if (dateClass.dateChecker(lastDate)) {
-                        doc = Jsoup.connect(loadLink + "&start=10")
-                                .validateTLSCertificates(false)
-                                .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-                                .timeout(5000)
-                                .get();
-
-                        Elements tables1 = doc.select(".result");
-                        runParse(tables1, 0);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    Elements tables1 = doc.select(".result");
+                    runParse(tables1, 0);
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
+                c++;
             }
+        }
+        if(c == stringCat.size()){
+            jobsInforms = null;
+        }
     }
 
     private Date runParse(Elements tables2, int counter) {
@@ -79,22 +86,22 @@ public class ParserWowjobs implements ParserMain {
             datePublished = null;
             String stringDate = tables2.get(i).select(".tags").text();
 
-            if(stringDate.contains("day")) {
+            if (stringDate.contains("day")) {
                 String date = stringDate.replaceAll("[^0-9]", "");
 //            System.out.println("  date S: " + stringDate);
-                if ( (date.length() != 0 && Integer.parseInt(date) < 6)) {
+                if ((date.length() != 0 && Integer.parseInt(date) < 6)) {
                     datePublished = new Date(new Date().getTime() - Integer.parseInt(date) * 24 * 3600 * 1000);
                 }
-            }else if(stringDate.contains("hour") || stringDate.contains("min")){
+            } else if (stringDate.contains("hour") || stringDate.contains("min")) {
                 datePublished = new Date();
             }
 
 
 //                System.out.println("  date D: " + datePublished);
 
-                objectGenerator(tables2.get(i).select(".location").first(), tables2.get(i).select("a").first(),
-                        tables2.get(i).select(".employer").first(), tables2.get(i).select("a").first(), datePublished);
-            }
+            objectGenerator(tables2.get(i).select(".location").first(), tables2.get(i).select("a").first(),
+                    tables2.get(i).select(".employer").first(), tables2.get(i).select("a").first(), datePublished);
+        }
         return datePublished;
     }
 

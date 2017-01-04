@@ -14,9 +14,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -42,26 +39,26 @@ public class ParserRemoteok implements ParserMain {
 
     private void parser() {
         try {
-
             doc = Jsoup.connect(startLink)
                     .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
                     .timeout(5000)
                     .get();
 
             Elements tables2 = doc.select("tbody .job");
-
             runParse(tables2, 0);
-
+            if (tables2.size() == 0) {
+                jobsInforms = null;
+            }
 
         } catch (IOException e) {
             e.printStackTrace();
+            jobsInforms = null;
         }
 
     }
 
     private void runParse(Elements tables2, int counter) {
-        System.out.println("text date : " + tables2.size());
-        for (int i = counter; i < tables2.size() || i < 100; i ++) {
+        for (int i = counter; i < tables2.size() || i < 100; i++) {
             Date datePublished = null;
             String stringDate = tables2.get(i).select(".time").text();
             if (stringDate.contains("m") || stringDate.contains("h")) {
@@ -83,7 +80,7 @@ public class ParserRemoteok implements ParserMain {
                 objectGenerator(tables2.get(i).select(".location").first(), tables2.get(i).select("[itemprop='title']").first(), tables2.get(i).select(".company [itemprop='name']").first(),
                         datePublished, tables2.get(i).select("[itemprop='url']").first());
             } catch (IndexOutOfBoundsException e) {
-                System.out.println(e.getMessage());
+                System.out.println("ParserRemoteok " + e.getMessage());
             }
 
         }
@@ -137,23 +134,6 @@ public class ParserRemoteok implements ParserMain {
             List<ListImpl> list = new ArrayList<ListImpl>();
 
             list.add(addHead(tablesHeaders.first()));
-//            for (int i = 0; i < tablesDescription.size(); i++) {
-//
-//                Elements ps = tablesDescription.get(i).select("p");
-//                Elements uls = tablesDescription.get(i).select("ul");
-//
-//
-//                if (ps.size() > 0) {
-//                    for (Element p : ps) {
-//                        list.add(addParagraph(p));
-//                    }
-//                }
-//                if (uls.size() > 0) {
-//                    for (Element ul : uls) {
-//                        list.add(addList(ul));
-//                    }
-//                }
-//            }
 
             list.addAll(new PrintDescription().generateListImpl(tablesDescription));
             list.add(null);
@@ -175,20 +155,5 @@ public class ParserRemoteok implements ParserMain {
         return list;
     }
 
-    private static ListImpl addParagraph(Element element) {
-        ListImpl list = new ListImpl();
-        list.setTextFieldImpl(element.text());
-        return list;
-    }
-
-    private static ListImpl addList(Element element) {
-        ListImpl list = new ListImpl();
-        List<String> strings = new ArrayList<String>();
-        for (Element e : element.getAllElements()) {
-            strings.add(e.text());
-        }
-        list.setListItem(strings);
-        return list;
-    }
 
 }

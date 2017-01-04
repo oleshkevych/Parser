@@ -43,6 +43,30 @@ public class PhantomJSStarter {
         }
     }
 
+    public static Document startGhostWebbjobb(String link){
+        WebDriver ghostDriver = startPhantom();
+        try {
+            ghostDriver.get(link);
+            WebDriverWait wdw = new WebDriverWait(ghostDriver, 15);
+            wdw.until(ExpectedConditions.visibilityOfElementLocated(By.className("job")));
+            return Jsoup.parse(ghostDriver.getPageSource());
+        }finally {
+            ghostDriver.close();
+            ghostDriver.quit();
+        }
+    }
+    public static Document startGhostF6s(String link){
+        WebDriver ghostDriver = startPhantom();
+        try {
+            ghostDriver.get(link);
+            WebDriverWait wdw = new WebDriverWait(ghostDriver, 15);
+            wdw.until(ExpectedConditions.visibilityOfElementLocated(By.className("result-info")));
+            return Jsoup.parse(ghostDriver.getPageSource());
+        }finally {
+            ghostDriver.close();
+            ghostDriver.quit();
+        }
+    }
     public static Document renderPage(String url, boolean description) {
 
         WebDriver ghostDriver = startPhantom();

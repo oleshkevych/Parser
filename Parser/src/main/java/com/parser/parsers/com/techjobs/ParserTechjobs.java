@@ -9,7 +9,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.openqa.selenium.WebDriver;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -19,11 +18,11 @@ import java.util.List;
  * Created by rolique_pc on 12/15/2016.
  */
 public class ParserTechjobs implements ParserMain {
+
     private String startLink = "http://www.techjobs.com/SearchResults.aspx?query=djAuMXxSVjpRdWlja2xpc3Rpbmd8U086ZGF0ZSBkZXNjfFBOOjF8UFM6NTB8Q1I6c2VhcmNoc3RhcnRkYXRlOkRhdGVSZXN0cmljdGVkJm13ZW5jMztAVG9kYXktNyZtd2VuYzM7T1AmbXdlbmMzO1JhbmdlfElWOnNlYXJjaHN0YXJ0ZGF0ZTpEYXRlUmVzdHJpY3RlZF9AVG9kYXktN19PUF9SYW5nZXxOQTp3b3JrYXJlYTpeQ29tcHV0aW5nL0lUJF9Db21wdXRpbmcvSVR8djAuMQ==&params=c2VhcmNoc3RhcnRkYXRlOjF8cXVlcnlmaWx0ZXI6fHdvcmthcmVhOjB8d29ya2FyZWFfbW9yZTowfEpvYmxvY2F0aW9uMTowfEpvYmxvY2F0aW9uMV9tb3JlOjB8Sm9ibG9jYXRpb246MHxKb2Jsb2NhdGlvbl9tb3JlOjB8Sm9ibG9jYXRpb24zOjB8Sm9ibG9jYXRpb24zX21vcmU6MHxKb2Jsb2NhdGlvbjQ6MHxKb2Jsb2NhdGlvbjRfbW9yZTowfEpvYmxvY2F0aW9uNTowfEpvYmxvY2F0aW9uNV9tb3JlOjB8Sm9idHlwZTowfEpvYnR5cGVfbW9yZTow";
     private List<JobsInform> jobsInforms = new ArrayList<JobsInform>();
     private Document doc;
 
-    private WebDriver ghostDriver;
 
     public ParserTechjobs() {
     }
@@ -34,13 +33,11 @@ public class ParserTechjobs implements ParserMain {
     }
 
     private void parser() {
-        try {
-            doc = PhantomJSStarter.startGhost(startLink);
-            Elements tables2 = doc.select(".borderContainer");
-            runParse(tables2, 0);
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        doc = PhantomJSStarter.startGhost(startLink);
+        Elements tables2 = doc.select(".borderContainer");
+        runParse(tables2, 0);
+        if (tables2.size() == 0) {
+            jobsInforms = null;
         }
     }
 
@@ -68,17 +65,17 @@ public class ParserTechjobs implements ParserMain {
         list.add(list1);
         list.add(list2);
         jobsInform.setOrder(list);
-        String link =linkDescription.attr("href");
+        String link = linkDescription.attr("href");
 
 
-        String jobIdNumber = link.substring(link.indexOf("LJA")+3, link.indexOf(",") - 1);
+        String jobIdNumber = link.substring(link.indexOf("LJA") + 3, link.indexOf(",") - 1);
         String jobName = jobsInform.getHeadPublication().toLowerCase().replaceAll(" ", "_").replaceAll("[\\W]", "").replace("_", "-");
         //(\"[!@#/\\\\,()&£.-]\")
         String jobCount = jobsInforms.size() + 1 + "";
-        jobsInform.setPublicationLink("http://www.techjobs.com/SearchResults/"+jobName+"-lja-"+jobIdNumber+".aspx?jobId=LJA-"+jobIdNumber+"&list=SearchResultsJobsIds&index="+jobCount+"&querydesc=SearchJobQueryDescription&viewedfrom=1");
+        jobsInform.setPublicationLink("http://www.techjobs.com/SearchResults/" + jobName + "-lja-" + jobIdNumber + ".aspx?jobId=LJA-" + jobIdNumber + "&list=SearchResultsJobsIds&index=" + jobCount + "&querydesc=SearchJobQueryDescription&viewedfrom=1");
 
 
-            jobsInform = getDescription(jobsInform.getPublicationLink(), jobsInform);
+        jobsInform = getDescription(jobsInform.getPublicationLink(), jobsInform);
         if (!jobsInforms.contains(jobsInform)) {
             jobsInforms.add(jobsInform);
         }

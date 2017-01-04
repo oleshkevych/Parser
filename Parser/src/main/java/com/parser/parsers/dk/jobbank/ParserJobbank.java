@@ -38,7 +38,7 @@ public class ParserJobbank implements ParserMain {
 
     private void parser() {
 
-    List<String> startLinksList = new ArrayList<>();
+        List<String> startLinksList = new ArrayList<>();
         startLinksList.add("http://jobbank.dk/job/?act=find&key=Drupal&virk=&oprettet=");
         startLinksList.add("http://jobbank.dk/job/?act=find&key=Angular&virk=&oprettet=");
         startLinksList.add("http://jobbank.dk/job/?act=find&key=React&virk=&oprettet=");
@@ -49,6 +49,7 @@ public class ParserJobbank implements ParserMain {
         startLinksList.add("http://jobbank.dk/job/?act=find&key=iOS&virk=&oprettet=");
         startLinksList.add("http://jobbank.dk/job/?act=find&key=mobile&virk=&oprettet=");
 
+        int c = 0;
         for (String link : startLinksList) {
             try {
 
@@ -63,11 +64,11 @@ public class ParserJobbank implements ParserMain {
 
                 Date datePublished = null;
                 int count = 2;
+                int ec = 0;
                 do {
                     try {
 
                         datePublished = null;
-                        // need http protocol
                         doc = Jsoup.connect(link + "?&page=" + count)
                                 .validateTLSCertificates(false).userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36").timeout(5000).get();
 
@@ -77,13 +78,18 @@ public class ParserJobbank implements ParserMain {
 
                     } catch (IOException e) {
                         e.printStackTrace();
+                        ec++;
                     }
 
-                } while (dateClass.dateChecker(datePublished) && jobsInforms.size() < 180);
+                } while (dateClass.dateChecker(datePublished) && jobsInforms.size() < 180 && ec < 3);
 
             } catch (IOException e) {
                 e.printStackTrace();
+                c++;
             }
+        }
+        if(c == startLinksList.size()){
+            jobsInforms = null;
         }
     }
 

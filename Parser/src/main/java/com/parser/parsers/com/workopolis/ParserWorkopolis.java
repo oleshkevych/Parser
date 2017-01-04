@@ -47,12 +47,12 @@ public class ParserWorkopolis implements ParserMain {
         startLinksList.add("http://www.workopolis.com/jobsearch/find-jobs#lg=EN&ak=%7Cios%7C&st=POSTDATE%20%20%20%20&lr=50&pn=");
         startLinksList.add("http://www.workopolis.com/jobsearch/find-jobs#lg=EN&ak=%7Cmobile%7C&st=POSTDATE%20%20%20%20&lr=50&pn=");
 
+        int c = 0;
         for (String link : startLinksList) {
             Date datePublished = null;
             int count = 1;
-            do {
-                try {
-
+            try {
+                do {
                     datePublished = null;
 
                     doc = Jsoup.connect(link + count)
@@ -63,12 +63,15 @@ public class ParserWorkopolis implements ParserMain {
                     Elements tables1 = doc.select("article");
                     datePublished = runParse(tables1, 0);
                     count++;
-
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
+                while (count < 2 && dateClass.dateChecker(datePublished) && jobsInforms.size() < (startLinksList.indexOf(link) + 1) * 20);
+            } catch (IOException e) {
+                e.printStackTrace();
+                c++;
             }
-            while (count < 2 && dateClass.dateChecker(datePublished) && jobsInforms.size() < (startLinksList.indexOf(link) + 1) * 20);
+        }
+        if (c == startLinksList.size()) {
+            jobsInforms = null;
         }
 
     }

@@ -54,6 +54,7 @@ public class ParserRemote implements ParserMain {
 
         } catch (IOException e) {
             e.printStackTrace();
+            jobsInforms = null;
         }
     }
 

@@ -45,12 +45,13 @@ public class TaskDB implements Runnable {
         int newResults = 0;
         if (error != null) {
             JLabel label = (JLabel) labelPanel.getComponent(0);
-            label.setForeground(new Color(0x5F0200));
+            label.setForeground(new Color(0x188700));
             String text = label.getText();
             label.setText(text + " Error parser");
             labelPanel.setVisible(false);
             labelPanel.setBackground(new Color(-721665));
             labelPanel.setVisible(true);
+
         } else if (labelPanel == null && label == null) {
             new DbHelper().writeDB(homeLink, jobsInforms);
         } else if (label != null) {
@@ -64,8 +65,11 @@ public class TaskDB implements Runnable {
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
-            if (newResults > 0) {
+            if (newResults > 0 && newResults != 99999) {
                 label.setText(previousLabelString + " new " + newResults);
+            } else if (newResults == 99999) {
+                label.setForeground(new Color(0x188700));
+                label.setText(previousLabelString + " Error DB");
             }
         } else {
             JLabel label = (JLabel) labelPanel.getComponent(0);
@@ -75,9 +79,11 @@ public class TaskDB implements Runnable {
                 newResults = new DbHelper().writeDB(homeLink, jobsInforms);
                 label.setForeground(new Color(0x5F0200));
             }
-            if (newResults > 0) {
-                String text = label.getText();
-                label.setText(text + " new " + newResults);
+            if (newResults > 0 && newResults != 99999) {
+                label.setText(label.getText() + " new " + newResults);
+            } else if (newResults == 99999) {
+                label.setForeground(new Color(0x188700));
+                label.setText(label.getText() + " Error DB");
             }
             labelPanel.setVisible(false);
             labelPanel.setBackground(new Color(-721665));

@@ -41,6 +41,9 @@ public class ParserUberjobs implements ParserMain {
             doc = PhantomJSStarter.startGhost(startLink);
             Elements tables2 = doc.select(".clickable");
             runParse(tables2, 0);
+            if(tables2.size() == 0){
+                jobsInforms = null;
+            }
         }finally {
             ghostDriver.close();
             ghostDriver.quit();
@@ -48,7 +51,6 @@ public class ParserUberjobs implements ParserMain {
     }
 
     private void runParse(Elements tables2, int counter) {
-        System.out.println("size : " + " " + tables2.size());
 
         for (int i = counter; i < tables2.size(); i += 1) {
             objectGenerator(tables2.get(i).select(".ort").first(), tables2.get(i).select(".job-title").first(),

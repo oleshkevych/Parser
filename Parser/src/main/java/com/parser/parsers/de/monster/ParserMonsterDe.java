@@ -47,6 +47,7 @@ public class ParserMonsterDe implements ParserMain {
         startLinksList.add("http://www.monster.de/jobs/suche/?q=iOS+&where=&intcid=swoop_HeroSearch&cy=de&rad=20");
         startLinksList.add("http://www.monster.de/jobs/suche/?q=mobile+&where=&intcid=swoop_HeroSearch&cy=de&rad=20");
 
+        int c = 0;
         for (String link : startLinksList) {
             try {
 
@@ -66,6 +67,7 @@ public class ParserMonsterDe implements ParserMain {
                 do {
                     try {
 
+                        datePublished = null;
                         doc = Jsoup.connect(link + "&page=" + count)
                                 .validateTLSCertificates(false).userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36").timeout(5000).get();
 
@@ -81,7 +83,11 @@ public class ParserMonsterDe implements ParserMain {
 
             } catch (IOException e) {
                 e.printStackTrace();
+                c++;
             }
+        }
+        if(c == startLinksList.size()){
+            jobsInforms = null;
         }
     }
 

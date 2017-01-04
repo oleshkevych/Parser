@@ -11,9 +11,9 @@
       <enabled value="true"/>
       <focusable value="false"/>
       <inheritsPopupMenu value="false"/>
-      <maximumSize width="1600" height="1000"/>
-      <minimumSize width="1150" height="682"/>
-      <preferredSize width="1150" height="682"/>
+      <maximumSize width="900" height="682"/>
+      <minimumSize width="900" height="682"/>
+      <preferredSize width="900" height="682"/>
       <visible value="true"/>
     </properties>
     <border type="empty" title="ParserApp" title-justification="2">
@@ -147,12 +147,12 @@
           </component>
         </children>
       </grid>
-      <scrollpane id="ad4ac">
+      <scrollpane id="ad4ac" binding="linkScrollPane">
         <constraints>
           <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false">
-            <minimum-size width="440" height="530"/>
-            <preferred-size width="440" height="530"/>
-            <maximum-size width="440" height="530"/>
+            <minimum-size width="250" height="530"/>
+            <preferred-size width="250" height="530"/>
+            <maximum-size width="250" height="530"/>
           </grid>
         </constraints>
         <properties>
@@ -168,9 +168,9 @@
               <enabled value="true"/>
               <focusable value="false"/>
               <font name="Times New Roman" size="12"/>
-              <maximumSize width="420" height="930"/>
-              <minimumSize width="420" height="930"/>
-              <preferredSize width="420" height="930"/>
+              <maximumSize width="230" height="1730"/>
+              <minimumSize width="230" height="1730"/>
+              <preferredSize width="230" height="1730"/>
             </properties>
             <border type="empty" title="Links" title-justification="2" title-position="1">
               <font name="DialogInput" size="18" style="1"/>

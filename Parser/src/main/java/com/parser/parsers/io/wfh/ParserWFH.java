@@ -43,7 +43,6 @@ public class ParserWFH implements ParserMain{
     private void parser() {
         try {
 
-
             doc = Jsoup.connect(startLink)
                     .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
                     .timeout(5000)
@@ -55,6 +54,7 @@ public class ParserWFH implements ParserMain{
 
         } catch (IOException e) {
             e.printStackTrace();
+            jobsInforms = null;
         }
 
     }

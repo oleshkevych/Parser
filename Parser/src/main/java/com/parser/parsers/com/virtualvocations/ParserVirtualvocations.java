@@ -10,8 +10,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -53,11 +51,10 @@ public class ParserVirtualvocations implements ParserMain {
         startLinksList.add("https://www.virtualvocations.com/jobs/q-iOS");
         startLinksList.add("https://www.virtualvocations.com/jobs/q-mobile");
 
+        int c = 0;
         for (String link : startLinksList) {
             try {
 
-
-                // need http protocol
                 doc = Jsoup.connect(link)
                         .validateTLSCertificates(false)
                         .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
@@ -69,8 +66,9 @@ public class ParserVirtualvocations implements ParserMain {
 
                 Date datePublished = null;
                 int count = 1;
-                do {
-                    try {
+                try {
+                    do {
+
 
                         datePublished = null;
                         // need http protocol
@@ -84,23 +82,23 @@ public class ParserVirtualvocations implements ParserMain {
 
                         datePublished = runParse(tables1, 0);
                         count += 10;
-
-                    } catch (IOException e) {
-                        e.printStackTrace();
                     }
-
+                    while (dateClass.dateChecker(datePublished) && jobsInforms.size() < (startLinksList.indexOf(link) + 1) * 20);
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                while (dateClass.dateChecker(datePublished) && jobsInforms.size() < (startLinksList.indexOf(link) + 1) * 20);
 //
             } catch (IOException e) {
                 e.printStackTrace();
+                c++;
             }
-
+        }
+        if (c == startLinksList.size()) {
+            jobsInforms = null;
         }
     }
 
     private Date runParse(Elements tables2, int counter) {
-        System.out.println("text size : " + tables2.size());
         Date datePublished = null;
         for (int i = counter; i < tables2.size(); i += 1) {
             String stringDate = tables2.get(i).select(".default-orange").text();

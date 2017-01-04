@@ -31,21 +31,25 @@ public class TaskReparse implements Runnable {
 
     public void run() {
         try {
-            labelPanel.setBackground(new Color(0x717184));
+//            labelPanel.setBackground(new Color(0x717184));
             List<JobsInform> jobsInforms = classParser.startParse();
 
-            String text = ((JLabel) parserApp.getSelectedComponent()).getText();
-            if (text.contains(" ")) {
-                text = text.substring(0, text.indexOf(" "));
-            }
-            if (text.equals(siteName)) {
-                labelPanel.setBackground(new Color(-721665));
-                List<JobsInformForSearch> jobs = new ArrayList<>();
-                new DbHelper().writeDB(siteName, jobsInforms);
-                jobs.addAll(new DbHelper().getJobsInformFromDb(siteName).stream().map(j -> new JobsInformForSearch(j, siteName)).collect(Collectors.toList()));
-                parserApp.panelFiller(jobs, siteName);
-            } else {
-                parserApp.getExecutorDB().execute(new TaskDB(labelPanel, jobsInforms, siteName));
+            if(jobsInforms != null) {
+                String text = ((JLabel) parserApp.getSelectedComponent()).getText();
+                if (text.contains(" ")) {
+                    text = text.substring(0, text.indexOf(" "));
+                }
+                if (text.equals(siteName)) {
+                    labelPanel.setBackground(new Color(-721665));
+                    List<JobsInformForSearch> jobs = new ArrayList<>();
+                    new DbHelper().writeDB(siteName, jobsInforms);
+                    jobs.addAll(new DbHelper().getJobsInformFromDb(siteName).stream().map(j -> new JobsInformForSearch(j, siteName)).collect(Collectors.toList()));
+                    parserApp.panelFiller(jobs, siteName);
+                } else {
+                    parserApp.getExecutorDB().execute(new TaskDB(labelPanel, jobsInforms, siteName));
+                }
+            }else{
+                parserApp.getExecutorDB().execute(new TaskDB("Error", labelPanel));
             }
         }catch (Exception e){
             parserApp.getExecutorDB().execute(new TaskDB(e.getMessage(), labelPanel));

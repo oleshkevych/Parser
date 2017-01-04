@@ -22,6 +22,7 @@ import com.parser.parsers.com.canadajobs.ParserCanadajobs;
 import com.parser.parsers.com.careerbuilder.ParserCareerbuilder;
 import com.parser.parsers.com.dutchstartupjobs.ParserDutchstartupjobs;
 import com.parser.parsers.com.eurojobs.ParserEurojobs;
+import com.parser.parsers.com.f6s.ParserF6s;
 import com.parser.parsers.com.flexjobs.ParserFlexjobs;
 import com.parser.parsers.com.guru.ParserGugu;
 import com.parser.parsers.com.indeed.ParserIndeed;
@@ -58,6 +59,7 @@ import org.jxls.reader.XLSReader;
 import org.jxls.template.SimpleExporter;
 
 import javax.swing.*;
+import javax.swing.Timer;
 import javax.swing.border.TitledBorder;
 import javax.swing.text.*;
 import java.awt.*;
@@ -183,16 +185,17 @@ public class ParserApp implements MouseListener {
     private JLabel jobsJustlandedLabel;
     private JPanel jobsRemotiveLabelPanel;
     private JLabel jobsRemotiveLabel;
+    private JScrollPane linkScrollPane;
     private JLabel europeremotelyLabel;
     private JFrame jFrame = new JFrame();
     private Component c;
-    private ExecutorService executorDB = Executors.newFixedThreadPool(1);
+    private ThreadPoolExecutor executorDB = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
     private ThreadPoolExecutor executor;
     private List<JobsInformForSearch> allJobs;
     private String testSearchWord;
     private List<JobsInformForSearch> testCorrectJobsList;
 
-    public ExecutorService getExecutorDB() {
+    public ThreadPoolExecutor getExecutorDB() {
         return executorDB;
     }
 
@@ -342,16 +345,34 @@ public class ParserApp implements MouseListener {
         } catch (Exception e) {
             e.printStackTrace();
         }
-//
+        List<Integer> ids = new ArrayList<>();
+        List<String> labelText = new ArrayList<>();
+        List<String> labelTextSorted = new ArrayList<>();
+        List<JPanel> labelPanelList = new ArrayList<>();
+        for (int i = 0; i < linkPanel.getComponents().length; i++) {
+            JPanel labelPanel = (JPanel) linkPanel.getComponents()[i];
+            labelPanelList.add(labelPanel);
+            labelPanel.setVisible(false);
+            labelText.add(((JLabel) labelPanel.getComponent(0)).getText());
+            labelTextSorted.add(((JLabel) labelPanel.getComponent(0)).getText());
+        }
+        Collections.sort(labelTextSorted);
+        for (String s : labelTextSorted) {
+            ids.add(labelText.indexOf(s));
+        }
+        for (int i : ids) {
+            linkPanel.add(labelPanelList.get(i));
+        }
 //        JPanel labelPanel = (JPanel) linkPanel.getComponents()[47];
 //        labelPanel.setBackground(new Color(0x717184));
 //        JLabel label = (JLabel) labelPanel.getComponent(0);
 //        String homeLink = label.getText();
 //        executor.execute(new TaskStartParser(labelPanel, mapParsers.get(homeLink), homeLink, getParserApp()));
-//        executor.execute(new TaskStartParser((JPanel) linkPanel.getComponents()[1], new ParserJobsRemotive(), "jobs.remotive.io", getParserApp()));
+//        executor.execute(new TaskStartParser((JPanel) linkPanel.getComponents()[1], new ParserF6s(), "jobs.remotive.io", getParserApp()));
 
 
         c = wfhLink;
+        linkScrollPane.getVerticalScrollBar().setUnitIncrement(15);
         wfhLink.addMouseListener(this);
         remoteokLabel.addMouseListener(this);
         landingJobsLabel.addMouseListener(this);
@@ -406,10 +427,12 @@ public class ParserApp implements MouseListener {
         openSearchButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                executorDB.execute(new TaskDB((JLabel) c));
+                c.setForeground(new Color(-16777216));
                 reparseButton.setVisible(false);
+                Future<List<JobsInformForSearch>> taskJobsInforms = executorDB.submit(new TaskReadDb(linkPanel));
                 openSearchButton.setVisible(false);
                 openSearchInSelected.setVisible(false);
-                Future<List<JobsInformForSearch>> taskJobsInforms = executorDB.submit(new TaskReadDb(linkPanel));
                 try {
                     allJobs = taskJobsInforms.get();
                     System.out.println(" reading all " + allJobs.size());
@@ -446,9 +469,9 @@ public class ParserApp implements MouseListener {
 
                 List<String> keyList = new ArrayList<String>();
                 if (testSearchWord.contains(" ")) {
-                    keyList = Arrays.asList(testSearchWord.split(" "));
+                    keyList = Arrays.asList(testSearchWord.toLowerCase().split(" "));
                 } else {
-                    keyList.add(testSearchWord);
+                    keyList.add(testSearchWord.toLowerCase());
                 }
                 List<JobsInformForSearch> testList = new ArrayList<JobsInformForSearch>();
                 for (JobsInformForSearch j : testCorrectJobsList) {
@@ -493,12 +516,15 @@ public class ParserApp implements MouseListener {
 
                 jobPanel.add(generateSingForJobPanel("Now www." + key + " is parsing..."));
                 jobPanel.setVisible(true);
+                c.getParent().setBackground(new Color(0x717184));
                 executor.execute(new TaskReparse(key, mapParsers.get(key), getParserApp(), c.getParent()));
             }
         });
         openSearchInSelected.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                executorDB.execute(new TaskDB((JLabel) c));
+                c.setForeground(new Color(-16777216));
                 reparseButton.setVisible(false);
                 openSearchButton.setVisible(false);
                 openSearchInSelected.setVisible(false);
@@ -518,6 +544,7 @@ public class ParserApp implements MouseListener {
                     reparseButton.setVisible(true);
                     openSearchButton.setVisible(true);
                     searchTextField.setVisible(false);
+                    searchTextField.setText("");
                     startSearchButton.setVisible(false);
                     System.out.println("Error reading all");
                     e1.printStackTrace();
@@ -897,6 +924,7 @@ public class ParserApp implements MouseListener {
                 ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         pane.setAutoscrolls(true);
+        pane.getVerticalScrollBar().setUnitIncrement(20);
         pane.setBackground(new Color(-721665));
         pane.setAlignmentX(0.0f);
         pane.setAlignmentY(0.0f);
@@ -962,34 +990,62 @@ public class ParserApp implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        System.out.println("text speciality :111 ");
+        System.out.println("text speciality :111 "
+                + " getQueue().remainingCapacity() " + executorDB.getQueue().remainingCapacity()
+                + " getLargestPoolSize " + executorDB.getLargestPoolSize()
+                + " getMaximumPoolSize " + executorDB.getMaximumPoolSize()
+                + " getTaskCount " + executorDB.getTaskCount()
+                + " .getQueue().size() " + executorDB.getQueue().size()
+                + " getActiveCount " + executorDB.getActiveCount()
+        );
 
-        openSearchButton.setVisible(true);
-        openSearchInSelected.setVisible(true);
-        searchTextField.setVisible(false);
-        startSearchButton.setVisible(false);
-        linkPanel.setVisible(false);
-        JLabel label = (JLabel) e.getComponent();
-        if (label.getText().contains(" ")) {
-            String text = label.getText().substring(0, label.getText().indexOf(" "));
-            label.setText(text);
-        }
-        if (!((JLabel) c).getText().equals(label.getText())) {
-            executorDB.execute(new TaskDB((JLabel) c));
-        }
-        c.setForeground(new Color(-16777216));
-        c = label;
-        c.setForeground(new Color(0x696969));
-        openSearchInSelected.setText("Search in " + label.getText());
-        reparseButton.setVisible(true);
-        reparseButton.setText("Reload parsing " + label.getText());
-        reparseButton.setVisible(true);
-        linkPanel.setVisible(true);
-        Future<List<JobsInformForSearch>> taskJobsInforms = executorDB.submit(new TaskReadDb(label.getText()));
-        try {
-            panelFiller(taskJobsInforms.get(), label.getText());
-        } catch (Exception ex) {
-            ex.printStackTrace();
+//        System.out.println("text speciality :111 getPoolSize " + executor.getPoolSize() + " getActiveCount "
+//                + executor.getActiveCount() + " getQueue " + executor.getQueue().size()
+//                + " getCorePoolSize " + executor.getCorePoolSize());
+
+        if (executorDB.getQueue().size() < 2) {
+            openSearchButton.setVisible(true);
+            openSearchInSelected.setVisible(true);
+            searchTextField.setVisible(false);
+            searchTextField.setText("");
+            startSearchButton.setVisible(false);
+            linkPanel.setVisible(false);
+            JLabel label = (JLabel) e.getComponent();
+            if (label.getText().contains(" ")) {
+                String text = label.getText().substring(0, label.getText().indexOf(" "));
+                label.setText(text);
+            }
+            if (!((JLabel) c).getText().equals(label.getText())) {
+                executorDB.execute(new TaskDB((JLabel) c));
+            }
+            c.setForeground(new Color(-16777216));
+            c = label;
+            c.setForeground(new Color(0x696969));
+            openSearchInSelected.setText("Search in " + label.getText());
+            reparseButton.setVisible(true);
+            reparseButton.setText("Reload parsing " + label.getText());
+            reparseButton.setVisible(true);
+            linkPanel.setVisible(true);
+            Future<List<JobsInformForSearch>> taskJobsInforms = executorDB.submit(new TaskReadDb(label.getText()));
+            try {
+                panelFiller(taskJobsInforms.get(), label.getText());
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        } else {
+            JLabel label = (JLabel) e.getComponent();
+            Color colorB = label.getBackground();
+            label.setForeground(new Color(0xFFFFFF));
+            label.setBackground(new Color(-16777216));
+//            try {
+//                Timer timer = new Timer(200, new ());
+//                timer.setInitialDelay(pause);
+//                timer.start();
+//            } catch (Exception e1) {
+//                e1.printStackTrace();
+//            }
+            label.setForeground(colorB);
+            label.setForeground(new Color(-16777216));
         }
     }
 
@@ -1057,9 +1113,9 @@ public class ParserApp implements MouseListener {
         panelMain.setEnabled(true);
         panelMain.setFocusable(false);
         panelMain.setInheritsPopupMenu(false);
-        panelMain.setMaximumSize(new Dimension(1600, 1000));
-        panelMain.setMinimumSize(new Dimension(1150, 682));
-        panelMain.setPreferredSize(new Dimension(1150, 682));
+        panelMain.setMaximumSize(new Dimension(900, 682));
+        panelMain.setMinimumSize(new Dimension(900, 682));
+        panelMain.setPreferredSize(new Dimension(900, 682));
         panelMain.setVisible(true);
         panelMain.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), "ParserApp", TitledBorder.CENTER, TitledBorder.DEFAULT_POSITION, new Font(panelMain.getFont().getName(), panelMain.getFont().getStyle(), 16), new Color(-16777216)));
         jobPanel = new JPanel();
@@ -1147,9 +1203,9 @@ public class ParserApp implements MouseListener {
         reparseButton.setText("Reparser");
         reparseButton.setVisible(false);
         panel1.add(reparseButton);
-        final JScrollPane scrollPane1 = new JScrollPane();
-        scrollPane1.setHorizontalScrollBarPolicy(31);
-        panelMain.add(scrollPane1, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, new Dimension(440, 530), new Dimension(440, 530), new Dimension(440, 530), 0, false));
+        linkScrollPane = new JScrollPane();
+        linkScrollPane.setHorizontalScrollBarPolicy(31);
+        panelMain.add(linkScrollPane, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, new Dimension(250, 530), new Dimension(250, 530), new Dimension(250, 530), 0, false));
         linkPanel = new JPanel();
         linkPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
         linkPanel.setAutoscrolls(true);
@@ -1157,10 +1213,10 @@ public class ParserApp implements MouseListener {
         linkPanel.setEnabled(true);
         linkPanel.setFocusable(false);
         linkPanel.setFont(new Font("Times New Roman", linkPanel.getFont().getStyle(), 12));
-        linkPanel.setMaximumSize(new Dimension(420, 930));
-        linkPanel.setMinimumSize(new Dimension(420, 930));
-        linkPanel.setPreferredSize(new Dimension(420, 930));
-        scrollPane1.setViewportView(linkPanel);
+        linkPanel.setMaximumSize(new Dimension(230, 1730));
+        linkPanel.setMinimumSize(new Dimension(230, 1730));
+        linkPanel.setPreferredSize(new Dimension(230, 1730));
+        linkScrollPane.setViewportView(linkPanel);
         linkPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), "Links", TitledBorder.CENTER, TitledBorder.ABOVE_TOP, new Font("DialogInput", Font.BOLD, 18), new Color(-16777216)));
         wfhLabelPanel = new JPanel();
         wfhLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));

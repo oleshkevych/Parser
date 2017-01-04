@@ -46,6 +46,7 @@ public class ParserStackoverflow implements ParserMain {
         startLinksList.add("https://stackoverflow.com/jobs?sort=p&q=iOS");
         startLinksList.add("https://stackoverflow.com/jobs?sort=p&q=mobile");
 
+        int c = 0;
         for (String link : startLinksList) {
             try {
 
@@ -58,33 +59,17 @@ public class ParserStackoverflow implements ParserMain {
                 Elements tables2 = doc.select(".listResults .-item");
                 runParse(tables2, 0);
 
-//                Date datePublished = null;
-//                int count = 2;
-//                do {
-//                    try {
-//
-//                        datePublished = null;
-//                        doc = Jsoup.connect(link + "&pg=" + count)
-//                                .validateTLSCertificates(false).userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36").timeout(5000).get();
-//
-//                        Elements tables1 = doc.select(".listResults .-item");
-//                        datePublished = runParse(tables1, 0);
-//                        count++;
-//
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//
-//                } while (dateClass.dateChecker(datePublished) && jobsInforms.size() < 100);
-
             } catch (IOException e) {
                 e.printStackTrace();
+                c++;
             }
+        }
+        if(c == startLinksList.size()){
+            jobsInforms = null;
         }
     }
 
     private Date runParse(Elements tables2, int counter) {
-        System.out.println("text date : " + tables2.size());
         Date datePublished = null;
         for (int i = counter; i < tables2.size(); i += 1) {
             datePublished = null;

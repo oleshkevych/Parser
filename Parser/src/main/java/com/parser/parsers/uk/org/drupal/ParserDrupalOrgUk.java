@@ -34,22 +34,9 @@ public class ParserDrupalOrgUk implements ParserMain {
     }
 
     private void parser() {
-//        try {
-
-
-        // need http protocol
-//            doc = Jsoup.connect(startLink)
-//                    .validateTLSCertificates(false)
-//                    .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-//                    .timeout(5000)
-//                    .get();
-//
-//            Elements tables2 = doc.select(".searchResultsJobs tr");
-////            System.out.println("text : " + tables2);
-//            runParse(tables2, 0);
-
         Date datePublished = null;
         int count = 11;
+        int c = 0;
         do {
             try {
 
@@ -62,47 +49,36 @@ public class ParserDrupalOrgUk implements ParserMain {
 
                 Elements tables2 = doc.select("#center .view-content .views-row");
                 datePublished = runParse(tables2, 0);
-                count+=10;
-
+                count += 10;
             } catch (IOException e) {
                 e.printStackTrace();
+                c++;
             }
 
-        } while (dateClass.dateChecker(datePublished) /*&& jobsInforms.size() < 40*/);
-
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
+        } while (dateClass.dateChecker(datePublished) && c < 4 /*&& jobsInforms.size() < 40*/);
+        if(count == 11){
+            jobsInforms = null;
+        }
     }
 
     private Date runParse(Elements tables2, int counter) {
-        System.out.println("text date : " + tables2.size());
         Date datePublished = null;
         for (int i = counter; i < tables2.size(); i += 1) {
-//            System.out.println("text date O: " + tables2.get(i));
             datePublished = objectGenerator(tables2.get(i).select("p").last(), tables2.get(i).select("a").first(),
                     tables2.get(i).select("p").first(), tables2.get(i).select("a").first());
-
-
         }
         return datePublished;
     }
 
     private Date objectGenerator(Element place, Element headPost, Element company, Element linkDescription) {
-//        System.out.println("text date P: " + linkDescription);
-//        System.out.println("text date P: " + linkDescription.attr("abs:href"));
         JobsInform jobsInform = new JobsInform();
-//            jobsInform.setPublishedDate(datePublished);
         jobsInform.setHeadPublication(headPost.text());
         jobsInform.setCompanyName("");
         jobsInform.setPlace("");
         jobsInform.setPublicationLink(linkDescription.attr("abs:href"));
         jobsInform = getDescription(linkDescription.attr("abs:href"), jobsInform);
-//        if (dateClass.dateChecker(jobsInform.getPublishedDate()) /*&& jobsInforms.size() < 40*/){
-            if (!jobsInforms.contains(jobsInform)) {
-                jobsInforms.add(jobsInform);
-//            }
+        if (!jobsInforms.contains(jobsInform)) {
+            jobsInforms.add(jobsInform);
         }
         return jobsInform.getPublishedDate();
     }
@@ -123,7 +99,6 @@ public class ParserDrupalOrgUk implements ParserMain {
             Element tablesCompany = document.select(".node").first().children().select("span").first().select("a").first();
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             String stringDate = tablesDate.ownText().substring(4, 19);
-//            System.out.println("Error : " + tablesDate.text());
             jobsInform.setPublishedDate(formatter.parse(stringDate));
             jobsInform.setCompanyName(tablesCompany.text());
             List<ListImpl> list = new ArrayList<ListImpl>();
@@ -132,23 +107,23 @@ public class ParserDrupalOrgUk implements ParserMain {
 
             for (int i = 0; i < tablesDescription.size(); i++) {
 
-                if(tablesDescription.get(i).tagName().equals("div")){
-                    for (Element e : tablesDescription.get(i).children()){
+                if (tablesDescription.get(i).tagName().equals("div")) {
+                    for (Element e : tablesDescription.get(i).children()) {
                         if (e.tagName().equals("p")) {
                             list.add(addParagraph(e));
                         } else if (e.tagName().equals("ul")) {
                             list.add(addList(e));
                         } else if (e.tagName().contains("h")) {
                             list.add(addHead(e));
-                        }else  if(e.tagName().contains("di")){
-                            for (Element e1 : e.children()){
+                        } else if (e.tagName().contains("di")) {
+                            for (Element e1 : e.children()) {
                                 if (e1.tagName().equals("p")) {
                                     list.add(addParagraph(e1));
                                 } else if (e1.tagName().equals("ul")) {
                                     list.add(addList(e1));
                                 } else if (e1.tagName().contains("h")) {
                                     list.add(addHead(e1));
-                                }else if(e1.tagName().equals("div")) {
+                                } else if (e1.tagName().equals("div")) {
                                     ListImpl list1 = new ListImpl();
                                     list1.setTextFieldImpl(e1.text());
                                     list.add(list1);
@@ -166,7 +141,7 @@ public class ParserDrupalOrgUk implements ParserMain {
                     list.add(addList(tablesDescription.get(i)));
                 } else if (tablesDescription.get(i).tagName().contains("h")) {
                     list.add(addHead(tablesDescription.get(i)));
-                }else if(tablesDescription.get(i).tagName().equals("div")) {
+                } else if (tablesDescription.get(i).tagName().equals("div")) {
                     ListImpl list1 = new ListImpl();
                     list1.setTextFieldImpl(tablesDescription.get(i).ownText());
                     list.add(list1);

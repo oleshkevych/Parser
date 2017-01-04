@@ -46,9 +46,13 @@ public class ParserDrupal implements ParserMain {
 
             Elements tables2 = doc.select(".view-content .views-row");
             runParse(tables2, 0);
+            if(tables2.size() == 0){
+                jobsInforms = null;
+            }
 
             Date datePublished = null;
             int count = 1;
+            int c = 0;
             do {
                 try {
 
@@ -65,18 +69,19 @@ public class ParserDrupal implements ParserMain {
 
                 } catch (IOException e) {
                     e.printStackTrace();
+                    c++;
                 }
 
-            } while (dateClass.dateChecker(datePublished) && jobsInforms.size() < 100);
+            } while (dateClass.dateChecker(datePublished) && jobsInforms.size() < 100 && c < 5);
 
         } catch (IOException e) {
             e.printStackTrace();
+            jobsInforms = null;
         }
 
     }
 
     private Date runParse(Elements tables2, int counter) {
-        System.out.println("text date : " + tables2.size());
         Date datePublished = null;
         SimpleDateFormat formatter = new SimpleDateFormat("EEE, MM/dd/yyyy - HH:mm");
         for (int i = counter; i < tables2.size(); i += 1) {
@@ -97,9 +102,9 @@ public class ParserDrupal implements ParserMain {
         if (dateClass.dateChecker(datePublished)) {
             JobsInform jobsInform = new JobsInform();
             jobsInform.setPublishedDate(datePublished);
-            jobsInform.setHeadPublication(headPost!=null ? headPost.text() : "");
-            jobsInform.setCompanyName(company!=null ? company.ownText() : "");
-            jobsInform.setPlace(place !=null ? place.text() : "");
+            jobsInform.setHeadPublication(headPost != null ? headPost.text() : "");
+            jobsInform.setCompanyName(company != null ? company.ownText() : "");
+            jobsInform.setPlace(place != null ? place.text() : "");
             jobsInform.setPublicationLink(linkDescription.attr("abs:href"));
             jobsInform = getDescription(linkDescription.attr("abs:href"), jobsInform);
             if (!jobsInforms.contains(jobsInform)) {

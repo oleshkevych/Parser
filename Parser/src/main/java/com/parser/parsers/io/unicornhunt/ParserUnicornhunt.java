@@ -46,6 +46,8 @@ public class ParserUnicornhunt implements ParserMain {
         stringCat.add("ios");
         stringCat.add("mobile");
 
+        int c = 0;
+        int c1 = 0;
         for (String link : stringCat) {
             try {
 
@@ -57,10 +59,16 @@ public class ParserUnicornhunt implements ParserMain {
 
                 Elements tables2 = doc.select(".job-card");
                 runParse(tables2, 0);
-
+                if(tables2.size() == 0){
+                    c1++;
+                }
             } catch (IOException e) {
                 e.printStackTrace();
+                c++;
             }
+        }
+        if(c1 == stringCat.size() || c == stringCat.size()){
+            jobsInforms = null;
         }
     }
 

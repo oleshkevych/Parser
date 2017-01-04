@@ -1,6 +1,5 @@
 package com.parser.parsers.de.webentwicklerJobs;
 
-import com.parser.entity.DateGenerator;
 import com.parser.entity.JobsInform;
 import com.parser.entity.ListImpl;
 import com.parser.entity.ParserMain;
@@ -12,7 +11,6 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -42,6 +40,7 @@ public class ParserWebentwicklerJobs implements ParserMain {
             Elements tables2 = doc.select(".jobs-table .job-item");
             runParse(tables2, 0);
 
+            int c = 0;
             int count = 2;
             do {
                 try {
@@ -56,12 +55,14 @@ public class ParserWebentwicklerJobs implements ParserMain {
 
                 } catch (IOException e) {
                     e.printStackTrace();
+                    c++;
                 }
 
-            } while (jobsInforms.size() < 100);
+            } while (jobsInforms.size() < 100 || c > 5);
 
         } catch (Exception e) {
             e.printStackTrace();
+            jobsInforms = null;
         }
 
     }
@@ -77,7 +78,6 @@ public class ParserWebentwicklerJobs implements ParserMain {
     }
 
     private void objectGenerator(Element place, Element headPost, Element company, Element linkDescription) {
-        if (jobsInforms.size() < 100) {
             JobsInform jobsInform = new JobsInform();
             jobsInform.setPublishedDate(null);
             jobsInform.setHeadPublication(headPost.text());
@@ -88,7 +88,6 @@ public class ParserWebentwicklerJobs implements ParserMain {
             if (!jobsInforms.contains(jobsInform)) {
                 jobsInforms.add(jobsInform);
             }
-        }
     }
 
     public static JobsInform getDescription(String linkToDescription, JobsInform jobsInform) {

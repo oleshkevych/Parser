@@ -58,6 +58,7 @@ public class ParserWeworkremotely implements ParserMain {
             runParse(tables, 0);
         } catch (IOException e) {
             e.printStackTrace();
+            jobsInforms = null;
         }
 
     }
@@ -71,7 +72,7 @@ public class ParserWeworkremotely implements ParserMain {
         for (int i = counter; i < tables2.size(); i += 1) {
             String stringDate = "";
             try {
-                stringDate = tables2.get(i).select(".date").first().text() + " "+calendar.get(Calendar.YEAR);
+                stringDate = tables2.get(i).select(".date").first().text() + " " + calendar.get(Calendar.YEAR);
             } catch (NullPointerException n) {
                 System.out.println("text date : " + tables2.get(i));
                 stringDate = "Dec 1 1999";
@@ -80,8 +81,8 @@ public class ParserWeworkremotely implements ParserMain {
                 datePublished = formatter.parse(stringDate);
                 Calendar calendarPublished = Calendar.getInstance();
                 calendarPublished.setTime(datePublished);
-                if(calendar.get(Calendar.MONTH)<calendarPublished.get(Calendar.MONTH)){
-                    stringDate = stringDate.replace(calendar.get(Calendar.YEAR)+"", (calendar.get(Calendar.YEAR)-1)+"");
+                if (calendar.get(Calendar.MONTH) < calendarPublished.get(Calendar.MONTH)) {
+                    stringDate = stringDate.replace(calendar.get(Calendar.YEAR) + "", (calendar.get(Calendar.YEAR) - 1) + "");
                     datePublished = formatter.parse(stringDate);
                 }
                 objectGenerator(tables2.get(i).select(".location").first(), tables2.get(i).select(".title").first(),

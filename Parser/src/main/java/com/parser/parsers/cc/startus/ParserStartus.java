@@ -47,6 +47,7 @@ public class ParserStartus implements ParserMain {
         startLinksList.add("https://www.startus.cc/jobs/web");
         startLinksList.add("https://www.startus.cc/jobs/mobile");
 
+        int c =0;
         for (String link : startLinksList) {
             try {
 
@@ -86,7 +87,11 @@ public class ParserStartus implements ParserMain {
 
             } catch (IOException e) {
                 e.printStackTrace();
+                c++;
             }
+        }
+        if(c == startLinksList.size()){
+            jobsInforms = null;
         }
     }
 

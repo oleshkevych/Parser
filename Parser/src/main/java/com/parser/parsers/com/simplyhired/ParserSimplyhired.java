@@ -20,8 +20,6 @@ import java.util.List;
  * Created by rolique_pc on 12/7/2016.
  */
 public class ParserSimplyhired implements ParserMain {
-
-    //    private String startLink = "http://www.simplyhired.com/search?q=software+engineer&fdb=1&sb=dd";
     private List<JobsInform> jobsInforms = new ArrayList<JobsInform>();
     private Document doc;
     private DateGenerator dateClass;
@@ -51,6 +49,7 @@ public class ParserSimplyhired implements ParserMain {
         startLinksList.add("http://www.simplyhired.com/search?q=JavaScript&fdb=7&sb=dd");
         startLinksList.add("http://www.simplyhired.com/search?q=mobile&fdb=7&sb=dd");
 
+        int c = 0;
         for (String link : startLinksList) {
             try {
 
@@ -84,7 +83,11 @@ public class ParserSimplyhired implements ParserMain {
 
             } catch (IOException e) {
                 e.printStackTrace();
+                c++;
             }
+        }
+        if(c == startLinksList.size()){
+            jobsInforms = null;
         }
     }
 

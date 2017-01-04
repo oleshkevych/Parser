@@ -47,23 +47,14 @@ public class ParserEluta implements ParserMain {
         stringCat.add("javascript");
         stringCat.add("ios");
         stringCat.add("mobile");
+        int c = 0;
         for(String s: stringCat) {
-//            try {
-//
-//                doc = Jsoup.connect(startLink + 1)
-//                        .validateTLSCertificates(false)
-//                        .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-//                        .timeout(5000)
-//                        .get();
-//                Elements tables2 = doc.select(".organic-job");
-//                runParse(tables2, 0);
-//
+            try {
+
                 Date datePublished = null;
                 int count = 1;
                 do {
-                    try {
 
-                        datePublished = null;
                         doc = Jsoup.connect(startLink.replace("TTTTTT", s) + count)
                                 .validateTLSCertificates(false)
                                 .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
@@ -75,16 +66,15 @@ public class ParserEluta implements ParserMain {
 
                         count++;
 
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
                 } while (dateClass.dateChecker(datePublished) && jobsInforms.size() < 100);
-//            }
 
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
+            } catch (IOException e) {
+                e.printStackTrace();
+                c++;
+            }
+        }
+        if (c == stringCat.size()){
+            jobsInforms = null;
         }
     }
 

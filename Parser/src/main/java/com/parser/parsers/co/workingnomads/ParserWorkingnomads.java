@@ -50,8 +50,9 @@ public class ParserWorkingnomads implements ParserMain {
 
         Date datePublished = null;
         int count = 0;
-        do {
+
             try {
+                do {
                 datePublished = null;
                 String urlS = "https://www.workingnomads.co/jobsapi/job/_search?sort=premium:desc,pub_date:desc&_source=company,category_name,description,instructions,id,external_id,slug,title,pub_date,tags,source,apply_url,premium&size=20&from=" + count;
                 URL url = new URL(urlS);
@@ -111,12 +112,13 @@ public class ParserWorkingnomads implements ParserMain {
                     }
                 }
                 count += 20;
-
+                } while (dateClass.dateChecker(datePublished) && jobsInforms.size() < 100);
             } catch (IOException e) {
                 e.printStackTrace();
+                jobsInforms = null;
             }
 
-        } while (dateClass.dateChecker(datePublished) && jobsInforms.size() < 100);
+
 
     }
 

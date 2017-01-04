@@ -49,6 +49,7 @@ public class ParserWeloveangular implements ParserMain {
             runParse(tables2, 0);
         } catch (IOException e) {
             e.printStackTrace();
+            jobsInforms = null;
         }
 
     }

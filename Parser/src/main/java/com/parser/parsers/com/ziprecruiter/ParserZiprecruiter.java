@@ -11,8 +11,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -50,10 +48,9 @@ public class ParserZiprecruiter implements ParserMain {
         startLinksList.add("https://www.ziprecruiter.com/candidate/search?search=iOS&page=1&location=&days=5");
         startLinksList.add("https://www.ziprecruiter.com/candidate/search?search=mobile&page=1&location=&days=5");
 
+        int c = 0;
         for (String link : startLinksList) {
             try {
-
-
                 doc = Jsoup.connect(link)
                         .validateTLSCertificates(false)
                         .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
@@ -63,33 +60,15 @@ public class ParserZiprecruiter implements ParserMain {
                 Elements tables2 = doc.select("#job_list article");
                 runParse(tables2, 0);
 
-                Date datePublished = null;
-                int count = 2;
-//                do {
-//                    try {
-//
-//                        datePublished = null;
-//                        // need http protocol
-//                        doc = Jsoup.connect(link.replace("page="+(count-1), "page="+(count)))
-//                                .validateTLSCertificates(false)
-//                                .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-//                                .timeout(5000)
-//                                .get();
-//
-//                        Elements tables1 = doc.select("#job_list article");
-//                        datePublished = runParse(tables1, 0);
-//                        count++;
-//
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//
-//                } while (dateClass.dateChecker(datePublished) && jobsInforms.size() < (startLinksList.indexOf(link)+1) * 20);
-
             } catch (IOException e) {
                 e.printStackTrace();
+                c++;
             }
         }
+        if (c == startLinksList.size()) {
+            jobsInforms = null;
+        }
+
     }
 
     private void runParse(Elements tables2, int counter) {
@@ -108,15 +87,15 @@ public class ParserZiprecruiter implements ParserMain {
 
     private void objectGenerator(Element place, Element headPost, Element company, Element linkDescription) {
 
-            JobsInform jobsInform = new JobsInform();
-            jobsInform.setHeadPublication(headPost.text());
-            jobsInform.setCompanyName(company.text());
-            jobsInform.setPlace(place.ownText());
+        JobsInform jobsInform = new JobsInform();
+        jobsInform.setHeadPublication(headPost.text());
+        jobsInform.setCompanyName(company.text());
+        jobsInform.setPlace(place.ownText());
         jobsInform.setPublicationLink(linkDescription.attr("href"));
         jobsInform = getDescription(linkDescription.attr("href"), jobsInform);
-            if (!jobsInforms.contains(jobsInform)) {
-                jobsInforms.add(jobsInform);
-            }
+        if (!jobsInforms.contains(jobsInform)) {
+            jobsInforms.add(jobsInform);
+        }
     }
 
     private static JobsInform getDescription(String linkToDescription, JobsInform jobsInform) {
@@ -129,7 +108,7 @@ public class ParserZiprecruiter implements ParserMain {
                     .get();
             Elements tablesDate = document.select(".posted_date");
 
-            if(tablesDate.size()>0) {
+            if (tablesDate.size() > 0) {
                 String stringDate = tablesDate.first().text();
                 Date datePublished = null;
                 if (stringDate.contains("minut") || stringDate.contains("hour")) {
@@ -165,7 +144,7 @@ public class ParserZiprecruiter implements ParserMain {
             }
             List<ListImpl> list = new ArrayList<ListImpl>();
 
-            if(tablesHead.size()>0) {
+            if (tablesHead.size() > 0) {
                 list.add(addHead(tablesHead.first()));
             }
 //            for (int i = 0; i<tablesDescription.size(); i++) {

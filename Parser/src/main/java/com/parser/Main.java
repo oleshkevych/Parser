@@ -29,7 +29,7 @@ public class Main extends Application {
             public void run() {
                 try {
                     parserApp.runParser();
-                }catch(Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -43,7 +43,7 @@ public class Main extends Application {
             }
         };
         jFrame.addWindowListener(exitListener);
-        jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         jFrame.pack();
         jFrame.setVisible(true);
 
@@ -51,24 +51,48 @@ public class Main extends Application {
 
     private void stopApp() {
         System.out.println("Stop");
-        if (!executorForStart.isShutdown()) {
+        jFrame.setVisible(false);
+        if ((executorForStart != null)) {
             executorForStart.shutdown();
         }
         try {
-            if (!parserApp.getExecutor().isShutdown()) {
-                parserApp.getExecutor().shutdown();
+            if (parserApp.getExecutor() != null && !parserApp.getExecutor().isShutdown()) {
+                parserApp.getExecutor().getQueue().clear();
             }
         } catch (NullPointerException n) {
             System.out.println("parserApp.getExecutor()");
             n.printStackTrace();
         }
         try {
-            if (!parserApp.getExecutorDB().isShutdown()) {
-                parserApp.getExecutorDB().shutdown();
+            if (parserApp.getExecutorDB() != null && !parserApp.getExecutorDB().isShutdown()) {
+                parserApp.getExecutorDB().getQueue().clear();
             }
         } catch (NullPointerException n) {
             System.out.println("parserApp.getExecutor()");
             n.printStackTrace();
+        }
+        closeApp();
+    }
+    private void closeApp(){
+        if(parserApp.getExecutor().getActiveCount() == 0 && parserApp.getExecutorDB().getActiveCount() == 0){
+            jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            try {
+                this.stop();
+            }catch (Exception e){
+                System.out.println("this.stop();");
+
+                e.printStackTrace();
+            }
+        }else{
+            try {
+                Thread.sleep(1000);
+                System.out.println("I'ms leepping ");
+                closeApp();
+            }catch (Exception e){
+                System.out.println("Thread.sleep(1000);");
+
+                e.printStackTrace();
+            }
         }
     }
 

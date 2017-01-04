@@ -1,22 +1,15 @@
 package com.parser.parsers.io.webbjobb;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.parser.entity.DateGenerator;
 import com.parser.entity.JobsInform;
 import com.parser.entity.ListImpl;
 import com.parser.entity.ParserMain;
+import com.parser.parsers.PhantomJSStarter;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -29,7 +22,7 @@ import java.util.List;
 public class ParserWebbjobb implements ParserMain {
 
 
-    private String startLink = "https://webbjobb.io/lediga-jobb/";
+    private String startLink = "https://webbjobb.io/sok/dela?freetext=TTTTT&exclude_headhunters=0";
     private List<JobsInform> jobsInforms = new ArrayList<JobsInform>();
     private Document doc;
     private DateGenerator dateClass;
@@ -44,50 +37,31 @@ public class ParserWebbjobb implements ParserMain {
     }
 
     private void parser() {
-//        List<String> stringCat = new ArrayList<>();
-//        stringCat.add("drupal");
-//        stringCat.add("angular");
-//        stringCat.add("react");
-//        stringCat.add("meteor");
-//        stringCat.add("node");
-//        stringCat.add("frontend");
-//        stringCat.add("javascript");
-//        stringCat.add("ios");
-//        stringCat.add("mobile");
-//        for (String s : stringCat) {
-//            try {
-
-        Date datePublished = null;
-        int count = 1;
-        do
-            try {
-
-                datePublished = null;
-                // need http protocol
-
-                doc = Jsoup.connect(startLink + count)
-                        .validateTLSCertificates(true)
-                        .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-                        .timeout(5000)
-                        .get();
-
-                Elements tables3 = doc.select(".job");
-                datePublished = runParse(tables3, 0);
-                count++;
-
-            } catch (IOException e) {
-                e.printStackTrace();
+        List<String> stringCat = new ArrayList<>();
+        stringCat.add("drupal");
+        stringCat.add("angular");
+        stringCat.add("react");
+        stringCat.add("meteor");
+        stringCat.add("node");
+        stringCat.add("frontend");
+        stringCat.add("javascript");
+        stringCat.add("ios");
+        stringCat.add("mobile");
+        int c = 0;
+        for (String s : stringCat) {
+            doc = PhantomJSStarter.startGhostWebbjobb(startLink.replace("TTTTT", s));
+            Elements tables3 = doc.select(".job");
+            runParse(tables3, 0);
+            if (tables3.size() == 0) {
+                c++;
             }
-        while (dateClass.dateChecker(datePublished) && jobsInforms.size() < 400);
-
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
+        }
+        if (c == stringCat.size()) {
+            jobsInforms = null;
+        }
     }
 
     private Date runParse(Elements tables2, int counter) {
-        System.out.println("text date : " + tables2.size());
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         Date datePublished = null;
         for (int i = counter; i < tables2.size(); i += 1) {

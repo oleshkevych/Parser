@@ -3,6 +3,8 @@ package com.parser.parsers.com.f6s;
 import com.parser.entity.DateGenerator;
 import com.parser.entity.JobsInform;
 import com.parser.entity.ListImpl;
+import com.parser.entity.ParserMain;
+import com.parser.parsers.PhantomJSStarter;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -34,28 +36,29 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by rolique_pc on 12/9/2016.
  */
-public class ParserF6s {
+public class ParserF6s implements ParserMain {
 
-    private String startLink = "https://www.f6s.com/jobs/?sort=newest&sort_dir=desc";
+    private String startLink = "https://www.f6s.com/jobs?keywords[]=TTTTT&page=1&page_alt=1&sort=newest&sort_dir=desc";
     private String baseUrl = "https://www.f6s.com";
     private List<JobsInform> jobsInforms = new ArrayList<JobsInform>();
     private Document doc;
     private DateGenerator dateClass;
 
     public ParserF6s(){
+
+
+    }
+
+    @Override
+    public List<JobsInform> startParse() {
         dateClass = new DateGenerator();
         parser();
         System.out.println("FINISH ");
-
-    }
-
-    public List<JobsInform> getJobsInforms() {
         return jobsInforms;
     }
 
-
     private void parser() {
-        try {
+//        try {
 //            doc = Jsoup.connect(baseUrl)
 //                    .validateTLSCertificates(false)
 //                    .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
@@ -69,32 +72,44 @@ public class ParserF6s {
 //                    .get();
 //            System.out.println("text : " + doc);
 //            // need http protocol
-            doc = Jsoup.connect(startLink)
-                    .validateTLSCertificates(false)
-                    .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-                    .timeout(100000)
-                    .get();
-
-
+//            doc = Jsoup.connect(startLink)
+//                    .validateTLSCertificates(false)
+//                    .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
+//                    .timeout(100000)
+//                    .get();
+        List<String> stringCat = new ArrayList<>();
+        stringCat.add("drupal");
+        stringCat.add("angular");
+        stringCat.add("react");
+        stringCat.add("meteor");
+        stringCat.add("node");
+        stringCat.add("frontend");
+        stringCat.add("javascript");
+        stringCat.add("ios");
+        stringCat.add("mobile");
+//        for (String s : stringCat) {
+            doc = PhantomJSStarter.startGhostF6s(startLink.replace("TTTTT", stringCat.get(1)));
             Elements tables2 = doc.select(".result-info");
-            System.out.println("text : " + doc);
-//            System.out.println("text : " + tables2);
             runParse(tables2, 0);
-            Date datePublished = null;
-            int count = 2;
-            do {
-                datePublished = null;
-            String newUrl = "https://www.f6s.com/jobs?page=" + count + "&page_alt=1&sort=newest&sort_dir=desc";
-
-                doc = Jsoup.connect(newUrl)
-                    .validateTLSCertificates(false)
-                    .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-                    .get();
-            Elements tables = doc.select(".result-info");
-            System.out.println("text : " + doc);
+//            System.out.println("text : " + doc);
+//        }
 //            System.out.println("text : " + tables2);
-            datePublished = runParse(tables, 0);
+//            runParse(tables2, 0);
+//            Date datePublished = null;
+//            int count = 2;
+//            do {
+//                datePublished = null;
+//            String newUrl = "https://www.f6s.com/jobs?page=" + count + "&page_alt=1&sort=newest&sort_dir=desc";
 //
+//                doc = Jsoup.connect(newUrl)
+//                    .validateTLSCertificates(false)
+//                    .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
+//                    .get();
+//            Elements tables = doc.select(".result-info");
+//            System.out.println("text : " + doc);
+////            System.out.println("text : " + tables2);
+//            datePublished = runParse(tables, 0);
+////
 //            int count = 2;
 //
 //                try {
@@ -107,17 +122,17 @@ public class ParserF6s {
 //                    Elements tables1 = doc.select(".listResults .-item");
 ////            System.out.println("text : " + tables2);
 //                    datePublished = runParse(tables1, 0);
-                    count++;
+//                    count++;
 //
 //                } catch (IOException e) {
 //                    e.printStackTrace();
 //                }
 //
-            }while(dateClass.dateChecker(datePublished));
+//            }while(dateClass.dateChecker(datePublished));
 //
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
     }
 
@@ -184,7 +199,6 @@ public class ParserF6s {
             jobsInform = getDescription(baseUrl + linkDescription.attr("href"), jobsInform);
         return jobsInform;
     }
-
     public static JobsInform getDescription(String linkToDescription, JobsInform jobsInform){
 
         try {
@@ -269,6 +283,7 @@ public class ParserF6s {
             return list;
         }
     }
+
     private static ListImpl addList(Element element){
         ListImpl list = new ListImpl();
         List<String> strings = new ArrayList<String>();
