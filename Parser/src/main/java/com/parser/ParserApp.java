@@ -2,426 +2,722 @@ package com.parser;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.parser.cc.startus.ParserStartus;
-import com.parser.ch.jobs.ParserJobs;
-import com.parser.com.berlinstartupjobs.ParserBerlinstartupjobs;
-import com.parser.com.builtinnode.ParserBuiltinnode;
-import com.parser.com.dutchstartupjobs.ParserDutchstartupjobs;
-import com.parser.com.f6s.ParserF6s;
-import com.parser.com.flexjobs.ParserFlexjobs;
-import com.parser.com.juju.ParserJuju;
-import com.parser.com.simplyhired.ParserSimplyhired;
-import com.parser.com.stackoverflow.ParserStackoverflow;
-import com.parser.com.virtualvocations.ParserVirtualvocations;
-import com.parser.com.weloveangular.ParserWeloveangular;
-import com.parser.com.weworkmeteor.ParserWeworkmeteor;
-import com.parser.com.weworkremotely.ParserWeworkremotely;
-import com.parser.de.monster.ParserMonsterDe;
-import com.parser.dk.jobbank.ParserJobbank;
-import com.parser.io.remoteok.ParserRemoteok;
-import com.parser.io.wfh.ParserWFH;
-import com.parser.jobs.landing.ParserLandingJobs;
-import com.parser.org.drupal.jobs.ParserDrupal;
-import com.parser.se.startupjobs.ParserStartupjobsSe;
+import com.parser.async_tasks.*;
+import com.parser.dbmanager.DbHelper;
+import com.parser.entity.*;
+import com.parser.parsers.ca.eluta.ParserEluta;
+import com.parser.parsers.ca.wowjobs.ParserWowjobs;
+import com.parser.parsers.cc.startus.ParserStartus;
+import com.parser.parsers.ch.jobs.ParserJobs;
+import com.parser.parsers.co.jobspresso.ParserJobspresso;
+import com.parser.parsers.co.remote.ParserRemote;
+import com.parser.parsers.co.technojobs.ParserTechnojobs;
+import com.parser.parsers.co.workingnomads.ParserWorkingnomads;
+import com.parser.parsers.com.authenticjobs.ParserAuthenticjobs;
+import com.parser.parsers.com.berlinstartupjobs.ParserBerlinstartupjobs;
+import com.parser.parsers.com.betalist.ParserBetalist;
+import com.parser.parsers.com.builtinaustin.ParserBuiltinaustin;
+import com.parser.parsers.com.builtinnode.ParserBuiltinnode;
+import com.parser.parsers.com.canadajobs.ParserCanadajobs;
+import com.parser.parsers.com.careerbuilder.ParserCareerbuilder;
+import com.parser.parsers.com.dutchstartupjobs.ParserDutchstartupjobs;
+import com.parser.parsers.com.eurojobs.ParserEurojobs;
+import com.parser.parsers.com.f6s.ParserF6s;
+import com.parser.parsers.com.flexjobs.ParserFlexjobs;
+import com.parser.parsers.com.guru.ParserGugu;
+import com.parser.parsers.com.indeed.ParserIndeed;
+import com.parser.parsers.com.jobs_justlanded.ParserJobsJustlanded;
+import com.parser.parsers.com.jobs_smashingmagazine.ParserJobsSmashingmagazine;
+import com.parser.parsers.com.juju.ParserJuju;
+import com.parser.parsers.com.randstad.ParserRandstad;
+import com.parser.parsers.com.simplyhired.ParserSimplyhired;
+import com.parser.parsers.com.stackoverflow.ParserStackoverflow;
+import com.parser.parsers.com.techjobs.ParserTechjobs;
+import com.parser.parsers.com.themuse.ParserThemuse;
+import com.parser.parsers.com.virtualvocations.ParserVirtualvocations;
+import com.parser.parsers.com.weloveangular.ParserWeloveangular;
+import com.parser.parsers.com.weworkmeteor.ParserWeworkmeteor;
+import com.parser.parsers.com.weworkremotely.ParserWeworkremotely;
+import com.parser.parsers.com.workopolis.ParserWorkopolis;
+import com.parser.parsers.com.ziprecruiter.ParserZiprecruiter;
+import com.parser.parsers.de.drupalcenter.ParserDrupalcenter;
+import com.parser.parsers.de.monster.ParserMonsterDe;
+import com.parser.parsers.de.uberjobs.ParserUberjobs;
+import com.parser.parsers.de.webentwicklerJobs.ParserWebentwicklerJobs;
+import com.parser.parsers.dk.jobbank.ParserJobbank;
+import com.parser.parsers.io.jobs_remotive.ParserJobsRemotive;
+import com.parser.parsers.io.remoteok.ParserRemoteok;
+import com.parser.parsers.io.unicornhunt.ParserUnicornhunt;
+import com.parser.parsers.io.webbjobb.ParserWebbjobb;
+import com.parser.parsers.io.wfh.ParserWFH;
+import com.parser.parsers.jobs.landing.ParserLandingJobs;
+import com.parser.parsers.org.drupal.jobs.ParserDrupal;
+import com.parser.parsers.se.startupjobs.ParserStartupjobsSe;
+import com.parser.parsers.uk.org.drupal.ParserDrupalOrgUk;
+import org.jxls.reader.ReaderBuilder;
+import org.jxls.reader.XLSReader;
+import org.jxls.template.SimpleExporter;
 
 import javax.swing.*;
+import javax.swing.Timer;
 import javax.swing.border.TitledBorder;
 import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.IOException;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.stream.Collectors;
 
-public class ParserApp {
+import static java.awt.BorderLayout.*;
+
+public class ParserApp implements MouseListener {
 
     private JPanel panelMain;
-    private JPanel descriptionPanel;
     private JPanel linkPanel;
     private JPanel jobPanel;
     private JLabel wfhLink;
     private JLabel jobLabel;
-    private JLabel descriptionLabel;
-    private JPanel wfhLabelPanel;
-    private JPanel remoteokLabelPanel;
-    private JLabel remoteok;
-    private JPanel landingJobsPanel;
+    private JLabel remoteokLabel;
     private JLabel landingJobsLabel;
-    private JPanel startusLabelPanel;
     private JLabel startusLabel;
-    private JPanel virtualvocationsLabelPanel;
     private JLabel virtualvocationsLabel;
-    private JPanel simplyhiredLabelPanel;
     private JLabel simplyhiredLabel;
     private JLabel stackoverflowLabel;
+    private JLabel jujuLabel;
+    private JLabel drupalLabel;
+    private JLabel dutchstartupjobsLabel;
+    private JLabel monsterDeLabel;
+    private JLabel weloveangularLabel;
+    private JLabel weworkremotelyLabel;
+    private JLabel startupjobsLabel;
+    private JLabel berlinstartupjobsLabel;
+    private JLabel jobsChLabel;
+    private JLabel flexjobsLabel;
+    private JLabel builtinnodeLabel;
+    private JLabel weworkmeteorLabel;
+    private JLabel jobbankLabel;
+    private JLabel workingnomadsLabel;
+    private JLabel remoteLabel;
+    private JLabel randstadLabel;
+    private JLabel workopolisLabel;
+    private JLabel elutaLabel;
+    private JLabel jobspressoLabel;
+    private JLabel webbjobbLabel;
+    private JLabel jobsSmashingmagazineLabel;
+    private JLabel themuseLabel;
+    private JLabel techjobsLabel;
+    private JLabel careerbuilderLabel;
+    private JLabel webentwicklerJobsLabel;
+    private JLabel uberjobsLabel;
+    private JLabel guruLabel;
+    private JLabel authenticjobsLabel;
+    private JLabel eurojobsLabel;
+    private JLabel technojobsCoUaLabel;
+    private JLabel canadajobsLabel;
+    private JLabel drupalOrgUkLabel;
+    private JLabel ziprecruiterLabel;
+    private JLabel drupalcenterLabel;
+    private JLabel indeedLabel;
+    private JLabel wowjobsLabel;
+    private JButton openSearchButton;
+    private JButton startSearchButton;
+    private JTextField searchTextField;
+    private JButton reparseButton;
+    private JPanel wfhLabelPanel;
+    private JPanel remoteokLabelPanel;
+    private JPanel landingJobsPanel;
+    private JPanel startusLabelPanel;
+    private JPanel virtualvocationsLabelPanel;
+    private JPanel simplyhiredLabelPanel;
     private JPanel stackoverflowLabelPanel;
     private JPanel jujuLabelPanel;
-    private JLabel jujuLabel;
     private JPanel drupalLubelPanel;
-    private JLabel drupalLabel;
     private JPanel dutchstartupjobsLabelPanel;
-    private JLabel dutchstartupjobsLabel;
     private JPanel monsterDeLabelPanel;
-    private JLabel monsterDeLabel;
     private JPanel weloveangularLabelPanel;
-    private JLabel weloveangularLabel;
     private JPanel weworkremotelyLabelPanel;
-    private JLabel weworkremotelyLabel;
     private JPanel startupjobsLabelPanel;
-    private JLabel startupjobsLabel;
     private JPanel berlinstartupjobsLabelPanel;
-    private JLabel berlinstartupjobsLabel;
     private JPanel jobsChLabelPanel;
-    private JLabel jobsChLabel;
     private JPanel flexjobslabelPanel;
-    private JLabel flexjobsLabel;
     private JPanel builtinnodeLabelPanel;
-    private JLabel builtinnodeLabel;
     private JPanel weworkmeteorLabelPanel;
-    private JLabel weworkmeteorLabel;
     private JPanel jobbankLabelPanel;
-    private JLabel jobbankLabel;
-    private JPanel f6sLabelPanel;
-    private JLabel f6sLabel;
+    private JPanel workingnomadsLabelPanel;
+    private JPanel remoteLabelPanel;
+    private JPanel randstadLabelPanel;
+    private JPanel workopolisLabelPanel;
+    private JPanel elutaLabelPanel;
+    private JPanel jobspressoLabelPanel;
+    private JPanel webbjobbLabelPrser;
+    private JPanel jobsSmashingmagazineLabelPanel;
+    private JPanel themuseLabelPanel;
+    private JPanel techjobsLabelPanel;
+    private JPanel careerbuilderLabelPanel;
+    private JPanel webentwicklerJobsLabelPanel;
+    private JPanel uberjobsLabelPanel;
+    private JPanel guruLabelPanel;
+    private JPanel authenticjobsLabelParser;
+    private JPanel eurojobsLabelPanel;
+    private JPanel technojobsCoUkLabelPanel;
+    private JPanel canadajobsLabelParser;
+    private JPanel drupalOrgUkLabelParser;
+    private JPanel ziprecruiterLabelPanel;
+    private JPanel drupalcenterLabelPanel;
+    private JPanel indeedLabelPanel;
+    private JPanel wowjobsLabelPanel;
+    private JPanel builtinaustinLabelPanel;
+    private JLabel builtinaustinLabel;
+    private JPanel betalistLabelPanel;
+    private JLabel betalistLabel;
+    private JPanel unicornhuntLabelPanel;
+    private JLabel unicornhuntLabel;
+    private JButton openSearchInSelected;
+    private JPanel jobsJustlandedLabelPanel;
+    private JLabel jobsJustlandedLabel;
+    private JPanel jobsRemotiveLabelPanel;
+    private JLabel jobsRemotiveLabel;
+    private JScrollPane linkScrollPane;
+    private JLabel europeremotelyLabel;
     private JFrame jFrame = new JFrame();
     private Component c;
+    private ThreadPoolExecutor executorDB = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
+    private ThreadPoolExecutor executor;
+    private List<JobsInformForSearch> allJobs;
+    private String testSearchWord;
+    private List<JobsInformForSearch> testCorrectJobsList;
+
+    public ThreadPoolExecutor getExecutorDB() {
+        return executorDB;
+    }
+
+    public ThreadPoolExecutor getExecutor() {
+        return executor;
+    }
 
     public JPanel getPanelMain() {
         return panelMain;
     }
 
+    public ParserApp getParserApp() {
+        return this;
+    }
+
+    public Component getSelectedComponent() {
+        return c;
+    }
+
     public ParserApp() {
 
+
+    }
+
+    public void runParser() {
+        Map<String, ParserMain> mapParsers = new HashMap<>();
+/*0*/
+        mapParsers.put("wfh.io", new ParserWFH());
+/*1*/
+        mapParsers.put("remoteok.io", new ParserRemoteok());
+/*2*/
+        mapParsers.put("landing.jobs", new ParserLandingJobs());
+/*3*/
+        mapParsers.put("startus.cc", new ParserStartus());
+/*4*/
+        mapParsers.put("virtualvocations.com", new ParserVirtualvocations());
+/*5*/
+        mapParsers.put("simplyhired.com", new ParserSimplyhired());
+/*6*/
+        mapParsers.put("stackoverflow.com", new ParserStackoverflow());
+/*7*/
+        mapParsers.put("juju.com", new ParserJuju());
+/*8*/
+        mapParsers.put("jobs.drupal.org", new ParserDrupal());
+/*9*/
+        mapParsers.put("dutchstartupjobs.com", new ParserDutchstartupjobs());
+/*10*/
+        mapParsers.put("monster.de", new ParserMonsterDe());
+/*11*/
+        mapParsers.put("weloveangular.com", new ParserWeloveangular());
+/*12*/
+        mapParsers.put("weworkremotely.com", new ParserWeworkremotely());
+/*13*/
+        mapParsers.put("startupjobs.se", new ParserStartupjobsSe());
+/*14*/
+        mapParsers.put("berlinstartupjobs.com", new ParserBerlinstartupjobs());
+/*15*/
+        mapParsers.put("jobs.ch", new ParserJobs());
+/*16*/
+        mapParsers.put("flexjobs.com", new ParserFlexjobs());
+/*17*/
+        mapParsers.put("builtinnode.com", new ParserBuiltinnode());
+/*18*/
+        mapParsers.put("weworkmeteor.com", new ParserWeworkmeteor());
+/*19*/
+        mapParsers.put("jobbank.dk", new ParserJobbank());
+/*20*/
+        mapParsers.put("workingnomads.co", new ParserWorkingnomads());
+/*21*/
+        mapParsers.put("remote.co", new ParserRemote());
+/*22*/
+        mapParsers.put("randstad.com", new ParserRandstad());
+/*23*/
+        mapParsers.put("workopolis.com", new ParserWorkopolis());
+/*24*/
+        mapParsers.put("eluta.ca", new ParserEluta());
+/*25*/
+        mapParsers.put("jobspresso.co", new ParserJobspresso());
+/*26*/
+        mapParsers.put("webbjobb.io", new ParserWebbjobb());
+/*27*/
+        mapParsers.put("jobs.smashingmagazine.com", new ParserJobsSmashingmagazine());
+/*28*/
+        mapParsers.put("themuse.com", new ParserThemuse());
+/*29*/
+        mapParsers.put("techjobs.com", new ParserTechjobs());
+/*30*/
+        mapParsers.put("careerbuilder.com", new ParserCareerbuilder());
+/*31*/
+        mapParsers.put("webentwickler-jobs.de", new ParserWebentwicklerJobs());
+/*32*/
+        mapParsers.put("uberjobs.de", new ParserUberjobs());
+/*33*/
+        mapParsers.put("guru.com", new ParserGugu());
+/*34*/
+        mapParsers.put("authenticjobs.com", new ParserAuthenticjobs());
+/*35*/
+        mapParsers.put("eurojobs.com", new ParserEurojobs());
+/*36*/
+        mapParsers.put("technojobs.co.uk", new ParserTechnojobs());
+/*37*/
+//        mapParsers.put("learn4good.com", new ParserLearn4good());
+/*37*/
+        mapParsers.put("canadajobs.com", new ParserCanadajobs());
+/*38*/
+        mapParsers.put("drupal.org.uk", new ParserDrupalOrgUk());
+/*39*/
+        mapParsers.put("ziprecruiter.com", new ParserZiprecruiter());
+/*40*/
+        mapParsers.put("drupalcenter.de", new ParserDrupalcenter());
+/*41*/
+        mapParsers.put("indeed.com", new ParserIndeed());
+/*42*/
+        mapParsers.put("wowjobs.ca", new ParserWowjobs());
+/*43*/
+        mapParsers.put("builtinaustin.com", new ParserBuiltinaustin());
+/*44*/
+        mapParsers.put("betalist.com", new ParserBetalist());
+/*45*/
+        mapParsers.put("unicornhunt.io", new ParserUnicornhunt());
+/*46*/
+        mapParsers.put("jobs.justlanded.com", new ParserJobsJustlanded());
+/*46*/
+        mapParsers.put("jobs.remotive.io", new ParserJobsRemotive());
+
+        executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(7);
+        System.out.println("    date: "+ (System.currentTimeMillis() > (new DbHelper().getDateLastUpdate() + 8 * 3600 * 1000)));
+
+        try {
+            if (System.currentTimeMillis() > (new DbHelper().getDateLastUpdate() + 8 * 3600 * 1000)) {
+                for (int i = 0; i < linkPanel.getComponents().length; i++) {
+                    JPanel labelPanel = (JPanel) linkPanel.getComponents()[i];
+                    labelPanel.setBackground(new Color(0x717184));
+                    JLabel label = (JLabel) labelPanel.getComponent(0);
+                    String homeLink = label.getText();
+                    executor.execute(new TaskStartParser(labelPanel, mapParsers.get(homeLink), homeLink, getParserApp()));
+                }
+                executorDB.execute(new TaskSetDateUpdateDb());
+            } else {
+                for (int i = 0; i < linkPanel.getComponents().length; i++) {
+                    JPanel labelPanel = (JPanel) linkPanel.getComponents()[i];
+                    labelPanel.setBackground(new Color(0x717184));
+                    JLabel label = (JLabel) labelPanel.getComponent(0);
+                    String homeLink = label.getText();
+                    executorDB.execute(new TaskDB(labelPanel, homeLink));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        List<Integer> ids = new ArrayList<>();
+        List<String> labelText = new ArrayList<>();
+        List<String> labelTextSorted = new ArrayList<>();
+        List<JPanel> labelPanelList = new ArrayList<>();
+        for (int i = 0; i < linkPanel.getComponents().length; i++) {
+            JPanel labelPanel = (JPanel) linkPanel.getComponents()[i];
+            labelPanelList.add(labelPanel);
+            labelPanel.setVisible(false);
+            labelText.add(((JLabel) labelPanel.getComponent(0)).getText());
+            labelTextSorted.add(((JLabel) labelPanel.getComponent(0)).getText());
+        }
+        Collections.sort(labelTextSorted);
+        for (String s : labelTextSorted) {
+            ids.add(labelText.indexOf(s));
+        }
+        for (int i : ids) {
+            linkPanel.add(labelPanelList.get(i));
+        }
+//        JPanel labelPanel = (JPanel) linkPanel.getComponents()[47];
+//        labelPanel.setBackground(new Color(0x717184));
+//        JLabel label = (JLabel) labelPanel.getComponent(0);
+//        String homeLink = label.getText();
+//        executor.execute(new TaskStartParser(labelPanel, mapParsers.get(homeLink), homeLink, getParserApp()));
+//        executor.execute(new TaskStartParser((JPanel) linkPanel.getComponents()[1], new ParserF6s(), "jobs.remotive.io", getParserApp()));
+
+        System.out.println("    FAIL: "+ (System.currentTimeMillis()));
+
         c = wfhLink;
-        wfhLink.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("text speciality :111 ");
-                linkPanel.setVisible(false);
-                c.setForeground(new Color(-16777216));
-                c = e.getComponent();
-                c.setForeground(new Color(0x696969));
-                linkPanel.setVisible(true);
-                jobPanel.removeAll();
-                panelFiller(new ParserWFH().getJobsInforms());
+        linkScrollPane.getVerticalScrollBar().setUnitIncrement(15);
+        wfhLink.addMouseListener(this);
+        remoteokLabel.addMouseListener(this);
+        landingJobsLabel.addMouseListener(this);
+        startusLabel.addMouseListener(this);
+        virtualvocationsLabel.addMouseListener(this);
+        simplyhiredLabel.addMouseListener(this);
+        stackoverflowLabel.addMouseListener(this);
+        jujuLabel.addMouseListener(this);
+        drupalLabel.addMouseListener(this);
+        dutchstartupjobsLabel.addMouseListener(this);
+        monsterDeLabel.addMouseListener(this);
+        weloveangularLabel.addMouseListener(this);
+        weworkremotelyLabel.addMouseListener(this);
+        startupjobsLabel.addMouseListener(this);
+        berlinstartupjobsLabel.addMouseListener(this);
+        jobsChLabel.addMouseListener(this);
+        flexjobsLabel.addMouseListener(this);
+        builtinnodeLabel.addMouseListener(this);
+        weworkmeteorLabel.addMouseListener(this);
+        jobbankLabel.addMouseListener(this);
+        workingnomadsLabel.addMouseListener(this);
+        remoteLabel.addMouseListener(this);
+        randstadLabel.addMouseListener(this);
+        workopolisLabel.addMouseListener(this);
+        elutaLabel.addMouseListener(this);
+        jobspressoLabel.addMouseListener(this);
+        webbjobbLabel.addMouseListener(this);
+        jobsSmashingmagazineLabel.addMouseListener(this);
+        themuseLabel.addMouseListener(this);
+        techjobsLabel.addMouseListener(this);
+        careerbuilderLabel.addMouseListener(this);
+        webentwicklerJobsLabel.addMouseListener(this);
+        uberjobsLabel.addMouseListener(this);
+        guruLabel.addMouseListener(this);
+        authenticjobsLabel.addMouseListener(this);
+        eurojobsLabel.addMouseListener(this);
+        technojobsCoUaLabel.addMouseListener(this);
+//        learn4goodLabel.addMouseListener(this);
+        canadajobsLabel.addMouseListener(this);
+        drupalOrgUkLabel.addMouseListener(this);
+        ziprecruiterLabel.addMouseListener(this);
+        drupalcenterLabel.addMouseListener(this);
+        indeedLabel.addMouseListener(this);
+        wowjobsLabel.addMouseListener(this);
+        builtinaustinLabel.addMouseListener(this);
+        betalistLabel.addMouseListener(this);
+        unicornhuntLabel.addMouseListener(this);
+        jobsJustlandedLabel.addMouseListener(this);
+        jobsRemotiveLabel.addMouseListener(this);
 
-                System.out.println("text speciality :111 ");
+
+        openSearchButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                executorDB.execute(new TaskDB((JLabel) c));
+                c.setForeground(new Color(-16777216));
+                reparseButton.setVisible(false);
+                Future<List<JobsInformForSearch>> taskJobsInforms = executorDB.submit(new TaskReadDb(linkPanel));
+                openSearchButton.setVisible(false);
+                openSearchInSelected.setVisible(false);
+                try {
+                    allJobs = taskJobsInforms.get();
+                    System.out.println(" reading all " + allJobs.size());
+                    testSearchWord = "";
+                    searchTextField.setVisible(true);
+                    startSearchButton.setVisible(true);
+                } catch (Exception e1) {
+                    reparseButton.setVisible(true);
+                    openSearchButton.setVisible(true);
+                    searchTextField.setVisible(false);
+                    startSearchButton.setVisible(false);
+                    System.out.println("Error reading all");
+                    e1.printStackTrace();
+                }
 
             }
         });
-        remoteok.addMouseListener(new MouseAdapter() {
+        searchTextField.addKeyListener(new KeyAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("text speciality :222 ");
-                linkPanel.setVisible(false);
-                c.setForeground(new Color(-16777216));
-                c = e.getComponent();
-                c.setForeground(new Color(0x696969));
-                linkPanel.setVisible(true);
-                jobPanel.removeAll();
-                panelFiller(new ParserRemoteok().getJobsInforms());
-//                super.mouseClicked(e);
-                System.out.println("text speciality :222 ");
+            public void keyTyped(KeyEvent e) {
+                String searchText = searchTextField.getText().toLowerCase();
+
+                if (testSearchWord.length() == searchText.length() && (Character.isLetter(e.getKeyChar()) || Character.isDigit(e.getKeyChar())) || e.getKeyChar() == ' ') {
+                    testSearchWord = searchText + e.getKeyChar();
+                } else {
+                    testSearchWord = searchText;
+                }
+
+                if (searchText.length() == testSearchWord.length() || searchText.length() == 0) {
+                    testCorrectJobsList = allJobs;
+                }
+
+                System.out.println("   " + testCorrectJobsList.size() + " " + testSearchWord);
+
+                List<String> keyList = new ArrayList<String>();
+                if (testSearchWord.contains(" ")) {
+                    keyList = Arrays.asList(testSearchWord.toLowerCase().split(" "));
+                } else {
+                    keyList.add(testSearchWord.toLowerCase());
+                }
+                List<JobsInformForSearch> testList = new ArrayList<JobsInformForSearch>();
+                for (JobsInformForSearch j : testCorrectJobsList) {
+                    String searchingField = j.getPlace().toLowerCase() + j.getHeadPublication().toLowerCase() +
+                            j.getCompanyName().toLowerCase();
+//                    System.out.println("   " + searchingField + " " + testSearchWord + " " + searchingField.contains(testSearchWord));
+                    boolean contains = true;
+                    for (String s : keyList) {
+                        if (!searchingField.contains(s)) {
+                            contains = false;
+                            break;
+                        }
+
+                    }
+                    if (contains) {
+                        testList.add(j);
+                    }
+                }
+                testCorrectJobsList = testList;
+                if (testCorrectJobsList.size() > 203) {
+                    panelFiller(testCorrectJobsList.subList(0, 200), null);
+                } else {
+                    panelFiller(testCorrectJobsList, null);
+                }
+                if (e.getKeyChar() == '\n') {
+                    formFoundJobsList();
+                }
             }
         });
-        landingJobsLabel.addMouseListener(new MouseAdapter() {
+        startSearchButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                System.out.println("text speciality :333 ");
-                linkPanel.setVisible(false);
-                c.setForeground(new Color(-16777216));
-                c = e.getComponent();
-                c.setForeground(new Color(0x696969));
-                linkPanel.setVisible(true);
-                jobPanel.removeAll();
-                panelFiller(new ParserLandingJobs().getJobsInforms());
-//                super.mouseClicked(e);
-                System.out.println("text speciality :333 ");
+                formFoundJobsList();
             }
         });
-        startusLabel.addMouseListener(new MouseAdapter() {
+        reparseButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                System.out.println("text speciality :444 ");
-                linkPanel.setVisible(false);
-                c.setForeground(new Color(-16777216));
-                c = e.getComponent();
-                c.setForeground(new Color(0x696969));
-                linkPanel.setVisible(true);
+                String key = reparseButton.getText().replace("Reload parsing ", "");
+                jobPanel.setVisible(false);
                 jobPanel.removeAll();
-                panelFiller(new ParserStartus().getJobsInforms());
-//                super.mouseClicked(e);
-                System.out.println("text speciality :444 ");
+
+                jobPanel.add(generateSingForJobPanel("Now www." + key + " is parsing..."));
+                jobPanel.setVisible(true);
+                c.getParent().setBackground(new Color(0x717184));
+                executor.execute(new TaskReparse(key, mapParsers.get(key), getParserApp(), c.getParent()));
             }
         });
-        virtualvocationsLabel.addMouseListener(new MouseAdapter() {
+        openSearchInSelected.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                System.out.println("text speciality :555 ");
-                linkPanel.setVisible(false);
+                executorDB.execute(new TaskDB((JLabel) c));
                 c.setForeground(new Color(-16777216));
-                c = e.getComponent();
-                c.setForeground(new Color(0x696969));
-                linkPanel.setVisible(true);
-                jobPanel.removeAll();
-                panelFiller(new ParserVirtualvocations().getJobsInforms());
-//                super.mouseClicked(e);
-                System.out.println("text speciality :555 ");
-            }
-        });
-        simplyhiredLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("text speciality :666 ");
-                linkPanel.setVisible(false);
-                c.setForeground(new Color(-16777216));
-                c = e.getComponent();
-                c.setForeground(new Color(0x696969));
-                linkPanel.setVisible(true);
-                jobPanel.removeAll();
-                panelFiller(new ParserSimplyhired().getJobsInforms());
-//                super.mouseClicked(e);
-                System.out.println("text speciality :666 ");
-            }
-        });
-        stackoverflowLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("text speciality :777 ");
-                linkPanel.setVisible(false);
-                c.setForeground(new Color(-16777216));
-                c = e.getComponent();
-                c.setForeground(new Color(0x696969));
-                linkPanel.setVisible(true);
-                jobPanel.removeAll();
-                panelFiller(new ParserStackoverflow().getJobsInforms());
-//                super.mouseClicked(e);
-                System.out.println("text speciality :777 ");
-            }
-        });
-        jujuLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("text speciality :888 ");
-                linkPanel.setVisible(false);
-                c.setForeground(new Color(-16777216));
-                c = e.getComponent();
-                c.setForeground(new Color(0x696969));
-                linkPanel.setVisible(true);
-                jobPanel.removeAll();
-                panelFiller(new ParserJuju().getJobsInforms());
-//                super.mouseClicked(e);
-                System.out.println("text speciality :888 ");
-            }
-        });
-        drupalLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("text speciality :999 ");
-                linkPanel.setVisible(false);
-                c.setForeground(new Color(-16777216));
-                c = e.getComponent();
-                c.setForeground(new Color(0x696969));
-                linkPanel.setVisible(true);
-                jobPanel.removeAll();
-                panelFiller(new ParserDrupal().getJobsInforms());
-//                super.mouseClicked(e);
-                System.out.println("text speciality :999 ");
-            }
-        });
-        dutchstartupjobsLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("text speciality :10 ");
-                linkPanel.setVisible(false);
-                c.setForeground(new Color(-16777216));
-                c = e.getComponent();
-                c.setForeground(new Color(0x696969));
-                linkPanel.setVisible(true);
-                jobPanel.removeAll();
-                panelFiller(new ParserDutchstartupjobs().getJobsInforms());
-//                super.mouseClicked(e);
-                System.out.println("text speciality :10 ");
-            }
-        });
-        monsterDeLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("text speciality :11 ");
-                linkPanel.setVisible(false);
-                c.setForeground(new Color(-16777216));
-                c = e.getComponent();
-                c.setForeground(new Color(0x696969));
-                linkPanel.setVisible(true);
-                jobPanel.removeAll();
-                panelFiller(new ParserMonsterDe().getJobsInforms());
-//                super.mouseClicked(e);
-                System.out.println("text speciality :11 ");
-            }
-        });
-        weloveangularLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("text speciality :12 ");
-                linkPanel.setVisible(false);
-                c.setForeground(new Color(-16777216));
-                c = e.getComponent();
-                c.setForeground(new Color(0x696969));
-                linkPanel.setVisible(true);
-                jobPanel.removeAll();
-                panelFiller(new ParserWeloveangular().getJobsInforms());
-//                super.mouseClicked(e);
-                System.out.println("text speciality :12 ");
-            }
-        });
-        weworkremotelyLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("text speciality :12 ");
-                linkPanel.setVisible(false);
-                c.setForeground(new Color(-16777216));
-                c = e.getComponent();
-                c.setForeground(new Color(0x696969));
-                linkPanel.setVisible(true);
-                jobPanel.removeAll();
-                panelFiller(new ParserWeworkremotely().getJobsInforms());
-//                super.mouseClicked(e);
-                System.out.println("text speciality :12 ");
-            }
-        });
-        startupjobsLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("text speciality :12 ");
-                linkPanel.setVisible(false);
-                c.setForeground(new Color(-16777216));
-                c = e.getComponent();
-                c.setForeground(new Color(0x696969));
-                linkPanel.setVisible(true);
-                jobPanel.removeAll();
-                panelFiller(new ParserStartupjobsSe().getJobsInforms());
-//                super.mouseClicked(e);
-                System.out.println("text speciality :12 ");
-            }
-        });
-        berlinstartupjobsLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("text speciality :12 ");
-                linkPanel.setVisible(false);
-                c.setForeground(new Color(-16777216));
-                c = e.getComponent();
-                c.setForeground(new Color(0x696969));
-                linkPanel.setVisible(true);
-                jobPanel.removeAll();
-                panelFiller(new ParserBerlinstartupjobs().getJobsInforms());
-//                super.mouseClicked(e);
-                System.out.println("text speciality :12 ");
-            }
-        });
-        jobsChLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("text speciality :12 ");
-                linkPanel.setVisible(false);
-                c.setForeground(new Color(-16777216));
-                c = e.getComponent();
-                c.setForeground(new Color(0x696969));
-                linkPanel.setVisible(true);
-                jobPanel.removeAll();
-                panelFiller(new ParserJobs().getJobsInforms());
-//                super.mouseClicked(e);
-                System.out.println("text speciality :12 ");
-            }
-        });
-        flexjobsLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("text speciality :13 ");
-                linkPanel.setVisible(false);
-                c.setForeground(new Color(-16777216));
-                c = e.getComponent();
-                c.setForeground(new Color(0x696969));
-                linkPanel.setVisible(true);
-                jobPanel.removeAll();
-                panelFiller(new ParserFlexjobs().getJobsInforms());
-//                super.mouseClicked(e);
-                System.out.println("text speciality :13 ");
-            }
-        });
-        builtinnodeLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("text speciality :13 ");
-                linkPanel.setVisible(false);
-                c.setForeground(new Color(-16777216));
-                c = e.getComponent();
-                c.setForeground(new Color(0x696969));
-                linkPanel.setVisible(true);
-                jobPanel.removeAll();
-                panelFiller(new ParserBuiltinnode().getJobsInforms());
-//                super.mouseClicked(e);
-                System.out.println("text speciality :13 ");
-            }
-        });
-        weworkmeteorLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("text speciality :13 ");
-                linkPanel.setVisible(false);
-                c.setForeground(new Color(-16777216));
-                c = e.getComponent();
-                c.setForeground(new Color(0x696969));
-                linkPanel.setVisible(true);
-                jobPanel.removeAll();
-                panelFiller(new ParserWeworkmeteor().getJobsInforms());
-//                super.mouseClicked(e);
-                System.out.println("text speciality :13 ");
-            }
-        });
-        jobbankLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("text speciality :13 ");
-                linkPanel.setVisible(false);
-                c.setForeground(new Color(-16777216));
-                c = e.getComponent();
-                c.setForeground(new Color(0x696969));
-                linkPanel.setVisible(true);
-                jobPanel.removeAll();
-                panelFiller(new ParserJobbank().getJobsInforms());
-//                super.mouseClicked(e);
-                System.out.println("text speciality :13 ");
-            }
-        });
-        f6sLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("text speciality :13 ");
-                linkPanel.setVisible(false);
-                c.setForeground(new Color(-16777216));
-                c = e.getComponent();
-                c.setForeground(new Color(0x696969));
-                linkPanel.setVisible(true);
-                jobPanel.removeAll();
-                panelFiller(new ParserF6s().getJobsInforms());
-//                super.mouseClicked(e);
-                System.out.println("text speciality :13 ");
+                reparseButton.setVisible(false);
+                openSearchButton.setVisible(false);
+                openSearchInSelected.setVisible(false);
+                testSearchWord = "";
+                JLabel label = (JLabel) c;
+                if (label.getText().contains(" ")) {
+                    String text = label.getText().substring(0, label.getText().indexOf(" "));
+                    label.setText(text);
+                }
+                Future<List<JobsInformForSearch>> taskJobsInforms = executorDB.submit(new TaskReadDb(label.getText()));
+                try {
+                    allJobs = taskJobsInforms.get();
+                    System.out.println(" reading all " + allJobs.size());
+                    searchTextField.setVisible(true);
+                    startSearchButton.setVisible(true);
+                } catch (Exception e1) {
+                    reparseButton.setVisible(true);
+                    openSearchButton.setVisible(true);
+                    searchTextField.setVisible(false);
+                    searchTextField.setText("");
+                    startSearchButton.setVisible(false);
+                    System.out.println("Error reading all");
+                    e1.printStackTrace();
+                }
             }
         });
     }
 
-    private void panelFiller(final List<JobsInform> jobsInformList) {
+    private List<ExportJob> readXMS(String fileXLS) {
+        InputStream inputXML = null;
+        try {
+            String path = Main.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+            path = path.substring(0, path.lastIndexOf("/"));
+            try{
+                inputXML = new BufferedInputStream(/*getClass().getResourceAsStream*/new FileInputStream(path + "/lib/XLSReader.xml"));
 
+            }catch (Exception e){
+                e.printStackTrace();
+                JFrame jFrame = new JFrame("Error");
+                jFrame.getContentPane().add(new JLabel(e.getLocalizedMessage()+e.getMessage() + e.toString()));
+                jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                jFrame.pack();
+                jFrame.setVisible(true);
+                return null;
+            }
+
+            XLSReader mainReader = ReaderBuilder.buildFromXML(inputXML);
+            InputStream inputXLS = new BufferedInputStream(new FileInputStream(fileXLS));
+            List<ExportJob> jobsInforms = new ArrayList<>();
+            Map beans = new HashMap();
+            beans.put("jobsInforms", jobsInforms);
+            mainReader.read(inputXLS, beans);
+            System.out.println(jobsInforms.size());
+            return jobsInforms;
+        } catch (Exception e) {
+                e.printStackTrace();
+            return new ArrayList<>();
+        } finally {
+            try {
+                inputXML.close();
+            } catch (IOException ignoreMe) {
+            }
+        }
+    }
+
+    private List<ExportJob> createListForExport(List<ExportJob> selectedOffers, String fileName) {
+        String homeDir = System.getProperty("user.home")+File.separator+"Documents"+File.separator + fileName;
+        File f = new File(homeDir);
+        if (f.exists()) {
+            selectedOffers.addAll(readXMS(homeDir));
+
+            return selectedOffers;
+        } else {
+            return selectedOffers;
+        }
+    }
+
+    private void writeExcel(List<ExportJob> exportJobs, String fileName) {
+
+//        File f = new File(fileName + ".xls");
+//        if (f.exists()) {
+//            for (int i = 1; i < Integer.MAX_VALUE; i++) {
+//                String fileName1 = fileName + "(" + i + ")";
+//                f = new File(fileName1 + ".xls");
+//                if (!f.exists()) {
+//                    fileName = fileName1;
+//                    break;
+//                }
+//            }
+//        }
+        String homeDir = System.getProperty("user.home")+File.separator+"Documents"+File.separator + fileName;
+        try (OutputStream os1 = new FileOutputStream(homeDir)) {
+            List<String> headers = Arrays.asList("Company Name", "Job Title", "Job Link", "Location", "Posting date", "Source Name", "Contact name", "Position", "E-mail", "Comment");
+            SimpleExporter exporter = new SimpleExporter();
+            exporter.gridExport(headers, exportJobs, "companyName,  jobTitle, jobLink, location, postingDate, sourceName", os1);
+            System.out.println("Excel crated");
+
+            os1.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void formFoundJobsList() {
+        List<JobsInformForSearch> correctJobsList = new ArrayList<JobsInformForSearch>();
+        String searchText = searchTextField.getText().toLowerCase();
+        List<String> keyList = new ArrayList<String>();
+        if (searchText.contains(" ")) {
+            keyList = Arrays.asList(searchText.split(" "));
+        } else {
+            keyList.add(searchText);
+        }
+        List<String> finalKeyList = keyList;
+        correctJobsList.addAll(allJobs.stream().filter(j -> searchChecker(j, finalKeyList)).collect(Collectors.toList()));
+        if (correctJobsList.size() > 0) {
+            panelFiller(correctJobsList, null);
+        } else {
+            jobPanel.setVisible(false);
+            jobPanel.removeAll();
+
+
+            jobPanel.add(generateSingForJobPanel("Searching for \"" + searchText + "\" gave no results..."));
+            jobPanel.setVisible(true);
+        }
+    }
+
+    private boolean searchChecker(JobsInform j, List<String> keyList) {
+        boolean contains = true;
+        System.out.println(" START ");
+
+        List<String> jobsStringList = new ArrayList<>();
+        try {
+            jobsStringList.addAll(Arrays.asList(j.getPlace().toLowerCase().split("[!@#/\\ ,]")));
+            jobsStringList.addAll(Arrays.asList(j.getHeadPublication().toLowerCase().split("[!@#/\\ ,]")));
+            jobsStringList.addAll(Arrays.asList(j.getCompanyName().toLowerCase().split("[!@#/\\ ,]")));
+        } catch (NullPointerException n) {
+            System.out.println("Errror getCompanyName " + j.getCompanyName());
+            System.out.println("Errror getPlace " + j.getPlace());
+            System.out.println("Errror getHeadPublication " + j.getHeadPublication());
+        }
+
+        for (String keyWord : keyList) {
+            if (!jobsStringList.contains(keyWord)) {
+                contains = false;
+                break;
+            }
+        }
+        return contains;
+    }
+
+    private JScrollPane generateSingForJobPanel(String s) {
+        JLabel labelParse = new JLabel(s);
+        labelParse.setMaximumSize(new Dimension(580, 80));
+        labelParse.setMinimumSize(new Dimension(580, 80));
+        labelParse.setPreferredSize(new Dimension(580, 80));
+        labelParse.setHorizontalAlignment(SwingConstants.CENTER);
+        JScrollPane pane = new JScrollPane(labelParse,
+                ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        pane.setAutoscrolls(true);
+        pane.setBackground(new Color(-721665));
+        pane.setAlignmentX(0.0f);
+        pane.setAlignmentY(0.0f);
+        pane.setMaximumSize(new Dimension(580, 100));
+        pane.setMinimumSize(labelParse.getMinimumSize());
+        pane.setPreferredSize(new Dimension(580, 100));
+        return pane;
+    }
+
+
+    public void panelFiller(final List<JobsInformForSearch> jobsInformList, String homeLink) {
+//        Collections.sort(jobsInformList, new SortDate());
+        jobsInformList.forEach(jobsInform -> {
+            if (jobsInform.getPublishedDate() == null) {
+                jobsInform.setPublishedDate(new Date(1));
+            }
+        });
+        jobsInformList.sort((o1, o2) -> (o2.getPublishedDate().compareTo(o1.getPublishedDate())));
+        jobsInformList.sort((o1, o2) -> ((Boolean) o1.isSeen()).compareTo(((Boolean) o2.isSeen())));
+        jobPanel.removeAll();
         jobPanel.setVisible(false);
         JPanel mainJobPanel = new JPanel();
         for (int i = 0; i < jobsInformList.size(); i++) {
-            JobsInform ji = jobsInformList.get(i);
-            JPanel label1Panel = new JPanel();
-            String stringDate = new SimpleDateFormat("dd-MM-yyyy").format(ji.getPublishedDate());
-            JLabel label1 = new JLabel("VOCATION: " + ji.getHeadPublication());
+            JobsInformForSearch ji = jobsInformList.get(i);
+            String stringDate = ji.getPublishedDate().getTime() > 1970 ? new SimpleDateFormat("dd-MM-yyyy").format(ji.getPublishedDate()) : "";
+            JLabel label1 = new JLabel("TITLE: " + ji.getHeadPublication());
+            if (ji.isSeen()) {
+                label1.setForeground(new Color(213123));
+            } else {
+                label1.setForeground(new Color(0x830200));
+            }
             label1.setMaximumSize(new Dimension(540, 20));
             label1.setMinimumSize(new Dimension(540, 20));
             label1.setPreferredSize(new Dimension(540, 20));
@@ -430,10 +726,12 @@ public class ParserApp {
             label2.setMinimumSize(new Dimension(540, 20));
             label2.setPreferredSize(new Dimension(540, 20));
             JLabel label3 = new JLabel("COMPANY: " + ji.getCompanyName() + "     " + stringDate);
+            label3.setForeground(new Color(0x308365));
             label1.setHorizontalAlignment(SwingConstants.LEFT);
             label2.setHorizontalAlignment(SwingConstants.LEFT);
             label3.setHorizontalAlignment(SwingConstants.LEFT);
 
+            JPanel label1Panel = new JPanel();
             label1Panel.setVisible(true);
             label1Panel.setName("" + i);
             label1Panel.setLayout(new BoxLayout(label1Panel, BoxLayout.Y_AXIS));
@@ -441,13 +739,11 @@ public class ParserApp {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     try {
-                        List<ListImpl> order = jobsInformList.get(Integer.parseInt(e.getComponent().getName())).getOrder();
-                        final URI uri = new URI(jobsInformList.get(Integer.parseInt(e.getComponent().getName())).getPublicationLink());
-                        descriptionPanel.removeAll();
-                        descriptionPanel.setVisible(false);
+                        List<ListImpl> order = /*jobsInformList.get(Integer.parseInt(e.getComponent().getName()))*/ji.getOrder();
+                        final URI uri = new URI(ji.getPublicationLink());
                         JPanel container = new JPanel();
                         container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
-                        container.add(new JLabel(new SimpleDateFormat("dd-MM-yyyy").format(jobsInformList.get(Integer.parseInt(e.getComponent().getName())).getPublishedDate())));
+                        container.add(new JLabel(ji.getPublishedDate() != null ? (new SimpleDateFormat("dd-MM-yyyy").format(ji.getPublishedDate())) : ""));
                         JButton button = new JButton();
                         button.setText("<HTML><FONT size=\"3\" color=\"#000099\"><U>Run to the source site</U></FONT>"
                                 + " </HTML>");
@@ -465,7 +761,7 @@ public class ParserApp {
                         container.add(button);
                         jFrame.dispose();
                         jFrame = new JFrame();
-                        jFrame.setSize(600, 800);
+                        jFrame.setSize(600, 600);
 
 
                         int counterDoc = 1;
@@ -494,24 +790,30 @@ public class ParserApp {
                                 heading2Style.addAttribute(StyleConstants.FontFamily, "serif");
                                 heading2Style.addAttribute(StyleConstants.Bold, Boolean.TRUE);
 
-                                do {
-                                    j++;
-                                    if (order.get(j) != null) {
+                                if (order.size() > 0)
+                                    do {
+                                        j++;
+//                                    System.out.println("date " + j + " size " + order.size());
+//                                    System.out.println("date " + order.get(j));
+                                        if (order.size() > j && order.get(j) != null) {
 
-                                        if (order.get(j).getListHeader() != null) {
-                                            text += /*"<FONT size=\"15\" color=\"#000099\"><U>Run to the source site</U></FONT>"*/order.get(j).getListHeader() + "\n";
-                                        } else if (order.get(j).getListItem() != null) {
-//                                                text += "<UL>";
-                                            for (String s : order.get(j).getListItem()) {
-                                                text += /*"    <LI> " +*/ "  --  " + s +  /*</LI> */"\n";
+                                            if (order.get(j).getListHeader() != null) {
+                                                text += /*"<FONT size=\"15\" color=\"#000099\"><U>Run to the source site</U></FONT>"*/order.get(j).getListHeader() + "\n";
                                             }
+                                            if (order.get(j).getListItem() != null) {
+//                                                text += "<UL>";
+                                                for (String s : order.get(j).getListItem()) {
+                                                    text += /*"    <LI> " +*/ "  --  " + s +  /*</LI> */"\n";
+                                                }
 //                                                text += "</UL>";
 
-                                        } else {
-                                            text += "  " + order.get(j).getTextFieldImpl() + "\n";
+                                            }
+                                            if (order.get(j).getTextFieldImpl() != null) {
+                                                text += "  " + order.get(j).getTextFieldImpl() + "\n";
+                                            }
                                         }
-                                    }
-                                } while (order.get(j) != null && j < order.size() - 1);
+//                                    System.out.println("date " + text);
+                                    } while (order.get(j) != null && j < order.size() - 1);
                                 pane.setLayout(null);
 //                                pane.setBounds(0, 0, 470, getContentHeight(text));
 
@@ -537,6 +839,13 @@ public class ParserApp {
                         jFrame.add(new JScrollPane(container));
                         jFrame.setLocationRelativeTo(null);
                         jFrame.setVisible(true);
+
+
+                        if (!ji.isSeen()) {
+                            ji.setSeen(true);
+                            ((JLabel) ((JPanel) e.getComponent()).getComponent(0)).setForeground(new Color(213123));
+                            executorDB.execute(new TaskDBWriteSeen(ji));
+                        }
 
 
 //                            jFrame.add(new JScrollPane(container));
@@ -566,10 +875,17 @@ public class ParserApp {
             label1Panel.setMaximumSize(new Dimension(540, 60));
             label1Panel.setMinimumSize(new Dimension(540, 60));
             label1Panel.setPreferredSize(new Dimension(540, 60));
-            mainJobPanel.add(label1Panel);
+            JPanel singleJobPanel = new JPanel(new BorderLayout());
+            singleJobPanel.add(label1Panel, WEST);
+            JCheckBox checkBox = new JCheckBox();
+            checkBox.setName("" + i);
+            singleJobPanel.add(checkBox, EAST);
+            mainJobPanel.add(singleJobPanel);
             label1Panel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
 
         }
+
+
         mainJobPanel.setMinimumSize(new
 
                 Dimension(580, 65 * jobsInformList.size()));
@@ -583,17 +899,60 @@ public class ParserApp {
                 ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         pane.setAutoscrolls(true);
+        pane.getVerticalScrollBar().setUnitIncrement(20);
         pane.setBackground(new Color(-721665));
         pane.setAlignmentX(0.0f);
         pane.setAlignmentY(0.0f);
-        pane.setMaximumSize(new Dimension(580, 740));
+        pane.setMaximumSize(new Dimension(580, 440));
         pane.setMinimumSize(mainJobPanel.getMinimumSize());
-        pane.setPreferredSize(new Dimension(580, 740));
-        jobPanel.add(pane);
+        pane.setPreferredSize(new Dimension(580, 440));
+        jobPanel.add(pane, BorderLayout.CENTER);
+        JButton exportButton = new JButton();
+        exportButton.setBackground(new Color(0xB4B49A));
+        exportButton.setBorderPainted(false);
+        exportButton.setContentAreaFilled(true);
+        exportButton.setForeground(new Color(-11579315));
+        exportButton.setHideActionText(false);
+        exportButton.setHorizontalAlignment(0);
+        exportButton.setHorizontalTextPosition(0);
+        exportButton.setMaximumSize(new Dimension(300, 36));
+        exportButton.setMinimumSize(new Dimension(300, 36));
+        exportButton.setPreferredSize(new Dimension(300, 36));
+        exportButton.setText("Export Selected Offers");
+        exportButton.setVisible(true);
+        exportButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                onClickExportButton(jobsInformList);
+            }
+        });
+        JPanel exportPanel = new JPanel(new BorderLayout());
+        exportPanel.add(exportButton, BorderLayout.EAST);
+        jobPanel.add(exportPanel, SOUTH);
         jobPanel.setVisible(true);
-        panelMain.setSize(652, 832);
+        panelMain.setSize(652, 682);
     }
 
+    private void onClickExportButton(List<JobsInformForSearch> jobsInformList) {
+        List<JobsInformForSearch> exportList = new ArrayList<>();
+        for (int i = 0; i < jobsInformList.size(); i++) {
+            JScrollPane jobsPane = (JScrollPane) jobPanel.getComponent(0);
+            JViewport jobsListPanel = (JViewport) jobsPane.getComponent(0);
+            JPanel singleJobPanel = (JPanel) jobsListPanel.getComponent(0);
+            JPanel checkBoxPanel = (JPanel) singleJobPanel.getComponent(i);
+            JCheckBox checkBox = (JCheckBox) checkBoxPanel.getComponent(1);
+            if (checkBox.isSelected()) {
+                exportList.add(jobsInformList.get(i));
+                checkBox.setSelected(false);
+            }
+        }
+        if (exportList.size() > 0) {
+            String stringDate = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
+            String fileName = "OffersExport" + stringDate + ".xls";
+            List<ExportJob> exportJobs = exportList.stream().map(ExportJob::new).collect(Collectors.toList());
+            writeExcel(createListForExport(exportJobs, fileName), fileName);
+        }
+    }
 
     private int getContentHeight(String content) {
         JTextPane dummyEditorPane = new JTextPane();
@@ -602,6 +961,101 @@ public class ParserApp {
 
         return dummyEditorPane.getPreferredSize().height;
     }
+
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        System.out.println("text speciality :111 "
+                + " getQueue().remainingCapacity() " + executorDB.getQueue().remainingCapacity()
+                + " getLargestPoolSize " + executorDB.getLargestPoolSize()
+                + " getMaximumPoolSize " + executorDB.getMaximumPoolSize()
+                + " getTaskCount " + executorDB.getTaskCount()
+                + " .getQueue().size() " + executorDB.getQueue().size()
+                + " getActiveCount " + executorDB.getActiveCount()
+        );
+
+//        System.out.println("text speciality :111 getPoolSize " + executor.getPoolSize() + " getActiveCount "
+//                + executor.getActiveCount() + " getQueue " + executor.getQueue().size()
+//                + " getCorePoolSize " + executor.getCorePoolSize());
+
+        if (executorDB.getQueue().size() < 2) {
+            openSearchButton.setVisible(true);
+            openSearchInSelected.setVisible(true);
+            searchTextField.setVisible(false);
+            searchTextField.setText("");
+            startSearchButton.setVisible(false);
+            linkPanel.setVisible(false);
+            JLabel label = (JLabel) e.getComponent();
+            if (label.getText().contains(" ")) {
+                String text = label.getText().substring(0, label.getText().indexOf(" "));
+                label.setText(text);
+            }
+            if (!((JLabel) c).getText().equals(label.getText())) {
+                executorDB.execute(new TaskDB((JLabel) c));
+            }
+            c.setForeground(new Color(-16777216));
+            c = label;
+            c.setForeground(new Color(0x696969));
+            openSearchInSelected.setText("Search in " + label.getText());
+            reparseButton.setVisible(true);
+            reparseButton.setText("Reload parsing " + label.getText());
+            reparseButton.setVisible(true);
+            linkPanel.setVisible(true);
+            Future<List<JobsInformForSearch>> taskJobsInforms = executorDB.submit(new TaskReadDb(label.getText()));
+            try {
+                panelFiller(taskJobsInforms.get(), label.getText());
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        } else {
+            JLabel label = (JLabel) e.getComponent();
+            Color colorB = label.getBackground();
+            label.setForeground(new Color(0xFFFFFF));
+            label.setBackground(new Color(-16777216));
+//            try {
+//                Timer timer = new Timer(200, new ());
+//                timer.setInitialDelay(pause);
+//                timer.start();
+//            } catch (Exception e1) {
+//                e1.printStackTrace();
+//            }
+            label.setForeground(colorB);
+            label.setForeground(new Color(-16777216));
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
+    }
+
+
+//    private class TaskGetDateUpdateDb implements Callable<Date> {
+//
+//
+//        public TaskGetDateUpdateDb() {
+//        }
+//
+//        public Date call() {
+//            return new DbHelper().getDateLastUpdate();
+//        }
+//    }
+
 
     private static void open(URI uri) {
         if (Desktop.isDesktopSupported()) {
@@ -628,25 +1082,116 @@ public class ParserApp {
      */
     private void $$$setupUI$$$() {
         panelMain = new JPanel();
-        panelMain.setLayout(new GridLayoutManager(1, 3, new Insets(0, 0, 0, 0), -1, 30));
+        panelMain.setLayout(new GridLayoutManager(2, 2, new Insets(0, 0, 0, 0), -1, 30));
         panelMain.setAutoscrolls(false);
         panelMain.setBackground(new Color(-7631989));
         panelMain.setEnabled(true);
         panelMain.setFocusable(false);
         panelMain.setInheritsPopupMenu(false);
-        panelMain.setMaximumSize(new Dimension(1600, 1000));
-        panelMain.setMinimumSize(new Dimension(872, 832));
-        panelMain.setPreferredSize(new Dimension(872, 832));
+        panelMain.setMaximumSize(new Dimension(900, 682));
+        panelMain.setMinimumSize(new Dimension(900, 682));
+        panelMain.setPreferredSize(new Dimension(900, 682));
         panelMain.setVisible(true);
         panelMain.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), "ParserApp", TitledBorder.CENTER, TitledBorder.DEFAULT_POSITION, new Font(panelMain.getFont().getName(), panelMain.getFont().getStyle(), 16), new Color(-16777216)));
+        jobPanel = new JPanel();
+        jobPanel.setLayout(new BorderLayout(0, 0));
+        jobPanel.setAutoscrolls(false);
+        jobPanel.setBackground(new Color(-4473925));
+        jobPanel.setEnabled(false);
+        jobPanel.setFocusCycleRoot(true);
+        jobPanel.setFocusTraversalPolicyProvider(true);
+        jobPanel.setFocusable(true);
+        jobPanel.setFont(new Font("Times New Roman", jobPanel.getFont().getStyle(), 12));
+        jobPanel.setInheritsPopupMenu(true);
+        jobPanel.setVisible(true);
+        panelMain.add(jobPanel, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, new Dimension(600, 500), new Dimension(600, 530), new Dimension(600, 530), 0, false));
+        jobPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), "Jobs", TitledBorder.CENTER, TitledBorder.ABOVE_TOP, new Font("DialogInput", Font.BOLD, 18), new Color(-16777216)));
+        jobLabel = new JLabel();
+        jobLabel.setAutoscrolls(false);
+        jobLabel.setEnabled(true);
+        jobLabel.setFocusable(false);
+        jobLabel.setFont(new Font("Times New Roman", jobLabel.getFont().getStyle(), 12));
+        jobLabel.setForeground(new Color(-16777216));
+        jobLabel.setHorizontalAlignment(0);
+        jobLabel.setHorizontalTextPosition(2);
+        jobLabel.setMaximumSize(new Dimension(300, 15));
+        jobLabel.setMinimumSize(new Dimension(300, 15));
+        jobLabel.setOpaque(false);
+        jobLabel.setPreferredSize(new Dimension(300, 15));
+        jobLabel.setText("");
+        jobLabel.setToolTipText("");
+        jobPanel.add(jobLabel, BorderLayout.CENTER);
+        final JPanel panel1 = new JPanel();
+        panel1.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+        panel1.setBackground(new Color(-7631989));
+        panelMain.add(panel1, new GridConstraints(0, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(550, 60), null, 0, false));
+        openSearchInSelected = new JButton();
+        openSearchInSelected.setAutoscrolls(false);
+        openSearchInSelected.setBackground(new Color(-8937619));
+        openSearchInSelected.setBorderPainted(true);
+        openSearchInSelected.setForeground(new Color(-13490857));
+        openSearchInSelected.setMaximumSize(new Dimension(281, 36));
+        openSearchInSelected.setMinimumSize(new Dimension(281, 36));
+        openSearchInSelected.setPreferredSize(new Dimension(281, 36));
+        openSearchInSelected.setText("Search in ");
+        openSearchInSelected.setVisible(false);
+        panel1.add(openSearchInSelected);
+        openSearchButton = new JButton();
+        openSearchButton.setBackground(new Color(-2960187));
+        openSearchButton.setBorderPainted(true);
+        openSearchButton.setContentAreaFilled(true);
+        openSearchButton.setForeground(new Color(-11579315));
+        openSearchButton.setHideActionText(false);
+        openSearchButton.setHorizontalAlignment(0);
+        openSearchButton.setHorizontalTextPosition(0);
+        openSearchButton.setMaximumSize(new Dimension(300, 36));
+        openSearchButton.setMinimumSize(new Dimension(300, 36));
+        openSearchButton.setPreferredSize(new Dimension(300, 36));
+        openSearchButton.setText("Open Global Search");
+        openSearchButton.setVisible(true);
+        panel1.add(openSearchButton);
+        searchTextField = new JTextField();
+        searchTextField.setFont(new Font("Times New Roman", searchTextField.getFont().getStyle(), 20));
+        searchTextField.setMargin(new Insets(4, 8, 4, 8));
+        searchTextField.setMinimumSize(new Dimension(500, 36));
+        searchTextField.setPreferredSize(new Dimension(500, 36));
+        searchTextField.setToolTipText("Enter KeyWords");
+        searchTextField.setVisible(false);
+        panel1.add(searchTextField);
+        startSearchButton = new JButton();
+        startSearchButton.setLabel("Search");
+        startSearchButton.setMaximumSize(new Dimension(100, 36));
+        startSearchButton.setMinimumSize(new Dimension(100, 36));
+        startSearchButton.setPreferredSize(new Dimension(100, 36));
+        startSearchButton.setText("Search");
+        startSearchButton.setVisible(false);
+        panel1.add(startSearchButton);
+        reparseButton = new JButton();
+        reparseButton.setBackground(new Color(-4867396));
+        reparseButton.setBorderPainted(true);
+        reparseButton.setEnabled(true);
+        reparseButton.setForeground(new Color(-13355980));
+        reparseButton.setHideActionText(false);
+        reparseButton.setMaximumSize(new Dimension(275, 36));
+        reparseButton.setMinimumSize(new Dimension(275, 36));
+        reparseButton.setPreferredSize(new Dimension(275, 36));
+        reparseButton.setText("Reparser");
+        reparseButton.setVisible(false);
+        panel1.add(reparseButton);
+        linkScrollPane = new JScrollPane();
+        linkScrollPane.setHorizontalScrollBarPolicy(31);
+        panelMain.add(linkScrollPane, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, new Dimension(250, 530), new Dimension(250, 530), new Dimension(250, 530), 0, false));
         linkPanel = new JPanel();
-        linkPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5));
-        linkPanel.setAutoscrolls(false);
+        linkPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+        linkPanel.setAutoscrolls(true);
         linkPanel.setBackground(new Color(-4473925));
         linkPanel.setEnabled(true);
         linkPanel.setFocusable(false);
         linkPanel.setFont(new Font("Times New Roman", linkPanel.getFont().getStyle(), 12));
-        panelMain.add(linkPanel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, new Dimension(220, 500), new Dimension(220, 780), new Dimension(220, 780), 2, false));
+        linkPanel.setMaximumSize(new Dimension(230, 1730));
+        linkPanel.setMinimumSize(new Dimension(230, 1730));
+        linkPanel.setPreferredSize(new Dimension(230, 1730));
+        linkScrollPane.setViewportView(linkPanel);
         linkPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), "Links", TitledBorder.CENTER, TitledBorder.ABOVE_TOP, new Font("DialogInput", Font.BOLD, 18), new Color(-16777216)));
         wfhLabelPanel = new JPanel();
         wfhLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
@@ -687,23 +1232,23 @@ public class ParserApp {
         remoteokLabelPanel.setPreferredSize(new Dimension(180, 30));
         linkPanel.add(remoteokLabelPanel);
         remoteokLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
-        remoteok = new JLabel();
-        remoteok.setAutoscrolls(false);
-        remoteok.setEnabled(true);
-        remoteok.setFocusable(false);
-        remoteok.setFont(new Font("Times New Roman", remoteok.getFont().getStyle(), 12));
-        remoteok.setForeground(new Color(-16777216));
-        remoteok.setHorizontalAlignment(2);
-        remoteok.setHorizontalTextPosition(2);
-        remoteok.setMaximumSize(new Dimension(170, 30));
-        remoteok.setMinimumSize(new Dimension(-1, -1));
-        remoteok.setOpaque(false);
-        remoteok.setPreferredSize(new Dimension(170, 30));
-        remoteok.setText("remoteok");
-        remoteok.setToolTipText("www.remoteok.io");
-        remoteok.setVerifyInputWhenFocusTarget(false);
-        remoteok.putClientProperty("html.disable", Boolean.TRUE);
-        remoteokLabelPanel.add(remoteok);
+        remoteokLabel = new JLabel();
+        remoteokLabel.setAutoscrolls(false);
+        remoteokLabel.setEnabled(true);
+        remoteokLabel.setFocusable(false);
+        remoteokLabel.setFont(new Font("Times New Roman", remoteokLabel.getFont().getStyle(), 12));
+        remoteokLabel.setForeground(new Color(-16777216));
+        remoteokLabel.setHorizontalAlignment(2);
+        remoteokLabel.setHorizontalTextPosition(2);
+        remoteokLabel.setMaximumSize(new Dimension(170, 30));
+        remoteokLabel.setMinimumSize(new Dimension(-1, -1));
+        remoteokLabel.setOpaque(false);
+        remoteokLabel.setPreferredSize(new Dimension(170, 30));
+        remoteokLabel.setText("remoteok.io");
+        remoteokLabel.setToolTipText("www.remoteok.io");
+        remoteokLabel.setVerifyInputWhenFocusTarget(false);
+        remoteokLabel.putClientProperty("html.disable", Boolean.TRUE);
+        remoteokLabelPanel.add(remoteokLabel);
         landingJobsPanel = new JPanel();
         landingJobsPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
         landingJobsPanel.setAlignmentX(0.0f);
@@ -1208,87 +1753,790 @@ public class ParserApp {
         jobbankLabel.setVerifyInputWhenFocusTarget(false);
         jobbankLabel.putClientProperty("html.disable", Boolean.TRUE);
         jobbankLabelPanel.add(jobbankLabel);
-        f6sLabelPanel = new JPanel();
-        f6sLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
-        f6sLabelPanel.setAlignmentX(0.0f);
-        f6sLabelPanel.setAlignmentY(0.0f);
-        f6sLabelPanel.setAutoscrolls(true);
-        f6sLabelPanel.setBackground(new Color(-721665));
-        f6sLabelPanel.setMaximumSize(new Dimension(210, 30));
-        f6sLabelPanel.setMinimumSize(new Dimension(180, 30));
-        f6sLabelPanel.setPreferredSize(new Dimension(180, 30));
-        linkPanel.add(f6sLabelPanel);
-        f6sLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
-        f6sLabel = new JLabel();
-        f6sLabel.setAutoscrolls(false);
-        f6sLabel.setEnabled(true);
-        f6sLabel.setFocusable(false);
-        f6sLabel.setFont(new Font("Times New Roman", f6sLabel.getFont().getStyle(), 12));
-        f6sLabel.setForeground(new Color(-16777216));
-        f6sLabel.setHorizontalAlignment(2);
-        f6sLabel.setHorizontalTextPosition(2);
-        f6sLabel.setMaximumSize(new Dimension(170, 30));
-        f6sLabel.setMinimumSize(new Dimension(-1, -1));
-        f6sLabel.setOpaque(false);
-        f6sLabel.setPreferredSize(new Dimension(170, 30));
-        f6sLabel.setText("f6s.com");
-        f6sLabel.setToolTipText("http://www.f6s.com");
-        f6sLabel.setVerifyInputWhenFocusTarget(false);
-        f6sLabel.putClientProperty("html.disable", Boolean.TRUE);
-        f6sLabelPanel.add(f6sLabel);
-        jobPanel = new JPanel();
-        jobPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5));
-        jobPanel.setAutoscrolls(false);
-        jobPanel.setBackground(new Color(-4473925));
-        jobPanel.setEnabled(false);
-        jobPanel.setFocusCycleRoot(true);
-        jobPanel.setFocusTraversalPolicyProvider(true);
-        jobPanel.setFocusable(true);
-        jobPanel.setFont(new Font("Times New Roman", jobPanel.getFont().getStyle(), 12));
-        jobPanel.setInheritsPopupMenu(true);
-        jobPanel.setVisible(true);
-        panelMain.add(jobPanel, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, new Dimension(600, 500), new Dimension(600, 780), new Dimension(600, 780), 0, false));
-        jobPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), "Jobs", TitledBorder.CENTER, TitledBorder.ABOVE_TOP, new Font("DialogInput", Font.BOLD, 18), new Color(-16777216)));
-        jobLabel = new JLabel();
-        jobLabel.setAutoscrolls(false);
-        jobLabel.setEnabled(true);
-        jobLabel.setFocusable(false);
-        jobLabel.setFont(new Font("Times New Roman", jobLabel.getFont().getStyle(), 12));
-        jobLabel.setForeground(new Color(-16777216));
-        jobLabel.setHorizontalAlignment(0);
-        jobLabel.setHorizontalTextPosition(2);
-        jobLabel.setMaximumSize(new Dimension(300, 15));
-        jobLabel.setMinimumSize(new Dimension(300, 15));
-        jobLabel.setOpaque(false);
-        jobLabel.setPreferredSize(new Dimension(300, 15));
-        jobLabel.setText("Start text1");
-        jobLabel.setToolTipText("start TEXT");
-        jobPanel.add(jobLabel);
-        descriptionPanel = new JPanel();
-        descriptionPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5));
-        descriptionPanel.setAutoscrolls(false);
-        descriptionPanel.setBackground(new Color(-4473925));
-        descriptionPanel.setEnabled(false);
-        descriptionPanel.setFocusable(false);
-        descriptionPanel.setFont(new Font("Times New Roman", descriptionPanel.getFont().getStyle(), 12));
-        descriptionPanel.setVisible(false);
-        panelMain.add(descriptionPanel, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, new Dimension(400, 500), new Dimension(300, -1), null, 0, false));
-        descriptionPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), "Description", TitledBorder.CENTER, TitledBorder.ABOVE_TOP, new Font("DialogInput", Font.BOLD, 18), new Color(-16777216)));
-        descriptionLabel = new JLabel();
-        descriptionLabel.setAutoscrolls(false);
-        descriptionLabel.setEnabled(true);
-        descriptionLabel.setFocusable(false);
-        descriptionLabel.setFont(new Font("Times New Roman", descriptionLabel.getFont().getStyle(), 12));
-        descriptionLabel.setForeground(new Color(-16777216));
-        descriptionLabel.setHorizontalAlignment(0);
-        descriptionLabel.setHorizontalTextPosition(2);
-        descriptionLabel.setMaximumSize(new Dimension(300, 15));
-        descriptionLabel.setMinimumSize(new Dimension(300, 15));
-        descriptionLabel.setOpaque(false);
-        descriptionLabel.setPreferredSize(new Dimension(300, 15));
-        descriptionLabel.setText("Start text2");
-        descriptionLabel.setToolTipText("start TEXT");
-        descriptionPanel.add(descriptionLabel);
+        workingnomadsLabelPanel = new JPanel();
+        workingnomadsLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        workingnomadsLabelPanel.setAlignmentX(0.0f);
+        workingnomadsLabelPanel.setAlignmentY(0.0f);
+        workingnomadsLabelPanel.setAutoscrolls(true);
+        workingnomadsLabelPanel.setBackground(new Color(-721665));
+        workingnomadsLabelPanel.setMaximumSize(new Dimension(210, 30));
+        workingnomadsLabelPanel.setMinimumSize(new Dimension(180, 30));
+        workingnomadsLabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(workingnomadsLabelPanel);
+        workingnomadsLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        workingnomadsLabel = new JLabel();
+        workingnomadsLabel.setAutoscrolls(false);
+        workingnomadsLabel.setEnabled(true);
+        workingnomadsLabel.setFocusable(false);
+        workingnomadsLabel.setFont(new Font("Times New Roman", workingnomadsLabel.getFont().getStyle(), 12));
+        workingnomadsLabel.setForeground(new Color(-16777216));
+        workingnomadsLabel.setHorizontalAlignment(2);
+        workingnomadsLabel.setHorizontalTextPosition(2);
+        workingnomadsLabel.setMaximumSize(new Dimension(170, 30));
+        workingnomadsLabel.setMinimumSize(new Dimension(-1, -1));
+        workingnomadsLabel.setOpaque(false);
+        workingnomadsLabel.setPreferredSize(new Dimension(170, 30));
+        workingnomadsLabel.setText("workingnomads.co");
+        workingnomadsLabel.setToolTipText("http://www.workingnomads.co");
+        workingnomadsLabel.setVerifyInputWhenFocusTarget(false);
+        workingnomadsLabel.putClientProperty("html.disable", Boolean.TRUE);
+        workingnomadsLabelPanel.add(workingnomadsLabel);
+        remoteLabelPanel = new JPanel();
+        remoteLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        remoteLabelPanel.setAlignmentX(0.0f);
+        remoteLabelPanel.setAlignmentY(0.0f);
+        remoteLabelPanel.setAutoscrolls(true);
+        remoteLabelPanel.setBackground(new Color(-721665));
+        remoteLabelPanel.setMaximumSize(new Dimension(210, 30));
+        remoteLabelPanel.setMinimumSize(new Dimension(180, 30));
+        remoteLabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(remoteLabelPanel);
+        remoteLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        remoteLabel = new JLabel();
+        remoteLabel.setAutoscrolls(false);
+        remoteLabel.setEnabled(true);
+        remoteLabel.setFocusable(false);
+        remoteLabel.setFont(new Font("Times New Roman", remoteLabel.getFont().getStyle(), 12));
+        remoteLabel.setForeground(new Color(-16777216));
+        remoteLabel.setHorizontalAlignment(2);
+        remoteLabel.setHorizontalTextPosition(2);
+        remoteLabel.setMaximumSize(new Dimension(170, 30));
+        remoteLabel.setMinimumSize(new Dimension(-1, -1));
+        remoteLabel.setOpaque(false);
+        remoteLabel.setPreferredSize(new Dimension(170, 30));
+        remoteLabel.setText("remote.co");
+        remoteLabel.setToolTipText("http://www.remote.co");
+        remoteLabel.setVerifyInputWhenFocusTarget(false);
+        remoteLabel.putClientProperty("html.disable", Boolean.TRUE);
+        remoteLabelPanel.add(remoteLabel);
+        randstadLabelPanel = new JPanel();
+        randstadLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        randstadLabelPanel.setAlignmentX(0.0f);
+        randstadLabelPanel.setAlignmentY(0.0f);
+        randstadLabelPanel.setAutoscrolls(true);
+        randstadLabelPanel.setBackground(new Color(-721665));
+        randstadLabelPanel.setMaximumSize(new Dimension(210, 30));
+        randstadLabelPanel.setMinimumSize(new Dimension(180, 30));
+        randstadLabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(randstadLabelPanel);
+        randstadLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        randstadLabel = new JLabel();
+        randstadLabel.setAutoscrolls(false);
+        randstadLabel.setEnabled(true);
+        randstadLabel.setFocusable(false);
+        randstadLabel.setFont(new Font("Times New Roman", randstadLabel.getFont().getStyle(), 12));
+        randstadLabel.setForeground(new Color(-16777216));
+        randstadLabel.setHorizontalAlignment(2);
+        randstadLabel.setHorizontalTextPosition(2);
+        randstadLabel.setMaximumSize(new Dimension(170, 30));
+        randstadLabel.setMinimumSize(new Dimension(-1, -1));
+        randstadLabel.setOpaque(false);
+        randstadLabel.setPreferredSize(new Dimension(170, 30));
+        randstadLabel.setText("randstad.com");
+        randstadLabel.setToolTipText("http://www.randstad.com");
+        randstadLabel.setVerifyInputWhenFocusTarget(false);
+        randstadLabel.putClientProperty("html.disable", Boolean.TRUE);
+        randstadLabelPanel.add(randstadLabel);
+        workopolisLabelPanel = new JPanel();
+        workopolisLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        workopolisLabelPanel.setAlignmentX(0.0f);
+        workopolisLabelPanel.setAlignmentY(0.0f);
+        workopolisLabelPanel.setAutoscrolls(true);
+        workopolisLabelPanel.setBackground(new Color(-721665));
+        workopolisLabelPanel.setMaximumSize(new Dimension(210, 30));
+        workopolisLabelPanel.setMinimumSize(new Dimension(180, 30));
+        workopolisLabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(workopolisLabelPanel);
+        workopolisLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        workopolisLabel = new JLabel();
+        workopolisLabel.setAutoscrolls(false);
+        workopolisLabel.setEnabled(true);
+        workopolisLabel.setFocusable(false);
+        workopolisLabel.setFont(new Font("Times New Roman", workopolisLabel.getFont().getStyle(), 12));
+        workopolisLabel.setForeground(new Color(-16777216));
+        workopolisLabel.setHorizontalAlignment(2);
+        workopolisLabel.setHorizontalTextPosition(2);
+        workopolisLabel.setMaximumSize(new Dimension(170, 30));
+        workopolisLabel.setMinimumSize(new Dimension(-1, -1));
+        workopolisLabel.setOpaque(false);
+        workopolisLabel.setPreferredSize(new Dimension(170, 30));
+        workopolisLabel.setText("workopolis.com");
+        workopolisLabel.setToolTipText("http://www.workopolis.com");
+        workopolisLabel.setVerifyInputWhenFocusTarget(false);
+        workopolisLabel.putClientProperty("html.disable", Boolean.TRUE);
+        workopolisLabelPanel.add(workopolisLabel);
+        elutaLabelPanel = new JPanel();
+        elutaLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        elutaLabelPanel.setAlignmentX(0.0f);
+        elutaLabelPanel.setAlignmentY(0.0f);
+        elutaLabelPanel.setAutoscrolls(true);
+        elutaLabelPanel.setBackground(new Color(-721665));
+        elutaLabelPanel.setMaximumSize(new Dimension(210, 30));
+        elutaLabelPanel.setMinimumSize(new Dimension(180, 30));
+        elutaLabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(elutaLabelPanel);
+        elutaLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        elutaLabel = new JLabel();
+        elutaLabel.setAutoscrolls(false);
+        elutaLabel.setEnabled(true);
+        elutaLabel.setFocusable(false);
+        elutaLabel.setFont(new Font("Times New Roman", elutaLabel.getFont().getStyle(), 12));
+        elutaLabel.setForeground(new Color(-16777216));
+        elutaLabel.setHorizontalAlignment(2);
+        elutaLabel.setHorizontalTextPosition(2);
+        elutaLabel.setMaximumSize(new Dimension(170, 30));
+        elutaLabel.setMinimumSize(new Dimension(-1, -1));
+        elutaLabel.setOpaque(false);
+        elutaLabel.setPreferredSize(new Dimension(170, 30));
+        elutaLabel.setText("eluta.ca");
+        elutaLabel.setToolTipText("http://www.eluta.ca");
+        elutaLabel.setVerifyInputWhenFocusTarget(false);
+        elutaLabel.putClientProperty("html.disable", Boolean.TRUE);
+        elutaLabelPanel.add(elutaLabel);
+        jobspressoLabelPanel = new JPanel();
+        jobspressoLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        jobspressoLabelPanel.setAlignmentX(0.0f);
+        jobspressoLabelPanel.setAlignmentY(0.0f);
+        jobspressoLabelPanel.setAutoscrolls(true);
+        jobspressoLabelPanel.setBackground(new Color(-721665));
+        jobspressoLabelPanel.setMaximumSize(new Dimension(210, 30));
+        jobspressoLabelPanel.setMinimumSize(new Dimension(180, 30));
+        jobspressoLabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(jobspressoLabelPanel);
+        jobspressoLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        jobspressoLabel = new JLabel();
+        jobspressoLabel.setAutoscrolls(false);
+        jobspressoLabel.setEnabled(true);
+        jobspressoLabel.setFocusable(false);
+        jobspressoLabel.setFont(new Font("Times New Roman", jobspressoLabel.getFont().getStyle(), 12));
+        jobspressoLabel.setForeground(new Color(-16777216));
+        jobspressoLabel.setHorizontalAlignment(2);
+        jobspressoLabel.setHorizontalTextPosition(2);
+        jobspressoLabel.setMaximumSize(new Dimension(170, 30));
+        jobspressoLabel.setMinimumSize(new Dimension(-1, -1));
+        jobspressoLabel.setOpaque(false);
+        jobspressoLabel.setPreferredSize(new Dimension(170, 30));
+        jobspressoLabel.setText("jobspresso.co");
+        jobspressoLabel.setToolTipText("http://www.jobspresso.co");
+        jobspressoLabel.setVerifyInputWhenFocusTarget(false);
+        jobspressoLabel.putClientProperty("html.disable", Boolean.TRUE);
+        jobspressoLabelPanel.add(jobspressoLabel);
+        webbjobbLabelPrser = new JPanel();
+        webbjobbLabelPrser.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        webbjobbLabelPrser.setAlignmentX(0.0f);
+        webbjobbLabelPrser.setAlignmentY(0.0f);
+        webbjobbLabelPrser.setAutoscrolls(true);
+        webbjobbLabelPrser.setBackground(new Color(-721665));
+        webbjobbLabelPrser.setMaximumSize(new Dimension(210, 30));
+        webbjobbLabelPrser.setMinimumSize(new Dimension(180, 30));
+        webbjobbLabelPrser.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(webbjobbLabelPrser);
+        webbjobbLabelPrser.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        webbjobbLabel = new JLabel();
+        webbjobbLabel.setAutoscrolls(false);
+        webbjobbLabel.setEnabled(true);
+        webbjobbLabel.setFocusable(false);
+        webbjobbLabel.setFont(new Font("Times New Roman", webbjobbLabel.getFont().getStyle(), 12));
+        webbjobbLabel.setForeground(new Color(-16777216));
+        webbjobbLabel.setHorizontalAlignment(2);
+        webbjobbLabel.setHorizontalTextPosition(2);
+        webbjobbLabel.setMaximumSize(new Dimension(170, 30));
+        webbjobbLabel.setMinimumSize(new Dimension(-1, -1));
+        webbjobbLabel.setOpaque(false);
+        webbjobbLabel.setPreferredSize(new Dimension(170, 30));
+        webbjobbLabel.setText("webbjobb.io");
+        webbjobbLabel.setToolTipText("http://www.webbjobb.io");
+        webbjobbLabel.setVerifyInputWhenFocusTarget(false);
+        webbjobbLabel.putClientProperty("html.disable", Boolean.TRUE);
+        webbjobbLabelPrser.add(webbjobbLabel);
+        jobsSmashingmagazineLabelPanel = new JPanel();
+        jobsSmashingmagazineLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        jobsSmashingmagazineLabelPanel.setAlignmentX(0.0f);
+        jobsSmashingmagazineLabelPanel.setAlignmentY(0.0f);
+        jobsSmashingmagazineLabelPanel.setAutoscrolls(true);
+        jobsSmashingmagazineLabelPanel.setBackground(new Color(-721665));
+        jobsSmashingmagazineLabelPanel.setMaximumSize(new Dimension(210, 30));
+        jobsSmashingmagazineLabelPanel.setMinimumSize(new Dimension(180, 30));
+        jobsSmashingmagazineLabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(jobsSmashingmagazineLabelPanel);
+        jobsSmashingmagazineLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        jobsSmashingmagazineLabel = new JLabel();
+        jobsSmashingmagazineLabel.setAutoscrolls(false);
+        jobsSmashingmagazineLabel.setEnabled(true);
+        jobsSmashingmagazineLabel.setFocusable(false);
+        jobsSmashingmagazineLabel.setFont(new Font("Times New Roman", jobsSmashingmagazineLabel.getFont().getStyle(), 12));
+        jobsSmashingmagazineLabel.setForeground(new Color(-16777216));
+        jobsSmashingmagazineLabel.setHorizontalAlignment(2);
+        jobsSmashingmagazineLabel.setHorizontalTextPosition(2);
+        jobsSmashingmagazineLabel.setMaximumSize(new Dimension(170, 30));
+        jobsSmashingmagazineLabel.setMinimumSize(new Dimension(-1, -1));
+        jobsSmashingmagazineLabel.setOpaque(false);
+        jobsSmashingmagazineLabel.setPreferredSize(new Dimension(170, 30));
+        jobsSmashingmagazineLabel.setText("jobs.smashingmagazine.com");
+        jobsSmashingmagazineLabel.setToolTipText("http://jobs.smashingmagazine.com/");
+        jobsSmashingmagazineLabel.setVerifyInputWhenFocusTarget(false);
+        jobsSmashingmagazineLabel.putClientProperty("html.disable", Boolean.TRUE);
+        jobsSmashingmagazineLabelPanel.add(jobsSmashingmagazineLabel);
+        themuseLabelPanel = new JPanel();
+        themuseLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        themuseLabelPanel.setAlignmentX(0.0f);
+        themuseLabelPanel.setAlignmentY(0.0f);
+        themuseLabelPanel.setAutoscrolls(true);
+        themuseLabelPanel.setBackground(new Color(-721665));
+        themuseLabelPanel.setMaximumSize(new Dimension(210, 30));
+        themuseLabelPanel.setMinimumSize(new Dimension(180, 30));
+        themuseLabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(themuseLabelPanel);
+        themuseLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        themuseLabel = new JLabel();
+        themuseLabel.setAutoscrolls(false);
+        themuseLabel.setEnabled(true);
+        themuseLabel.setFocusable(false);
+        themuseLabel.setFont(new Font("Times New Roman", themuseLabel.getFont().getStyle(), 12));
+        themuseLabel.setForeground(new Color(-16777216));
+        themuseLabel.setHorizontalAlignment(2);
+        themuseLabel.setHorizontalTextPosition(2);
+        themuseLabel.setMaximumSize(new Dimension(170, 30));
+        themuseLabel.setMinimumSize(new Dimension(-1, -1));
+        themuseLabel.setOpaque(false);
+        themuseLabel.setPreferredSize(new Dimension(170, 30));
+        themuseLabel.setText("themuse.com");
+        themuseLabel.setToolTipText("http://www.themuse.com");
+        themuseLabel.setVerifyInputWhenFocusTarget(false);
+        themuseLabel.putClientProperty("html.disable", Boolean.TRUE);
+        themuseLabelPanel.add(themuseLabel);
+        techjobsLabelPanel = new JPanel();
+        techjobsLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        techjobsLabelPanel.setAlignmentX(0.0f);
+        techjobsLabelPanel.setAlignmentY(0.0f);
+        techjobsLabelPanel.setAutoscrolls(true);
+        techjobsLabelPanel.setBackground(new Color(-721665));
+        techjobsLabelPanel.setMaximumSize(new Dimension(210, 30));
+        techjobsLabelPanel.setMinimumSize(new Dimension(180, 30));
+        techjobsLabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(techjobsLabelPanel);
+        techjobsLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        techjobsLabel = new JLabel();
+        techjobsLabel.setAutoscrolls(false);
+        techjobsLabel.setEnabled(true);
+        techjobsLabel.setFocusable(false);
+        techjobsLabel.setFont(new Font("Times New Roman", techjobsLabel.getFont().getStyle(), 12));
+        techjobsLabel.setForeground(new Color(-16777216));
+        techjobsLabel.setHorizontalAlignment(2);
+        techjobsLabel.setHorizontalTextPosition(2);
+        techjobsLabel.setMaximumSize(new Dimension(170, 30));
+        techjobsLabel.setMinimumSize(new Dimension(-1, -1));
+        techjobsLabel.setOpaque(false);
+        techjobsLabel.setPreferredSize(new Dimension(170, 30));
+        techjobsLabel.setText("techjobs.com");
+        techjobsLabel.setToolTipText("http://www.techjobs.com");
+        techjobsLabel.setVerifyInputWhenFocusTarget(false);
+        techjobsLabel.putClientProperty("html.disable", Boolean.TRUE);
+        techjobsLabelPanel.add(techjobsLabel);
+        careerbuilderLabelPanel = new JPanel();
+        careerbuilderLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        careerbuilderLabelPanel.setAlignmentX(0.0f);
+        careerbuilderLabelPanel.setAlignmentY(0.0f);
+        careerbuilderLabelPanel.setAutoscrolls(true);
+        careerbuilderLabelPanel.setBackground(new Color(-721665));
+        careerbuilderLabelPanel.setMaximumSize(new Dimension(210, 30));
+        careerbuilderLabelPanel.setMinimumSize(new Dimension(180, 30));
+        careerbuilderLabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(careerbuilderLabelPanel);
+        careerbuilderLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        careerbuilderLabel = new JLabel();
+        careerbuilderLabel.setAutoscrolls(false);
+        careerbuilderLabel.setEnabled(true);
+        careerbuilderLabel.setFocusable(false);
+        careerbuilderLabel.setFont(new Font("Times New Roman", careerbuilderLabel.getFont().getStyle(), 12));
+        careerbuilderLabel.setForeground(new Color(-16777216));
+        careerbuilderLabel.setHorizontalAlignment(2);
+        careerbuilderLabel.setHorizontalTextPosition(2);
+        careerbuilderLabel.setMaximumSize(new Dimension(170, 30));
+        careerbuilderLabel.setMinimumSize(new Dimension(-1, -1));
+        careerbuilderLabel.setOpaque(false);
+        careerbuilderLabel.setPreferredSize(new Dimension(170, 30));
+        careerbuilderLabel.setText("careerbuilder.com");
+        careerbuilderLabel.setToolTipText("http://www.careerbuilder.com");
+        careerbuilderLabel.setVerifyInputWhenFocusTarget(false);
+        careerbuilderLabel.putClientProperty("html.disable", Boolean.TRUE);
+        careerbuilderLabelPanel.add(careerbuilderLabel);
+        webentwicklerJobsLabelPanel = new JPanel();
+        webentwicklerJobsLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        webentwicklerJobsLabelPanel.setAlignmentX(0.0f);
+        webentwicklerJobsLabelPanel.setAlignmentY(0.0f);
+        webentwicklerJobsLabelPanel.setAutoscrolls(true);
+        webentwicklerJobsLabelPanel.setBackground(new Color(-721665));
+        webentwicklerJobsLabelPanel.setMaximumSize(new Dimension(210, 30));
+        webentwicklerJobsLabelPanel.setMinimumSize(new Dimension(180, 30));
+        webentwicklerJobsLabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(webentwicklerJobsLabelPanel);
+        webentwicklerJobsLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        webentwicklerJobsLabel = new JLabel();
+        webentwicklerJobsLabel.setAutoscrolls(false);
+        webentwicklerJobsLabel.setEnabled(true);
+        webentwicklerJobsLabel.setFocusable(false);
+        webentwicklerJobsLabel.setFont(new Font("Times New Roman", webentwicklerJobsLabel.getFont().getStyle(), 12));
+        webentwicklerJobsLabel.setForeground(new Color(-16777216));
+        webentwicklerJobsLabel.setHorizontalAlignment(2);
+        webentwicklerJobsLabel.setHorizontalTextPosition(2);
+        webentwicklerJobsLabel.setMaximumSize(new Dimension(170, 30));
+        webentwicklerJobsLabel.setMinimumSize(new Dimension(-1, -1));
+        webentwicklerJobsLabel.setOpaque(false);
+        webentwicklerJobsLabel.setPreferredSize(new Dimension(170, 30));
+        webentwicklerJobsLabel.setText("webentwickler-jobs.de");
+        webentwicklerJobsLabel.setToolTipText("http://www.webentwickler-jobs.de");
+        webentwicklerJobsLabel.setVerifyInputWhenFocusTarget(false);
+        webentwicklerJobsLabel.putClientProperty("html.disable", Boolean.TRUE);
+        webentwicklerJobsLabelPanel.add(webentwicklerJobsLabel);
+        uberjobsLabelPanel = new JPanel();
+        uberjobsLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        uberjobsLabelPanel.setAlignmentX(0.0f);
+        uberjobsLabelPanel.setAlignmentY(0.0f);
+        uberjobsLabelPanel.setAutoscrolls(true);
+        uberjobsLabelPanel.setBackground(new Color(-721665));
+        uberjobsLabelPanel.setMaximumSize(new Dimension(210, 30));
+        uberjobsLabelPanel.setMinimumSize(new Dimension(180, 30));
+        uberjobsLabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(uberjobsLabelPanel);
+        uberjobsLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        uberjobsLabel = new JLabel();
+        uberjobsLabel.setAutoscrolls(false);
+        uberjobsLabel.setEnabled(true);
+        uberjobsLabel.setFocusable(false);
+        uberjobsLabel.setFont(new Font("Times New Roman", uberjobsLabel.getFont().getStyle(), 12));
+        uberjobsLabel.setForeground(new Color(-16777216));
+        uberjobsLabel.setHorizontalAlignment(2);
+        uberjobsLabel.setHorizontalTextPosition(2);
+        uberjobsLabel.setMaximumSize(new Dimension(170, 30));
+        uberjobsLabel.setMinimumSize(new Dimension(-1, -1));
+        uberjobsLabel.setOpaque(false);
+        uberjobsLabel.setPreferredSize(new Dimension(170, 30));
+        uberjobsLabel.setText("uberjobs.de");
+        uberjobsLabel.setToolTipText("http://uberjobs.de");
+        uberjobsLabel.setVerifyInputWhenFocusTarget(false);
+        uberjobsLabel.putClientProperty("html.disable", Boolean.TRUE);
+        uberjobsLabelPanel.add(uberjobsLabel);
+        guruLabelPanel = new JPanel();
+        guruLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        guruLabelPanel.setAlignmentX(0.0f);
+        guruLabelPanel.setAlignmentY(0.0f);
+        guruLabelPanel.setAutoscrolls(true);
+        guruLabelPanel.setBackground(new Color(-721665));
+        guruLabelPanel.setMaximumSize(new Dimension(210, 30));
+        guruLabelPanel.setMinimumSize(new Dimension(180, 30));
+        guruLabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(guruLabelPanel);
+        guruLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        guruLabel = new JLabel();
+        guruLabel.setAutoscrolls(false);
+        guruLabel.setEnabled(true);
+        guruLabel.setFocusable(false);
+        guruLabel.setFont(new Font("Times New Roman", guruLabel.getFont().getStyle(), 12));
+        guruLabel.setForeground(new Color(-16777216));
+        guruLabel.setHorizontalAlignment(2);
+        guruLabel.setHorizontalTextPosition(2);
+        guruLabel.setMaximumSize(new Dimension(170, 30));
+        guruLabel.setMinimumSize(new Dimension(-1, -1));
+        guruLabel.setOpaque(false);
+        guruLabel.setPreferredSize(new Dimension(170, 30));
+        guruLabel.setText("guru.com");
+        guruLabel.setToolTipText("http://www.guru.com");
+        guruLabel.setVerifyInputWhenFocusTarget(false);
+        guruLabel.putClientProperty("html.disable", Boolean.TRUE);
+        guruLabelPanel.add(guruLabel);
+        authenticjobsLabelParser = new JPanel();
+        authenticjobsLabelParser.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        authenticjobsLabelParser.setAlignmentX(0.0f);
+        authenticjobsLabelParser.setAlignmentY(0.0f);
+        authenticjobsLabelParser.setAutoscrolls(true);
+        authenticjobsLabelParser.setBackground(new Color(-721665));
+        authenticjobsLabelParser.setMaximumSize(new Dimension(210, 30));
+        authenticjobsLabelParser.setMinimumSize(new Dimension(180, 30));
+        authenticjobsLabelParser.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(authenticjobsLabelParser);
+        authenticjobsLabelParser.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        authenticjobsLabel = new JLabel();
+        authenticjobsLabel.setAutoscrolls(false);
+        authenticjobsLabel.setEnabled(true);
+        authenticjobsLabel.setFocusable(false);
+        authenticjobsLabel.setFont(new Font("Times New Roman", authenticjobsLabel.getFont().getStyle(), 12));
+        authenticjobsLabel.setForeground(new Color(-16777216));
+        authenticjobsLabel.setHorizontalAlignment(2);
+        authenticjobsLabel.setHorizontalTextPosition(2);
+        authenticjobsLabel.setMaximumSize(new Dimension(170, 30));
+        authenticjobsLabel.setMinimumSize(new Dimension(-1, -1));
+        authenticjobsLabel.setOpaque(false);
+        authenticjobsLabel.setPreferredSize(new Dimension(170, 30));
+        authenticjobsLabel.setText("authenticjobs.com");
+        authenticjobsLabel.setToolTipText("http://authenticjobs.com");
+        authenticjobsLabel.setVerifyInputWhenFocusTarget(false);
+        authenticjobsLabel.putClientProperty("html.disable", Boolean.TRUE);
+        authenticjobsLabelParser.add(authenticjobsLabel);
+        eurojobsLabelPanel = new JPanel();
+        eurojobsLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        eurojobsLabelPanel.setAlignmentX(0.0f);
+        eurojobsLabelPanel.setAlignmentY(0.0f);
+        eurojobsLabelPanel.setAutoscrolls(true);
+        eurojobsLabelPanel.setBackground(new Color(-721665));
+        eurojobsLabelPanel.setMaximumSize(new Dimension(210, 30));
+        eurojobsLabelPanel.setMinimumSize(new Dimension(180, 30));
+        eurojobsLabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(eurojobsLabelPanel);
+        eurojobsLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        eurojobsLabel = new JLabel();
+        eurojobsLabel.setAutoscrolls(false);
+        eurojobsLabel.setEnabled(true);
+        eurojobsLabel.setFocusable(false);
+        eurojobsLabel.setFont(new Font("Times New Roman", eurojobsLabel.getFont().getStyle(), 12));
+        eurojobsLabel.setForeground(new Color(-16777216));
+        eurojobsLabel.setHorizontalAlignment(2);
+        eurojobsLabel.setHorizontalTextPosition(2);
+        eurojobsLabel.setMaximumSize(new Dimension(170, 30));
+        eurojobsLabel.setMinimumSize(new Dimension(-1, -1));
+        eurojobsLabel.setOpaque(false);
+        eurojobsLabel.setPreferredSize(new Dimension(170, 30));
+        eurojobsLabel.setText("eurojobs.com");
+        eurojobsLabel.setToolTipText("http://www.eurojobs.com");
+        eurojobsLabel.setVerifyInputWhenFocusTarget(false);
+        eurojobsLabel.putClientProperty("html.disable", Boolean.TRUE);
+        eurojobsLabelPanel.add(eurojobsLabel);
+        technojobsCoUkLabelPanel = new JPanel();
+        technojobsCoUkLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        technojobsCoUkLabelPanel.setAlignmentX(0.0f);
+        technojobsCoUkLabelPanel.setAlignmentY(0.0f);
+        technojobsCoUkLabelPanel.setAutoscrolls(true);
+        technojobsCoUkLabelPanel.setBackground(new Color(-721665));
+        technojobsCoUkLabelPanel.setMaximumSize(new Dimension(210, 30));
+        technojobsCoUkLabelPanel.setMinimumSize(new Dimension(180, 30));
+        technojobsCoUkLabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(technojobsCoUkLabelPanel);
+        technojobsCoUkLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        technojobsCoUaLabel = new JLabel();
+        technojobsCoUaLabel.setAutoscrolls(false);
+        technojobsCoUaLabel.setEnabled(true);
+        technojobsCoUaLabel.setFocusable(false);
+        technojobsCoUaLabel.setFont(new Font("Times New Roman", technojobsCoUaLabel.getFont().getStyle(), 12));
+        technojobsCoUaLabel.setForeground(new Color(-16777216));
+        technojobsCoUaLabel.setHorizontalAlignment(2);
+        technojobsCoUaLabel.setHorizontalTextPosition(2);
+        technojobsCoUaLabel.setMaximumSize(new Dimension(170, 30));
+        technojobsCoUaLabel.setMinimumSize(new Dimension(-1, -1));
+        technojobsCoUaLabel.setOpaque(false);
+        technojobsCoUaLabel.setPreferredSize(new Dimension(170, 30));
+        technojobsCoUaLabel.setText("technojobs.co.uk");
+        technojobsCoUaLabel.setToolTipText("http://www.technojobs.co.uk");
+        technojobsCoUaLabel.setVerifyInputWhenFocusTarget(false);
+        technojobsCoUaLabel.putClientProperty("html.disable", Boolean.TRUE);
+        technojobsCoUkLabelPanel.add(technojobsCoUaLabel);
+        canadajobsLabelParser = new JPanel();
+        canadajobsLabelParser.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        canadajobsLabelParser.setAlignmentX(0.0f);
+        canadajobsLabelParser.setAlignmentY(0.0f);
+        canadajobsLabelParser.setAutoscrolls(true);
+        canadajobsLabelParser.setBackground(new Color(-721665));
+        canadajobsLabelParser.setMaximumSize(new Dimension(210, 30));
+        canadajobsLabelParser.setMinimumSize(new Dimension(180, 30));
+        canadajobsLabelParser.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(canadajobsLabelParser);
+        canadajobsLabelParser.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        canadajobsLabel = new JLabel();
+        canadajobsLabel.setAutoscrolls(false);
+        canadajobsLabel.setEnabled(true);
+        canadajobsLabel.setFocusable(false);
+        canadajobsLabel.setFont(new Font("Times New Roman", canadajobsLabel.getFont().getStyle(), 12));
+        canadajobsLabel.setForeground(new Color(-16777216));
+        canadajobsLabel.setHorizontalAlignment(2);
+        canadajobsLabel.setHorizontalTextPosition(2);
+        canadajobsLabel.setMaximumSize(new Dimension(170, 30));
+        canadajobsLabel.setMinimumSize(new Dimension(-1, -1));
+        canadajobsLabel.setOpaque(false);
+        canadajobsLabel.setPreferredSize(new Dimension(170, 30));
+        canadajobsLabel.setText("canadajobs.com");
+        canadajobsLabel.setToolTipText("http://www.canadajobs.com");
+        canadajobsLabel.setVerifyInputWhenFocusTarget(false);
+        canadajobsLabel.putClientProperty("html.disable", Boolean.TRUE);
+        canadajobsLabelParser.add(canadajobsLabel);
+        drupalOrgUkLabelParser = new JPanel();
+        drupalOrgUkLabelParser.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        drupalOrgUkLabelParser.setAlignmentX(0.0f);
+        drupalOrgUkLabelParser.setAlignmentY(0.0f);
+        drupalOrgUkLabelParser.setAutoscrolls(true);
+        drupalOrgUkLabelParser.setBackground(new Color(-721665));
+        drupalOrgUkLabelParser.setMaximumSize(new Dimension(210, 30));
+        drupalOrgUkLabelParser.setMinimumSize(new Dimension(180, 30));
+        drupalOrgUkLabelParser.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(drupalOrgUkLabelParser);
+        drupalOrgUkLabelParser.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        drupalOrgUkLabel = new JLabel();
+        drupalOrgUkLabel.setAutoscrolls(false);
+        drupalOrgUkLabel.setEnabled(true);
+        drupalOrgUkLabel.setFocusable(false);
+        drupalOrgUkLabel.setFont(new Font("Times New Roman", drupalOrgUkLabel.getFont().getStyle(), 12));
+        drupalOrgUkLabel.setForeground(new Color(-16777216));
+        drupalOrgUkLabel.setHorizontalAlignment(2);
+        drupalOrgUkLabel.setHorizontalTextPosition(2);
+        drupalOrgUkLabel.setMaximumSize(new Dimension(170, 30));
+        drupalOrgUkLabel.setMinimumSize(new Dimension(-1, -1));
+        drupalOrgUkLabel.setOpaque(false);
+        drupalOrgUkLabel.setPreferredSize(new Dimension(170, 30));
+        drupalOrgUkLabel.setText("drupal.org.uk");
+        drupalOrgUkLabel.setToolTipText("http://www.drupal.org.uk");
+        drupalOrgUkLabel.setVerifyInputWhenFocusTarget(false);
+        drupalOrgUkLabel.putClientProperty("html.disable", Boolean.TRUE);
+        drupalOrgUkLabelParser.add(drupalOrgUkLabel);
+        ziprecruiterLabelPanel = new JPanel();
+        ziprecruiterLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        ziprecruiterLabelPanel.setAlignmentX(0.0f);
+        ziprecruiterLabelPanel.setAlignmentY(0.0f);
+        ziprecruiterLabelPanel.setAutoscrolls(true);
+        ziprecruiterLabelPanel.setBackground(new Color(-721665));
+        ziprecruiterLabelPanel.setMaximumSize(new Dimension(210, 30));
+        ziprecruiterLabelPanel.setMinimumSize(new Dimension(180, 30));
+        ziprecruiterLabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(ziprecruiterLabelPanel);
+        ziprecruiterLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        ziprecruiterLabel = new JLabel();
+        ziprecruiterLabel.setAutoscrolls(false);
+        ziprecruiterLabel.setEnabled(true);
+        ziprecruiterLabel.setFocusable(false);
+        ziprecruiterLabel.setFont(new Font("Times New Roman", ziprecruiterLabel.getFont().getStyle(), 12));
+        ziprecruiterLabel.setForeground(new Color(-16777216));
+        ziprecruiterLabel.setHorizontalAlignment(2);
+        ziprecruiterLabel.setHorizontalTextPosition(2);
+        ziprecruiterLabel.setMaximumSize(new Dimension(170, 30));
+        ziprecruiterLabel.setMinimumSize(new Dimension(-1, -1));
+        ziprecruiterLabel.setOpaque(false);
+        ziprecruiterLabel.setPreferredSize(new Dimension(170, 30));
+        ziprecruiterLabel.setText("ziprecruiter.com");
+        ziprecruiterLabel.setToolTipText("http://www.ziprecruiter.com");
+        ziprecruiterLabel.setVerifyInputWhenFocusTarget(false);
+        ziprecruiterLabel.putClientProperty("html.disable", Boolean.TRUE);
+        ziprecruiterLabelPanel.add(ziprecruiterLabel);
+        drupalcenterLabelPanel = new JPanel();
+        drupalcenterLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        drupalcenterLabelPanel.setAlignmentX(0.0f);
+        drupalcenterLabelPanel.setAlignmentY(0.0f);
+        drupalcenterLabelPanel.setAutoscrolls(true);
+        drupalcenterLabelPanel.setBackground(new Color(-721665));
+        drupalcenterLabelPanel.setMaximumSize(new Dimension(210, 30));
+        drupalcenterLabelPanel.setMinimumSize(new Dimension(180, 30));
+        drupalcenterLabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(drupalcenterLabelPanel);
+        drupalcenterLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        drupalcenterLabel = new JLabel();
+        drupalcenterLabel.setAutoscrolls(false);
+        drupalcenterLabel.setEnabled(true);
+        drupalcenterLabel.setFocusable(false);
+        drupalcenterLabel.setFont(new Font("Times New Roman", drupalcenterLabel.getFont().getStyle(), 12));
+        drupalcenterLabel.setForeground(new Color(-16777216));
+        drupalcenterLabel.setHorizontalAlignment(2);
+        drupalcenterLabel.setHorizontalTextPosition(2);
+        drupalcenterLabel.setMaximumSize(new Dimension(170, 30));
+        drupalcenterLabel.setMinimumSize(new Dimension(-1, -1));
+        drupalcenterLabel.setOpaque(false);
+        drupalcenterLabel.setPreferredSize(new Dimension(170, 30));
+        drupalcenterLabel.setText("drupalcenter.de");
+        drupalcenterLabel.setToolTipText("http://www.drupalcenter.de");
+        drupalcenterLabel.setVerifyInputWhenFocusTarget(false);
+        drupalcenterLabel.putClientProperty("html.disable", Boolean.TRUE);
+        drupalcenterLabelPanel.add(drupalcenterLabel);
+        indeedLabelPanel = new JPanel();
+        indeedLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        indeedLabelPanel.setAlignmentX(0.0f);
+        indeedLabelPanel.setAlignmentY(0.0f);
+        indeedLabelPanel.setAutoscrolls(true);
+        indeedLabelPanel.setBackground(new Color(-721665));
+        indeedLabelPanel.setMaximumSize(new Dimension(210, 30));
+        indeedLabelPanel.setMinimumSize(new Dimension(180, 30));
+        indeedLabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(indeedLabelPanel);
+        indeedLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        indeedLabel = new JLabel();
+        indeedLabel.setAutoscrolls(false);
+        indeedLabel.setEnabled(true);
+        indeedLabel.setFocusable(false);
+        indeedLabel.setFont(new Font("Times New Roman", indeedLabel.getFont().getStyle(), 12));
+        indeedLabel.setForeground(new Color(-16777216));
+        indeedLabel.setHorizontalAlignment(2);
+        indeedLabel.setHorizontalTextPosition(2);
+        indeedLabel.setMaximumSize(new Dimension(170, 30));
+        indeedLabel.setMinimumSize(new Dimension(-1, -1));
+        indeedLabel.setOpaque(false);
+        indeedLabel.setPreferredSize(new Dimension(170, 30));
+        indeedLabel.setText("indeed.com");
+        indeedLabel.setToolTipText("http://www.indeed.com");
+        indeedLabel.setVerifyInputWhenFocusTarget(false);
+        indeedLabel.putClientProperty("html.disable", Boolean.TRUE);
+        indeedLabelPanel.add(indeedLabel);
+        wowjobsLabelPanel = new JPanel();
+        wowjobsLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        wowjobsLabelPanel.setAlignmentX(0.0f);
+        wowjobsLabelPanel.setAlignmentY(0.0f);
+        wowjobsLabelPanel.setAutoscrolls(true);
+        wowjobsLabelPanel.setBackground(new Color(-721665));
+        wowjobsLabelPanel.setMaximumSize(new Dimension(210, 30));
+        wowjobsLabelPanel.setMinimumSize(new Dimension(180, 30));
+        wowjobsLabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(wowjobsLabelPanel);
+        wowjobsLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        wowjobsLabel = new JLabel();
+        wowjobsLabel.setAutoscrolls(false);
+        wowjobsLabel.setEnabled(true);
+        wowjobsLabel.setFocusable(false);
+        wowjobsLabel.setFont(new Font("Times New Roman", wowjobsLabel.getFont().getStyle(), 12));
+        wowjobsLabel.setForeground(new Color(-16777216));
+        wowjobsLabel.setHorizontalAlignment(2);
+        wowjobsLabel.setHorizontalTextPosition(2);
+        wowjobsLabel.setMaximumSize(new Dimension(170, 30));
+        wowjobsLabel.setMinimumSize(new Dimension(-1, -1));
+        wowjobsLabel.setOpaque(false);
+        wowjobsLabel.setPreferredSize(new Dimension(170, 30));
+        wowjobsLabel.setText("wowjobs.ca");
+        wowjobsLabel.setToolTipText("http://www.wowjobs.ca");
+        wowjobsLabel.setVerifyInputWhenFocusTarget(false);
+        wowjobsLabel.putClientProperty("html.disable", Boolean.TRUE);
+        wowjobsLabelPanel.add(wowjobsLabel);
+        builtinaustinLabelPanel = new JPanel();
+        builtinaustinLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        builtinaustinLabelPanel.setAlignmentX(0.0f);
+        builtinaustinLabelPanel.setAlignmentY(0.0f);
+        builtinaustinLabelPanel.setAutoscrolls(true);
+        builtinaustinLabelPanel.setBackground(new Color(-721665));
+        builtinaustinLabelPanel.setMaximumSize(new Dimension(210, 30));
+        builtinaustinLabelPanel.setMinimumSize(new Dimension(180, 30));
+        builtinaustinLabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(builtinaustinLabelPanel);
+        builtinaustinLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        builtinaustinLabel = new JLabel();
+        builtinaustinLabel.setAutoscrolls(false);
+        builtinaustinLabel.setEnabled(true);
+        builtinaustinLabel.setFocusable(false);
+        builtinaustinLabel.setFont(new Font("Times New Roman", builtinaustinLabel.getFont().getStyle(), 12));
+        builtinaustinLabel.setForeground(new Color(-16777216));
+        builtinaustinLabel.setHorizontalAlignment(2);
+        builtinaustinLabel.setHorizontalTextPosition(2);
+        builtinaustinLabel.setMaximumSize(new Dimension(170, 30));
+        builtinaustinLabel.setMinimumSize(new Dimension(-1, -1));
+        builtinaustinLabel.setOpaque(false);
+        builtinaustinLabel.setPreferredSize(new Dimension(170, 30));
+        builtinaustinLabel.setText("builtinaustin.com");
+        builtinaustinLabel.setToolTipText("http://www.builtinaustin.com");
+        builtinaustinLabel.setVerifyInputWhenFocusTarget(false);
+        builtinaustinLabel.putClientProperty("html.disable", Boolean.TRUE);
+        builtinaustinLabelPanel.add(builtinaustinLabel);
+        betalistLabelPanel = new JPanel();
+        betalistLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        betalistLabelPanel.setAlignmentX(0.0f);
+        betalistLabelPanel.setAlignmentY(0.0f);
+        betalistLabelPanel.setAutoscrolls(true);
+        betalistLabelPanel.setBackground(new Color(-721665));
+        betalistLabelPanel.setMaximumSize(new Dimension(210, 30));
+        betalistLabelPanel.setMinimumSize(new Dimension(180, 30));
+        betalistLabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(betalistLabelPanel);
+        betalistLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        betalistLabel = new JLabel();
+        betalistLabel.setAutoscrolls(false);
+        betalistLabel.setEnabled(true);
+        betalistLabel.setFocusable(false);
+        betalistLabel.setFont(new Font("Times New Roman", betalistLabel.getFont().getStyle(), 12));
+        betalistLabel.setForeground(new Color(-16777216));
+        betalistLabel.setHorizontalAlignment(2);
+        betalistLabel.setHorizontalTextPosition(2);
+        betalistLabel.setMaximumSize(new Dimension(170, 30));
+        betalistLabel.setMinimumSize(new Dimension(-1, -1));
+        betalistLabel.setOpaque(false);
+        betalistLabel.setPreferredSize(new Dimension(170, 30));
+        betalistLabel.setText("betalist.com");
+        betalistLabel.setToolTipText("http://www.betalist.com");
+        betalistLabel.setVerifyInputWhenFocusTarget(false);
+        betalistLabel.putClientProperty("html.disable", Boolean.TRUE);
+        betalistLabelPanel.add(betalistLabel);
+        unicornhuntLabelPanel = new JPanel();
+        unicornhuntLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        unicornhuntLabelPanel.setAlignmentX(0.0f);
+        unicornhuntLabelPanel.setAlignmentY(0.0f);
+        unicornhuntLabelPanel.setAutoscrolls(true);
+        unicornhuntLabelPanel.setBackground(new Color(-721665));
+        unicornhuntLabelPanel.setMaximumSize(new Dimension(210, 30));
+        unicornhuntLabelPanel.setMinimumSize(new Dimension(180, 30));
+        unicornhuntLabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(unicornhuntLabelPanel);
+        unicornhuntLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        unicornhuntLabel = new JLabel();
+        unicornhuntLabel.setAutoscrolls(false);
+        unicornhuntLabel.setEnabled(true);
+        unicornhuntLabel.setFocusable(false);
+        unicornhuntLabel.setFont(new Font("Times New Roman", unicornhuntLabel.getFont().getStyle(), 12));
+        unicornhuntLabel.setForeground(new Color(-16777216));
+        unicornhuntLabel.setHorizontalAlignment(2);
+        unicornhuntLabel.setHorizontalTextPosition(2);
+        unicornhuntLabel.setMaximumSize(new Dimension(170, 30));
+        unicornhuntLabel.setMinimumSize(new Dimension(-1, -1));
+        unicornhuntLabel.setOpaque(false);
+        unicornhuntLabel.setPreferredSize(new Dimension(170, 30));
+        unicornhuntLabel.setText("unicornhunt.io");
+        unicornhuntLabel.setToolTipText("http://unicornhunt.io");
+        unicornhuntLabel.setVerifyInputWhenFocusTarget(false);
+        unicornhuntLabel.putClientProperty("html.disable", Boolean.TRUE);
+        unicornhuntLabelPanel.add(unicornhuntLabel);
+        jobsJustlandedLabelPanel = new JPanel();
+        jobsJustlandedLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        jobsJustlandedLabelPanel.setAlignmentX(0.0f);
+        jobsJustlandedLabelPanel.setAlignmentY(0.0f);
+        jobsJustlandedLabelPanel.setAutoscrolls(true);
+        jobsJustlandedLabelPanel.setBackground(new Color(-721665));
+        jobsJustlandedLabelPanel.setMaximumSize(new Dimension(210, 30));
+        jobsJustlandedLabelPanel.setMinimumSize(new Dimension(180, 30));
+        jobsJustlandedLabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(jobsJustlandedLabelPanel);
+        jobsJustlandedLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        jobsJustlandedLabel = new JLabel();
+        jobsJustlandedLabel.setAutoscrolls(false);
+        jobsJustlandedLabel.setEnabled(true);
+        jobsJustlandedLabel.setFocusable(false);
+        jobsJustlandedLabel.setFont(new Font("Times New Roman", jobsJustlandedLabel.getFont().getStyle(), 12));
+        jobsJustlandedLabel.setForeground(new Color(-16777216));
+        jobsJustlandedLabel.setHorizontalAlignment(2);
+        jobsJustlandedLabel.setHorizontalTextPosition(2);
+        jobsJustlandedLabel.setMaximumSize(new Dimension(170, 30));
+        jobsJustlandedLabel.setMinimumSize(new Dimension(-1, -1));
+        jobsJustlandedLabel.setOpaque(false);
+        jobsJustlandedLabel.setPreferredSize(new Dimension(170, 30));
+        jobsJustlandedLabel.setText("jobs.justlanded.com");
+        jobsJustlandedLabel.setToolTipText("http://jobs.justlanded.com");
+        jobsJustlandedLabel.setVerifyInputWhenFocusTarget(false);
+        jobsJustlandedLabel.putClientProperty("html.disable", Boolean.TRUE);
+        jobsJustlandedLabelPanel.add(jobsJustlandedLabel);
+        jobsRemotiveLabelPanel = new JPanel();
+        jobsRemotiveLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        jobsRemotiveLabelPanel.setAlignmentX(0.0f);
+        jobsRemotiveLabelPanel.setAlignmentY(0.0f);
+        jobsRemotiveLabelPanel.setAutoscrolls(true);
+        jobsRemotiveLabelPanel.setBackground(new Color(-721665));
+        jobsRemotiveLabelPanel.setMaximumSize(new Dimension(210, 30));
+        jobsRemotiveLabelPanel.setMinimumSize(new Dimension(180, 30));
+        jobsRemotiveLabelPanel.setPreferredSize(new Dimension(180, 30));
+        linkPanel.add(jobsRemotiveLabelPanel);
+        jobsRemotiveLabelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.ABOVE_TOP, null, new Color(-16777216)));
+        jobsRemotiveLabel = new JLabel();
+        jobsRemotiveLabel.setAutoscrolls(false);
+        jobsRemotiveLabel.setEnabled(true);
+        jobsRemotiveLabel.setFocusable(false);
+        jobsRemotiveLabel.setFont(new Font("Times New Roman", jobsRemotiveLabel.getFont().getStyle(), 12));
+        jobsRemotiveLabel.setForeground(new Color(-16777216));
+        jobsRemotiveLabel.setHorizontalAlignment(2);
+        jobsRemotiveLabel.setHorizontalTextPosition(2);
+        jobsRemotiveLabel.setMaximumSize(new Dimension(170, 30));
+        jobsRemotiveLabel.setMinimumSize(new Dimension(-1, -1));
+        jobsRemotiveLabel.setOpaque(false);
+        jobsRemotiveLabel.setPreferredSize(new Dimension(170, 30));
+        jobsRemotiveLabel.setText("jobs.remotive.io");
+        jobsRemotiveLabel.setToolTipText("http://jobs.remotive.io/");
+        jobsRemotiveLabel.setVerifyInputWhenFocusTarget(false);
+        jobsRemotiveLabel.putClientProperty("html.disable", Boolean.TRUE);
+        jobsRemotiveLabelPanel.add(jobsRemotiveLabel);
     }
 
     /**
