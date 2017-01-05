@@ -4,6 +4,7 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.parser.async_tasks.*;
 import com.parser.dbmanager.DbHelper;
+import com.parser.dbmanager.DbHelperSort;
 import com.parser.entity.*;
 import com.parser.parsers.ca.eluta.ParserEluta;
 import com.parser.parsers.ca.wowjobs.ParserWowjobs;
@@ -194,7 +195,7 @@ public class ParserApp implements MouseListener {
     private List<JobsInformForSearch> allJobs;
     private String testSearchWord;
     private List<JobsInformForSearch> testCorrectJobsList;
-
+    private List<LabelSort> labelSortList;
     public ThreadPoolExecutor getExecutorDB() {
         return executorDB;
     }
@@ -346,33 +347,80 @@ public class ParserApp implements MouseListener {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        List<Integer> ids = new ArrayList<>();
-        List<String> labelText = new ArrayList<>();
-        List<String> labelTextSorted = new ArrayList<>();
-        List<JPanel> labelPanelList = new ArrayList<>();
-        for (int i = 0; i < linkPanel.getComponents().length; i++) {
-            JPanel labelPanel = (JPanel) linkPanel.getComponents()[i];
-            labelPanelList.add(labelPanel);
-            labelPanel.setVisible(false);
-            labelText.add(((JLabel) labelPanel.getComponent(0)).getText());
-            labelTextSorted.add(((JLabel) labelPanel.getComponent(0)).getText());
-        }
-        Collections.sort(labelTextSorted);
-        for (String s : labelTextSorted) {
-            ids.add(labelText.indexOf(s));
-        }
-        for (int i : ids) {
-            linkPanel.add(labelPanelList.get(i));
-        }
+//        List<Integer> ids = new ArrayList<>();
+//        List<String> labelText = new ArrayList<>();
+//        List<String> labelTextSorted = new ArrayList<>();
+//        List<JPanel> labelPanelList = new ArrayList<>();
+//        for (int i = 0; i < linkPanel.getComponents().length; i++) {
+//            JPanel labelPanel = (JPanel) linkPanel.getComponents()[i];
+//            labelPanelList.add(labelPanel);
+//            labelPanel.setVisible(false);
+//            labelText.add(((JLabel) labelPanel.getComponent(0)).getText());
+//            labelTextSorted.add(((JLabel) labelPanel.getComponent(0)).getText());
+//        }
+//        Collections.sort(labelTextSorted);
+//        for (String s : labelTextSorted) {
+//            ids.add(labelText.indexOf(s));
+//        }
+//        for (int i : ids) {
+//            linkPanel.add(labelPanelList.get(i));
+//        }
 //        JPanel labelPanel = (JPanel) linkPanel.getComponents()[47];
 //        labelPanel.setBackground(new Color(0x717184));
 //        JLabel label = (JLabel) labelPanel.getComponent(0);
 //        String homeLink = label.getText();
 //        executor.execute(new TaskStartParser(labelPanel, mapParsers.get(homeLink), homeLink, getParserApp()));
 //        executor.execute(new TaskStartParser((JPanel) linkPanel.getComponents()[1], new ParserF6s(), "jobs.remotive.io", getParserApp()));
+        List<String> labelText = new ArrayList<>();
+        for (int i = 0; i < linkPanel.getComponents().length; i++) {
+            JPanel labelPanel = (JPanel) linkPanel.getComponents()[i];
+            String text = ((JLabel) labelPanel.getComponent(0)).getText();
+            if(text.contains(" ")){
+                text = text.substring(0, text.indexOf(" "));
+            }
+            labelText.add(text);
+        }
+        labelSortList = new DbHelperSort().getLabelSortList(labelText);
 
-        System.out.println("    FAIL: "+ (System.currentTimeMillis()));
+        String path = Main.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        path = path.substring(0, path.lastIndexOf("/"))+File.separator+"lib"+File.separator;
+        for (int i = 0; i < linkPanel.getComponents().length; i++) {
+            ImageIcon up = new ImageIcon(path+"up.png");
+            JLabel upLabel = new JLabel(up);
+            upLabel.setVisible(true);
+            upLabel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    moveLabel(e, true);
+                }
+            });
+            ImageIcon down = new ImageIcon(path+"down.png");
+            JLabel downLabel = new JLabel(down);
+            downLabel.setVisible(true);
+            downLabel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    moveLabel(e, false);
+                }
+            });
+            JPanel labelPanel = (JPanel) linkPanel.getComponents()[i];
+            String text = ((JLabel) labelPanel.getComponent(0)).getText();
+            if(text.contains(" ")){
+                text = text.substring(0, text.indexOf(" "));
+            }
+            int priority = 0;
+            for (LabelSort ls : labelSortList){
+                if(ls.getName().equals(text)){
+                    priority = ls.getTopPosition();
+                }
+            }
+            upLabel.setToolTipText("priority: "+priority+"+1");
+            downLabel.setToolTipText("priority: "+priority+"-1");
+            labelPanel.add(upLabel);
+            labelPanel.add(downLabel);
+        }
 
+        sortLinks();
         c = wfhLink;
         linkScrollPane.getVerticalScrollBar().setUnitIncrement(15);
         wfhLink.addMouseListener(this);
@@ -555,6 +603,54 @@ public class ParserApp implements MouseListener {
         });
     }
 
+    private void sortLinks(){
+        List<Integer> ids = new ArrayList<>();
+        List<String> labelText = new ArrayList<>();
+        List<JPanel> labelPanelList = new ArrayList<>();
+        for (int i = 0; i < linkPanel.getComponents().length; i++) {
+            JPanel labelPanel = (JPanel) linkPanel.getComponents()[i];
+            labelPanelList.add(labelPanel);
+            labelPanel.setVisible(false);
+            String text = ((JLabel) labelPanel.getComponent(0)).getText();
+            if(text.contains(" ")){
+                text = text.substring(0, text.indexOf(" "));
+            }
+            labelText.add(text);
+        }
+        labelSortList = new DbHelperSort().getLabelSortList(labelText);
+//        System.out.println(labelSortList);
+        labelSortList.sort((o1, o2) -> (o2.getTopPosition().compareTo(o1.getTopPosition())));
+        System.out.println(labelSortList);
+        linkPanel.removeAll();
+        for (LabelSort s : labelSortList) {
+            ids.add(labelText.indexOf(s.getName()));
+        }
+        for (int i = 0; i< ids.size(); i++) {
+            System.out.println(ids.get(i));
+            System.out.println(labelText.get(i));
+        }
+        System.out.println(ids.size());
+        System.out.println(labelSortList.size());
+        System.out.println(labelPanelList.size());
+
+        for (int i : ids) {
+            labelPanelList.get(i).setVisible(true);
+            String text = ((JLabel) labelPanelList.get(i).getComponent(0)).getText();
+            if(text.contains(" ")){
+                text = text.substring(0, text.indexOf(" "));
+            }
+            int priority = 0;
+            for (LabelSort ls : labelSortList){
+                if(ls.getName().equals(text)){
+                    priority = ls.getTopPosition();
+                }
+            }
+            ((JLabel) labelPanelList.get(i).getComponent(1)).setToolTipText("priority: "+priority+"+1");
+            ((JLabel) labelPanelList.get(i).getComponent(2)).setToolTipText("priority: "+priority+"-1");
+            linkPanel.add(labelPanelList.get(i));
+        }
+    }
+
     private List<ExportJob> readXMS(String fileXLS) {
         InputStream inputXML = null;
         try {
@@ -606,17 +702,7 @@ public class ParserApp implements MouseListener {
 
     private void writeExcel(List<ExportJob> exportJobs, String fileName) {
 
-//        File f = new File(fileName + ".xls");
-//        if (f.exists()) {
-//            for (int i = 1; i < Integer.MAX_VALUE; i++) {
-//                String fileName1 = fileName + "(" + i + ")";
-//                f = new File(fileName1 + ".xls");
-//                if (!f.exists()) {
-//                    fileName = fileName1;
-//                    break;
-//                }
-//            }
-//        }
+
         String homeDir = System.getProperty("user.home")+File.separator+"Documents"+File.separator + fileName;
         try (OutputStream os1 = new FileOutputStream(homeDir)) {
             List<String> headers = Arrays.asList("Company Name", "Job Title", "Job Link", "Location", "Posting date", "Source Name", "Contact name", "Position", "E-mail", "Comment");
@@ -977,7 +1063,7 @@ public class ParserApp implements MouseListener {
 //        System.out.println("text speciality :111 getPoolSize " + executor.getPoolSize() + " getActiveCount "
 //                + executor.getActiveCount() + " getQueue " + executor.getQueue().size()
 //                + " getCorePoolSize " + executor.getCorePoolSize());
-
+//        if(SwingUtilities.isLeftMouseButton(e) ) {
         if (executorDB.getQueue().size() < 2) {
             openSearchButton.setVisible(true);
             openSearchInSelected.setVisible(true);
@@ -1022,6 +1108,25 @@ public class ParserApp implements MouseListener {
             label.setForeground(colorB);
             label.setForeground(new Color(-16777216));
         }
+
+//        }else{
+//            String text = ((JLabel) e.getComponent()).getText();
+//            if(text.contains(" ")){
+//                text = text.substring(0, text.indexOf(" "));
+//            }
+//            new DbHelperSort().setPriority(text, true);
+//            sortLinks();
+//        }
+    }
+
+    private void moveLabel(MouseEvent e, boolean isTop){
+        JPanel panel = (JPanel) e.getComponent().getParent();
+        String text = ((JLabel) panel.getComponent(0)).getText();
+        if(text.contains(" ")){
+            text = text.substring(0, text.indexOf(" "));
+        }
+        new DbHelperSort().setPriority(text, isTop);
+        sortLinks();
     }
 
     @Override
