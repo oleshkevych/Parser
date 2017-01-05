@@ -4,6 +4,7 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.parser.async_tasks.*;
 import com.parser.dbmanager.DbHelper;
+import com.parser.dbmanager.DbHelperSort;
 import com.parser.entity.*;
 import com.parser.parsers.ca.eluta.ParserEluta;
 import com.parser.parsers.ca.wowjobs.ParserWowjobs;
@@ -22,7 +23,6 @@ import com.parser.parsers.com.canadajobs.ParserCanadajobs;
 import com.parser.parsers.com.careerbuilder.ParserCareerbuilder;
 import com.parser.parsers.com.dutchstartupjobs.ParserDutchstartupjobs;
 import com.parser.parsers.com.eurojobs.ParserEurojobs;
-import com.parser.parsers.com.f6s.ParserF6s;
 import com.parser.parsers.com.flexjobs.ParserFlexjobs;
 import com.parser.parsers.com.guru.ParserGugu;
 import com.parser.parsers.com.indeed.ParserIndeed;
@@ -59,7 +59,6 @@ import org.jxls.reader.XLSReader;
 import org.jxls.template.SimpleExporter;
 
 import javax.swing.*;
-import javax.swing.Timer;
 import javax.swing.border.TitledBorder;
 import javax.swing.text.*;
 import java.awt.*;
@@ -70,7 +69,6 @@ import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -195,6 +193,12 @@ public class ParserApp implements MouseListener {
     private String testSearchWord;
     private List<JobsInformForSearch> testCorrectJobsList;
 
+    private Map<String, ParserMain> mapParsers;
+
+    public Map<String, ParserMain> getMapParsers() {
+        return mapParsers;
+    }
+
     public ThreadPoolExecutor getExecutorDB() {
         return executorDB;
     }
@@ -221,7 +225,7 @@ public class ParserApp implements MouseListener {
     }
 
     public void runParser() {
-        Map<String, ParserMain> mapParsers = new HashMap<>();
+        mapParsers = new HashMap<>();
 /*0*/
         mapParsers.put("wfh.io", new ParserWFH());
 /*1*/
@@ -345,30 +349,35 @@ public class ParserApp implements MouseListener {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        List<Integer> ids = new ArrayList<>();
-        List<String> labelText = new ArrayList<>();
-        List<String> labelTextSorted = new ArrayList<>();
-        List<JPanel> labelPanelList = new ArrayList<>();
-        for (int i = 0; i < linkPanel.getComponents().length; i++) {
-            JPanel labelPanel = (JPanel) linkPanel.getComponents()[i];
-            labelPanelList.add(labelPanel);
-            labelPanel.setVisible(false);
-            labelText.add(((JLabel) labelPanel.getComponent(0)).getText());
-            labelTextSorted.add(((JLabel) labelPanel.getComponent(0)).getText());
-        }
-        Collections.sort(labelTextSorted);
-        for (String s : labelTextSorted) {
-            ids.add(labelText.indexOf(s));
-        }
-        for (int i : ids) {
-            linkPanel.add(labelPanelList.get(i));
-        }
+
+        //without priority
+//        List<Integer> ids = new ArrayList<>();
+//        List<LabelSort> labelText = new ArrayList<>();
+//        List<LabelSort> labelTextSorted = new ArrayList<>();
+//        List<JPanel> labelPanelList = new ArrayList<>();
+//        for (int i = 0; i < linkPanel.getComponents().length; i++) {
+//            JPanel labelPanel = (JPanel) linkPanel.getComponents()[i];
+//            labelPanelList.add(labelPanel);
+//            labelPanel.setVisible(false);
+//            labelText.add(((JLabel) labelPanel.getComponent(0)).getText());
+//            labelTextSorted.add(((JLabel) labelPanel.getComponent(0)).getText());
+//        }
+//        Collections.sort(labelTextSorted);
+//        for (String s : labelTextSorted) {
+//            ids.add(labelText.indexOf(s));
+//        }
+//        for (int i : ids) {
+//            linkPanel.add(labelPanelList.get(i));
+//        }
 //        JPanel labelPanel = (JPanel) linkPanel.getComponents()[47];
 //        labelPanel.setBackground(new Color(0x717184));
 //        JLabel label = (JLabel) labelPanel.getComponent(0);
 //        String homeLink = label.getText();
 //        executor.execute(new TaskStartParser(labelPanel, mapParsers.get(homeLink), homeLink, getParserApp()));
 //        executor.execute(new TaskStartParser((JPanel) linkPanel.getComponents()[1], new ParserF6s(), "jobs.remotive.io", getParserApp()));
+
+
+        sortLinks();
 
 
         c = wfhLink;
@@ -553,6 +562,43 @@ public class ParserApp implements MouseListener {
         });
     }
 
+    private void sortLinks(){
+        List<Integer> ids = new ArrayList<>();
+        List<String> labelText = new ArrayList<>();
+        List<JPanel> labelPanelList = new ArrayList<>();
+        for (int i = 0; i < linkPanel.getComponents().length; i++) {
+            JPanel labelPanel = (JPanel) linkPanel.getComponents()[i];
+            labelPanelList.add(labelPanel);
+            labelPanel.setVisible(false);
+            String text = ((JLabel) labelPanel.getComponent(0)).getText();
+            if(text.contains(" ")){
+                text = text.substring(0, text.indexOf(" "));
+            }
+            labelText.add(text);
+        }
+        List<LabelSort> labelSortList = new DbHelperSort().getLabelSortList(labelText);
+//        System.out.println(labelSortList);
+        labelSortList.sort((o1, o2) -> (o2.getTopPosition().compareTo(o1.getTopPosition())));
+        System.out.println(labelSortList);
+//        linkPanel.removeAll();
+        for (LabelSort s : labelSortList) {
+            ids.add(labelText.indexOf(s.getName()));
+        }
+        for (int i = 0; i< ids.size(); i++) {
+            System.out.println(ids.get(i));
+            System.out.println(labelText.get(i));
+        }
+        System.out.println(ids.size());
+        System.out.println(labelSortList.size());
+        System.out.println(labelPanelList.size());
+
+        for (int i : ids) {
+            labelPanelList.get(i).setVisible(true);
+            linkPanel.add(labelPanelList.get(i));
+
+        }
+    }
+
 //    private static final Logger logger = LoggerFactory.getLogger(ParserApp.class);
 
     private List<ExportJob> readXMS(String fileXLS) {
@@ -632,17 +678,6 @@ public class ParserApp implements MouseListener {
 
     private void writeExcel(List<ExportJob> exportJobs, String fileName) {
 
-//        File f = new File(fileName + ".xls");
-//        if (f.exists()) {
-//            for (int i = 1; i < Integer.MAX_VALUE; i++) {
-//                String fileName1 = fileName + "(" + i + ")";
-//                f = new File(fileName1 + ".xls");
-//                if (!f.exists()) {
-//                    fileName = fileName1;
-//                    break;
-//                }
-//            }
-//        }
         try (OutputStream os1 = new FileOutputStream(fileName)) {
             List<String> headers = Arrays.asList("Company Name", "Job Title", "Job Link", "Location", "Posting date", "Source Name", "Contact name", "Position", "E-mail", "Comment");
             SimpleExporter exporter = new SimpleExporter();
@@ -999,44 +1034,43 @@ public class ParserApp implements MouseListener {
                 + " getActiveCount " + executorDB.getActiveCount()
         );
 
-//        System.out.println("text speciality :111 getPoolSize " + executor.getPoolSize() + " getActiveCount "
-//                + executor.getActiveCount() + " getQueue " + executor.getQueue().size()
-//                + " getCorePoolSize " + executor.getCorePoolSize());
 
-        if (executorDB.getQueue().size() < 2) {
-            openSearchButton.setVisible(true);
-            openSearchInSelected.setVisible(true);
-            searchTextField.setVisible(false);
-            searchTextField.setText("");
-            startSearchButton.setVisible(false);
-            linkPanel.setVisible(false);
-            JLabel label = (JLabel) e.getComponent();
-            if (label.getText().contains(" ")) {
-                String text = label.getText().substring(0, label.getText().indexOf(" "));
-                label.setText(text);
-            }
-            if (!((JLabel) c).getText().equals(label.getText())) {
-                executorDB.execute(new TaskDB((JLabel) c));
-            }
-            c.setForeground(new Color(-16777216));
-            c = label;
-            c.setForeground(new Color(0x696969));
-            openSearchInSelected.setText("Search in " + label.getText());
-            reparseButton.setVisible(true);
-            reparseButton.setText("Reload parsing " + label.getText());
-            reparseButton.setVisible(true);
-            linkPanel.setVisible(true);
-            Future<List<JobsInformForSearch>> taskJobsInforms = executorDB.submit(new TaskReadDb(label.getText()));
-            try {
-                panelFiller(taskJobsInforms.get(), label.getText());
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        } else {
-            JLabel label = (JLabel) e.getComponent();
-            Color colorB = label.getBackground();
-            label.setForeground(new Color(0xFFFFFF));
-            label.setBackground(new Color(-16777216));
+        if(SwingUtilities.isLeftMouseButton(e) ) {
+
+            if (executorDB.getQueue().size() < 2) {
+                openSearchButton.setVisible(true);
+                openSearchInSelected.setVisible(true);
+                searchTextField.setVisible(false);
+                searchTextField.setText("");
+                startSearchButton.setVisible(false);
+                linkPanel.setVisible(false);
+                JLabel label = (JLabel) e.getComponent();
+                if (label.getText().contains(" ")) {
+                    String text = label.getText().substring(0, label.getText().indexOf(" "));
+                    label.setText(text);
+                }
+                if (!((JLabel) c).getText().equals(label.getText())) {
+                    executorDB.execute(new TaskDB((JLabel) c));
+                }
+                c.setForeground(new Color(-16777216));
+                c = label;
+                c.setForeground(new Color(0x696969));
+                openSearchInSelected.setText("Search in " + label.getText());
+                reparseButton.setVisible(true);
+                reparseButton.setText("Reload parsing " + label.getText());
+                reparseButton.setVisible(true);
+                linkPanel.setVisible(true);
+                Future<List<JobsInformForSearch>> taskJobsInforms = executorDB.submit(new TaskReadDb(label.getText()));
+                try {
+                    panelFiller(taskJobsInforms.get(), label.getText());
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            } else {
+                JLabel label = (JLabel) e.getComponent();
+                Color colorB = label.getBackground();
+                label.setForeground(new Color(0xFFFFFF));
+                label.setBackground(new Color(-16777216));
 //            try {
 //                Timer timer = new Timer(200, new ());
 //                timer.setInitialDelay(pause);
@@ -1044,28 +1078,39 @@ public class ParserApp implements MouseListener {
 //            } catch (Exception e1) {
 //                e1.printStackTrace();
 //            }
-            label.setForeground(colorB);
-            label.setForeground(new Color(-16777216));
+                label.setForeground(colorB);
+                label.setForeground(new Color(-16777216));
+            }
+        }else{
+            String text = ((JLabel) e.getComponent()).getText();
+            if(text.contains(" ")){
+                text = text.substring(0, text.indexOf(" "));
+            }
+            new DbHelperSort().setPriority(text, true);
+            sortLinks();
         }
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
-
+        System.out.println("text speciality :mousePressed ");
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
+        System.out.println("text speciality :mouseReleased ");
 
     }
 
     @Override
     public void mouseEntered(MouseEvent e) {
+        System.out.println("text speciality :mouseEntered ");
 
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
+        System.out.println("text speciality :mouseExited ");
 
     }
 

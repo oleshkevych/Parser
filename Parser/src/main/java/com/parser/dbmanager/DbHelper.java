@@ -17,33 +17,6 @@ import static jdk.nashorn.internal.runtime.regexp.joni.Syntax.Java;
  */
 public class DbHelper {
 
-    private final static String DB_NAME_1 = "ParserDB1.s3db";
-    private final static String DB_NAME_2 = "ParserDB2.s3db";
-    private final static String DB_NAME_3 = "ParserDB3.s3db";
-    private final static String DB_NAME_4 = "ParserDB4.s3db";
-    private final static String DB_NAME_5 = "ParserDB5.s3db";
-    private final static String DB_NAME_6 = "ParserDB6.s3db";
-    private final static String DB_NAME_7 = "ParserDB7.s3db";
-    private final static String DB_NAME_8 = "ParserDB8.s3db";
-    private final static String DB_NAME_9 = "ParserDB9.s3db";
-    private final static String DB_NAME_10 = "ParserDB10.s3db";
-    private final static String DB_NAME_11 = "ParserDB11.s3db";
-    private final static String DB_NAME_12 = "ParserDB12.s3db";
-    private final static String DB_NAME_13 = "ParserDB13.s3db";
-    private final static String DB_NAME_14 = "ParserDB14.s3db";
-    private final static String DB_NAME_15 = "ParserDB15.s3db";
-    private final static String DB_NAME_16 = "ParserDB16.s3db";
-    private final static String DB_NAME_17 = "ParserDB17.s3db";
-    private final static String DB_NAME_18 = "ParserDB18.s3db";
-    private final static String DB_NAME_19 = "ParserDB19.s3db";
-    private final static String DB_NAME_20 = "ParserDB20.s3db";
-    private final static String DB_NAME_21 = "ParserDB21.s3db";
-    private final static String DB_NAME_22 = "ParserDB22.s3db";
-    private final static String DB_NAME_23 = "ParserDB23.s3db";
-    private final static String DB_NAME_24 = "ParserDB24.s3db";
-    private final static String DB_NAME_25 = "ParserDB25.s3db";
-    private final static String DB_NAME_26 = "ParserDB26.s3db";
-    private final static String DB_NAME_27 = "ParserDB27.s3db";
     private final static String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS ";
     private final static String DROP_TABLE = "DROP TABLE IF EXISTS ";
 
@@ -141,7 +114,7 @@ public class DbHelper {
             }catch (Exception e){
 //                e.printStackTrace();
             }
-            /*System.out.println(path+"  "+*/ new File(path+"/lib").mkdir()/*)*/;
+            /*System.out.println(path+"  "+*/ new File("lib").mkdir()/*)*/;
             if (link != null) {
                 connection = DriverManager.getConnection("jdbc:sqlite:" + "lib/" + "ParserDB" + listParsers.indexOf(link) + ".s3db");
             } else {
