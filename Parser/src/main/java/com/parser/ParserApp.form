@@ -150,9 +150,9 @@
       <scrollpane id="ad4ac" binding="linkScrollPane">
         <constraints>
           <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false">
-            <minimum-size width="250" height="530"/>
-            <preferred-size width="250" height="530"/>
-            <maximum-size width="250" height="530"/>
+            <minimum-size width="280" height="530"/>
+            <preferred-size width="280" height="530"/>
+            <maximum-size width="280" height="530"/>
           </grid>
         </constraints>
         <properties>
@@ -168,9 +168,9 @@
               <enabled value="true"/>
               <focusable value="false"/>
               <font name="Times New Roman" size="12"/>
-              <maximumSize width="230" height="1730"/>
-              <minimumSize width="230" height="1730"/>
-              <preferredSize width="230" height="1730"/>
+              <maximumSize width="280" height="1730"/>
+              <minimumSize width="280" height="1730"/>
+              <preferredSize width="280" height="1730"/>
             </properties>
             <border type="empty" title="Links" title-justification="2" title-position="1">
               <font name="DialogInput" size="18" style="1"/>
@@ -178,16 +178,16 @@
               <color color="-16777216"/>
             </border>
             <children>
-              <grid id="3bd89" binding="wfhLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="3bd89" binding="wfhLabelPanel" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
                   <alignmentY value="0.0"/>
                   <autoscrolls value="true"/>
                   <background color="-721665"/>
-                  <maximumSize width="210" height="30"/>
-                  <minimumSize width="180" height="30"/>
-                  <preferredSize width="180" height="30"/>
+                  <maximumSize width="240" height="30"/>
+                  <minimumSize width="240" height="30"/>
+                  <preferredSize width="240" height="30"/>
                 </properties>
                 <border type="empty" title-position="1">
                   <title-color color="-16777216"/>
@@ -217,16 +217,16 @@
                   </component>
                 </children>
               </grid>
-              <grid id="68f01" binding="remoteokLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="68f01" binding="remoteokLabelPanel" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
                   <alignmentY value="0.0"/>
                   <autoscrolls value="true"/>
                   <background color="-721665"/>
-                  <maximumSize width="210" height="30"/>
-                  <minimumSize width="180" height="30"/>
-                  <preferredSize width="180" height="30"/>
+                  <maximumSize width="240" height="30"/>
+                  <minimumSize width="240" height="30"/>
+                  <preferredSize width="240" height="30"/>
                 </properties>
                 <border type="empty" title-position="1">
                   <title-color color="-16777216"/>
@@ -256,16 +256,16 @@
                   </component>
                 </children>
               </grid>
-              <grid id="6800e" binding="landingJobsPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="6800e" binding="landingJobsPanel" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
                   <alignmentY value="0.0"/>
                   <autoscrolls value="true"/>
                   <background color="-721665"/>
-                  <maximumSize width="210" height="30"/>
-                  <minimumSize width="180" height="30"/>
-                  <preferredSize width="180" height="30"/>
+                  <maximumSize width="240" height="30"/>
+                  <minimumSize width="240" height="30"/>
+                  <preferredSize width="240" height="30"/>
                 </properties>
                 <border type="empty" title-position="1">
                   <title-color color="-16777216"/>
@@ -295,16 +295,16 @@
                   </component>
                 </children>
               </grid>
-              <grid id="d807a" binding="startusLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="d807a" binding="startusLabelPanel" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
                   <alignmentY value="0.0"/>
                   <autoscrolls value="true"/>
                   <background color="-721665"/>
-                  <maximumSize width="210" height="30"/>
-                  <minimumSize width="180" height="30"/>
-                  <preferredSize width="180" height="30"/>
+                  <maximumSize width="240" height="30"/>
+                  <minimumSize width="240" height="30"/>
+                  <preferredSize width="240" height="30"/>
                 </properties>
                 <border type="empty" title-position="1">
                   <title-color color="-16777216"/>
@@ -334,16 +334,16 @@
                   </component>
                 </children>
               </grid>
-              <grid id="a27cf" binding="virtualvocationsLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="a27cf" binding="virtualvocationsLabelPanel" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
                   <alignmentY value="0.0"/>
                   <autoscrolls value="true"/>
                   <background color="-721665"/>
-                  <maximumSize width="210" height="30"/>
-                  <minimumSize width="180" height="30"/>
-                  <preferredSize width="180" height="30"/>
+                  <maximumSize width="240" height="30"/>
+                  <minimumSize width="240" height="30"/>
+                  <preferredSize width="240" height="30"/>
                 </properties>
                 <border type="empty" title-position="1">
                   <title-color color="-16777216"/>
@@ -373,16 +373,16 @@
                   </component>
                 </children>
               </grid>
-              <grid id="439f" binding="simplyhiredLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="439f" binding="simplyhiredLabelPanel" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
                   <alignmentY value="0.0"/>
                   <autoscrolls value="true"/>
                   <background color="-721665"/>
-                  <maximumSize width="210" height="30"/>
-                  <minimumSize width="180" height="30"/>
-                  <preferredSize width="180" height="30"/>
+                  <maximumSize width="240" height="30"/>
+                  <minimumSize width="240" height="30"/>
+                  <preferredSize width="240" height="30"/>
                 </properties>
                 <border type="empty" title-position="1">
                   <title-color color="-16777216"/>
@@ -412,16 +412,16 @@
                   </component>
                 </children>
               </grid>
-              <grid id="41a70" binding="stackoverflowLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="41a70" binding="stackoverflowLabelPanel" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
                   <alignmentY value="0.0"/>
                   <autoscrolls value="true"/>
                   <background color="-721665"/>
-                  <maximumSize width="210" height="30"/>
-                  <minimumSize width="180" height="30"/>
-                  <preferredSize width="180" height="30"/>
+                  <maximumSize width="240" height="30"/>
+                  <minimumSize width="240" height="30"/>
+                  <preferredSize width="240" height="30"/>
                 </properties>
                 <border type="empty" title-position="1">
                   <title-color color="-16777216"/>
@@ -451,16 +451,16 @@
                   </component>
                 </children>
               </grid>
-              <grid id="ee61a" binding="jujuLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="ee61a" binding="jujuLabelPanel" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
                   <alignmentY value="0.0"/>
                   <autoscrolls value="true"/>
                   <background color="-721665"/>
-                  <maximumSize width="210" height="30"/>
-                  <minimumSize width="180" height="30"/>
-                  <preferredSize width="180" height="30"/>
+                  <maximumSize width="240" height="30"/>
+                  <minimumSize width="240" height="30"/>
+                  <preferredSize width="240" height="30"/>
                 </properties>
                 <border type="empty" title-position="1">
                   <title-color color="-16777216"/>
@@ -490,16 +490,16 @@
                   </component>
                 </children>
               </grid>
-              <grid id="82c7b" binding="drupalLubelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="82c7b" binding="drupalLubelPanel" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
                   <alignmentY value="0.0"/>
                   <autoscrolls value="true"/>
                   <background color="-721665"/>
-                  <maximumSize width="210" height="30"/>
-                  <minimumSize width="180" height="30"/>
-                  <preferredSize width="180" height="30"/>
+                  <maximumSize width="240" height="30"/>
+                  <minimumSize width="240" height="30"/>
+                  <preferredSize width="240" height="30"/>
                 </properties>
                 <border type="empty" title-position="1">
                   <title-color color="-16777216"/>
@@ -529,16 +529,16 @@
                   </component>
                 </children>
               </grid>
-              <grid id="9b4b" binding="dutchstartupjobsLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="9b4b" binding="dutchstartupjobsLabelPanel" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
                   <alignmentY value="0.0"/>
                   <autoscrolls value="true"/>
                   <background color="-721665"/>
-                  <maximumSize width="210" height="30"/>
-                  <minimumSize width="180" height="30"/>
-                  <preferredSize width="180" height="30"/>
+                  <maximumSize width="240" height="30"/>
+                  <minimumSize width="240" height="30"/>
+                  <preferredSize width="240" height="30"/>
                 </properties>
                 <border type="empty" title-position="1">
                   <title-color color="-16777216"/>
@@ -568,16 +568,16 @@
                   </component>
                 </children>
               </grid>
-              <grid id="b4874" binding="monsterDeLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="b4874" binding="monsterDeLabelPanel" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
                   <alignmentY value="0.0"/>
                   <autoscrolls value="true"/>
                   <background color="-721665"/>
-                  <maximumSize width="210" height="30"/>
-                  <minimumSize width="180" height="30"/>
-                  <preferredSize width="180" height="30"/>
+                  <maximumSize width="240" height="30"/>
+                  <minimumSize width="240" height="30"/>
+                  <preferredSize width="240" height="30"/>
                 </properties>
                 <border type="empty" title-position="1">
                   <title-color color="-16777216"/>
@@ -607,16 +607,16 @@
                   </component>
                 </children>
               </grid>
-              <grid id="f56db" binding="weloveangularLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="f56db" binding="weloveangularLabelPanel" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
                   <alignmentY value="0.0"/>
                   <autoscrolls value="true"/>
                   <background color="-721665"/>
-                  <maximumSize width="210" height="30"/>
-                  <minimumSize width="180" height="30"/>
-                  <preferredSize width="180" height="30"/>
+                  <maximumSize width="240" height="30"/>
+                  <minimumSize width="240" height="30"/>
+                  <preferredSize width="240" height="30"/>
                 </properties>
                 <border type="empty" title-position="1">
                   <title-color color="-16777216"/>
@@ -646,16 +646,16 @@
                   </component>
                 </children>
               </grid>
-              <grid id="9e46d" binding="weworkremotelyLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="9e46d" binding="weworkremotelyLabelPanel" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
                   <alignmentY value="0.0"/>
                   <autoscrolls value="true"/>
                   <background color="-721665"/>
-                  <maximumSize width="210" height="30"/>
-                  <minimumSize width="180" height="30"/>
-                  <preferredSize width="180" height="30"/>
+                  <maximumSize width="240" height="30"/>
+                  <minimumSize width="240" height="30"/>
+                  <preferredSize width="240" height="30"/>
                 </properties>
                 <border type="empty" title-position="1">
                   <title-color color="-16777216"/>
@@ -685,16 +685,16 @@
                   </component>
                 </children>
               </grid>
-              <grid id="4f569" binding="startupjobsLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="4f569" binding="startupjobsLabelPanel" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
                   <alignmentY value="0.0"/>
                   <autoscrolls value="true"/>
                   <background color="-721665"/>
-                  <maximumSize width="210" height="30"/>
-                  <minimumSize width="180" height="30"/>
-                  <preferredSize width="180" height="30"/>
+                  <maximumSize width="240" height="30"/>
+                  <minimumSize width="240" height="30"/>
+                  <preferredSize width="240" height="30"/>
                 </properties>
                 <border type="empty" title-position="1">
                   <title-color color="-16777216"/>
@@ -724,16 +724,16 @@
                   </component>
                 </children>
               </grid>
-              <grid id="2e4e" binding="berlinstartupjobsLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="2e4e" binding="berlinstartupjobsLabelPanel" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
                   <alignmentY value="0.0"/>
                   <autoscrolls value="true"/>
                   <background color="-721665"/>
-                  <maximumSize width="210" height="30"/>
-                  <minimumSize width="180" height="30"/>
-                  <preferredSize width="180" height="30"/>
+                  <maximumSize width="240" height="30"/>
+                  <minimumSize width="240" height="30"/>
+                  <preferredSize width="240" height="30"/>
                 </properties>
                 <border type="empty" title-position="1">
                   <title-color color="-16777216"/>
@@ -763,16 +763,16 @@
                   </component>
                 </children>
               </grid>
-              <grid id="a3d67" binding="jobsChLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="a3d67" binding="jobsChLabelPanel" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
                   <alignmentY value="0.0"/>
                   <autoscrolls value="true"/>
                   <background color="-721665"/>
-                  <maximumSize width="210" height="30"/>
-                  <minimumSize width="180" height="30"/>
-                  <preferredSize width="180" height="30"/>
+                  <maximumSize width="240" height="30"/>
+                  <minimumSize width="240" height="30"/>
+                  <preferredSize width="240" height="30"/>
                 </properties>
                 <border type="empty" title-position="1">
                   <title-color color="-16777216"/>
@@ -802,16 +802,16 @@
                   </component>
                 </children>
               </grid>
-              <grid id="abadc" binding="flexjobslabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="abadc" binding="flexjobslabelPanel" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
                   <alignmentY value="0.0"/>
                   <autoscrolls value="true"/>
                   <background color="-721665"/>
-                  <maximumSize width="210" height="30"/>
-                  <minimumSize width="180" height="30"/>
-                  <preferredSize width="180" height="30"/>
+                  <maximumSize width="240" height="30"/>
+                  <minimumSize width="240" height="30"/>
+                  <preferredSize width="240" height="30"/>
                 </properties>
                 <border type="empty" title-position="1">
                   <title-color color="-16777216"/>
@@ -841,16 +841,16 @@
                   </component>
                 </children>
               </grid>
-              <grid id="b265b" binding="builtinnodeLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="b265b" binding="builtinnodeLabelPanel" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
                   <alignmentY value="0.0"/>
                   <autoscrolls value="true"/>
                   <background color="-721665"/>
-                  <maximumSize width="210" height="30"/>
-                  <minimumSize width="180" height="30"/>
-                  <preferredSize width="180" height="30"/>
+                  <maximumSize width="240" height="30"/>
+                  <minimumSize width="240" height="30"/>
+                  <preferredSize width="240" height="30"/>
                 </properties>
                 <border type="empty" title-position="1">
                   <title-color color="-16777216"/>
@@ -880,16 +880,16 @@
                   </component>
                 </children>
               </grid>
-              <grid id="7e7b3" binding="weworkmeteorLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="7e7b3" binding="weworkmeteorLabelPanel" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
                   <alignmentY value="0.0"/>
                   <autoscrolls value="true"/>
                   <background color="-721665"/>
-                  <maximumSize width="210" height="30"/>
-                  <minimumSize width="180" height="30"/>
-                  <preferredSize width="180" height="30"/>
+                  <maximumSize width="240" height="30"/>
+                  <minimumSize width="240" height="30"/>
+                  <preferredSize width="240" height="30"/>
                 </properties>
                 <border type="empty" title-position="1">
                   <title-color color="-16777216"/>
@@ -919,16 +919,16 @@
                   </component>
                 </children>
               </grid>
-              <grid id="77891" binding="jobbankLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="77891" binding="jobbankLabelPanel" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
                   <alignmentY value="0.0"/>
                   <autoscrolls value="true"/>
                   <background color="-721665"/>
-                  <maximumSize width="210" height="30"/>
-                  <minimumSize width="180" height="30"/>
-                  <preferredSize width="180" height="30"/>
+                  <maximumSize width="240" height="30"/>
+                  <minimumSize width="240" height="30"/>
+                  <preferredSize width="240" height="30"/>
                 </properties>
                 <border type="empty" title-position="1">
                   <title-color color="-16777216"/>
@@ -958,16 +958,16 @@
                   </component>
                 </children>
               </grid>
-              <grid id="c043b" binding="workingnomadsLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="c043b" binding="workingnomadsLabelPanel" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
                   <alignmentY value="0.0"/>
                   <autoscrolls value="true"/>
                   <background color="-721665"/>
-                  <maximumSize width="210" height="30"/>
-                  <minimumSize width="180" height="30"/>
-                  <preferredSize width="180" height="30"/>
+                  <maximumSize width="240" height="30"/>
+                  <minimumSize width="240" height="30"/>
+                  <preferredSize width="240" height="30"/>
                 </properties>
                 <border type="empty" title-position="1">
                   <title-color color="-16777216"/>
@@ -997,16 +997,16 @@
                   </component>
                 </children>
               </grid>
-              <grid id="afb6c" binding="remoteLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="afb6c" binding="remoteLabelPanel" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
                   <alignmentY value="0.0"/>
                   <autoscrolls value="true"/>
                   <background color="-721665"/>
-                  <maximumSize width="210" height="30"/>
-                  <minimumSize width="180" height="30"/>
-                  <preferredSize width="180" height="30"/>
+                  <maximumSize width="240" height="30"/>
+                  <minimumSize width="240" height="30"/>
+                  <preferredSize width="240" height="30"/>
                 </properties>
                 <border type="empty" title-position="1">
                   <title-color color="-16777216"/>
@@ -1036,16 +1036,16 @@
                   </component>
                 </children>
               </grid>
-              <grid id="cb9d8" binding="randstadLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="cb9d8" binding="randstadLabelPanel" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
                   <alignmentY value="0.0"/>
                   <autoscrolls value="true"/>
                   <background color="-721665"/>
-                  <maximumSize width="210" height="30"/>
-                  <minimumSize width="180" height="30"/>
-                  <preferredSize width="180" height="30"/>
+                  <maximumSize width="240" height="30"/>
+                  <minimumSize width="240" height="30"/>
+                  <preferredSize width="240" height="30"/>
                 </properties>
                 <border type="empty" title-position="1">
                   <title-color color="-16777216"/>
@@ -1075,16 +1075,16 @@
                   </component>
                 </children>
               </grid>
-              <grid id="d0c6b" binding="workopolisLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="d0c6b" binding="workopolisLabelPanel" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
                   <alignmentY value="0.0"/>
                   <autoscrolls value="true"/>
                   <background color="-721665"/>
-                  <maximumSize width="210" height="30"/>
-                  <minimumSize width="180" height="30"/>
-                  <preferredSize width="180" height="30"/>
+                  <maximumSize width="240" height="30"/>
+                  <minimumSize width="240" height="30"/>
+                  <preferredSize width="240" height="30"/>
                 </properties>
                 <border type="empty" title-position="1">
                   <title-color color="-16777216"/>
@@ -1114,16 +1114,16 @@
                   </component>
                 </children>
               </grid>
-              <grid id="30f54" binding="elutaLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="30f54" binding="elutaLabelPanel" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
                   <alignmentY value="0.0"/>
                   <autoscrolls value="true"/>
                   <background color="-721665"/>
-                  <maximumSize width="210" height="30"/>
-                  <minimumSize width="180" height="30"/>
-                  <preferredSize width="180" height="30"/>
+                  <maximumSize width="240" height="30"/>
+                  <minimumSize width="240" height="30"/>
+                  <preferredSize width="240" height="30"/>
                 </properties>
                 <border type="empty" title-position="1">
                   <title-color color="-16777216"/>
@@ -1153,16 +1153,16 @@
                   </component>
                 </children>
               </grid>
-              <grid id="c9d07" binding="jobspressoLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="c9d07" binding="jobspressoLabelPanel" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
                   <alignmentY value="0.0"/>
                   <autoscrolls value="true"/>
                   <background color="-721665"/>
-                  <maximumSize width="210" height="30"/>
-                  <minimumSize width="180" height="30"/>
-                  <preferredSize width="180" height="30"/>
+                  <maximumSize width="240" height="30"/>
+                  <minimumSize width="240" height="30"/>
+                  <preferredSize width="240" height="30"/>
                 </properties>
                 <border type="empty" title-position="1">
                   <title-color color="-16777216"/>
@@ -1192,16 +1192,16 @@
                   </component>
                 </children>
               </grid>
-              <grid id="6c7b8" binding="webbjobbLabelPrser" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="6c7b8" binding="webbjobbLabelPrser" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
                   <alignmentY value="0.0"/>
                   <autoscrolls value="true"/>
                   <background color="-721665"/>
-                  <maximumSize width="210" height="30"/>
-                  <minimumSize width="180" height="30"/>
-                  <preferredSize width="180" height="30"/>
+                  <maximumSize width="240" height="30"/>
+                  <minimumSize width="240" height="30"/>
+                  <preferredSize width="240" height="30"/>
                 </properties>
                 <border type="empty" title-position="1">
                   <title-color color="-16777216"/>
@@ -1231,16 +1231,16 @@
                   </component>
                 </children>
               </grid>
-              <grid id="33992" binding="jobsSmashingmagazineLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="33992" binding="jobsSmashingmagazineLabelPanel" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
                   <alignmentY value="0.0"/>
                   <autoscrolls value="true"/>
                   <background color="-721665"/>
-                  <maximumSize width="210" height="30"/>
-                  <minimumSize width="180" height="30"/>
-                  <preferredSize width="180" height="30"/>
+                  <maximumSize width="240" height="30"/>
+                  <minimumSize width="240" height="30"/>
+                  <preferredSize width="240" height="30"/>
                 </properties>
                 <border type="empty" title-position="1">
                   <title-color color="-16777216"/>
@@ -1270,16 +1270,16 @@
                   </component>
                 </children>
               </grid>
-              <grid id="1c0af" binding="themuseLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="1c0af" binding="themuseLabelPanel" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
                   <alignmentY value="0.0"/>
                   <autoscrolls value="true"/>
                   <background color="-721665"/>
-                  <maximumSize width="210" height="30"/>
-                  <minimumSize width="180" height="30"/>
-                  <preferredSize width="180" height="30"/>
+                  <maximumSize width="240" height="30"/>
+                  <minimumSize width="240" height="30"/>
+                  <preferredSize width="240" height="30"/>
                 </properties>
                 <border type="empty" title-position="1">
                   <title-color color="-16777216"/>
@@ -1309,16 +1309,16 @@
                   </component>
                 </children>
               </grid>
-              <grid id="fdf22" binding="techjobsLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="fdf22" binding="techjobsLabelPanel" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
                   <alignmentY value="0.0"/>
                   <autoscrolls value="true"/>
                   <background color="-721665"/>
-                  <maximumSize width="210" height="30"/>
-                  <minimumSize width="180" height="30"/>
-                  <preferredSize width="180" height="30"/>
+                  <maximumSize width="240" height="30"/>
+                  <minimumSize width="240" height="30"/>
+                  <preferredSize width="240" height="30"/>
                 </properties>
                 <border type="empty" title-position="1">
                   <title-color color="-16777216"/>
@@ -1348,16 +1348,16 @@
                   </component>
                 </children>
               </grid>
-              <grid id="e5890" binding="careerbuilderLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="e5890" binding="careerbuilderLabelPanel" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
                   <alignmentY value="0.0"/>
                   <autoscrolls value="true"/>
                   <background color="-721665"/>
-                  <maximumSize width="210" height="30"/>
-                  <minimumSize width="180" height="30"/>
-                  <preferredSize width="180" height="30"/>
+                  <maximumSize width="240" height="30"/>
+                  <minimumSize width="240" height="30"/>
+                  <preferredSize width="240" height="30"/>
                 </properties>
                 <border type="empty" title-position="1">
                   <title-color color="-16777216"/>
@@ -1387,16 +1387,16 @@
                   </component>
                 </children>
               </grid>
-              <grid id="10ac2" binding="webentwicklerJobsLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="10ac2" binding="webentwicklerJobsLabelPanel" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
                   <alignmentY value="0.0"/>
                   <autoscrolls value="true"/>
                   <background color="-721665"/>
-                  <maximumSize width="210" height="30"/>
-                  <minimumSize width="180" height="30"/>
-                  <preferredSize width="180" height="30"/>
+                  <maximumSize width="240" height="30"/>
+                  <minimumSize width="240" height="30"/>
+                  <preferredSize width="240" height="30"/>
                 </properties>
                 <border type="empty" title-position="1">
                   <title-color color="-16777216"/>
@@ -1426,16 +1426,16 @@
                   </component>
                 </children>
               </grid>
-              <grid id="c830" binding="uberjobsLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="c830" binding="uberjobsLabelPanel" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
                   <alignmentY value="0.0"/>
                   <autoscrolls value="true"/>
                   <background color="-721665"/>
-                  <maximumSize width="210" height="30"/>
-                  <minimumSize width="180" height="30"/>
-                  <preferredSize width="180" height="30"/>
+                  <maximumSize width="240" height="30"/>
+                  <minimumSize width="240" height="30"/>
+                  <preferredSize width="240" height="30"/>
                 </properties>
                 <border type="empty" title-position="1">
                   <title-color color="-16777216"/>
@@ -1465,16 +1465,16 @@
                   </component>
                 </children>
               </grid>
-              <grid id="c8ff1" binding="guruLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="c8ff1" binding="guruLabelPanel" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
                   <alignmentY value="0.0"/>
                   <autoscrolls value="true"/>
                   <background color="-721665"/>
-                  <maximumSize width="210" height="30"/>
-                  <minimumSize width="180" height="30"/>
-                  <preferredSize width="180" height="30"/>
+                  <maximumSize width="240" height="30"/>
+                  <minimumSize width="240" height="30"/>
+                  <preferredSize width="240" height="30"/>
                 </properties>
                 <border type="empty" title-position="1">
                   <title-color color="-16777216"/>
@@ -1504,16 +1504,16 @@
                   </component>
                 </children>
               </grid>
-              <grid id="c0a2" binding="authenticjobsLabelParser" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="c0a2" binding="authenticjobsLabelParser" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
                   <alignmentY value="0.0"/>
                   <autoscrolls value="true"/>
                   <background color="-721665"/>
-                  <maximumSize width="210" height="30"/>
-                  <minimumSize width="180" height="30"/>
-                  <preferredSize width="180" height="30"/>
+                  <maximumSize width="240" height="30"/>
+                  <minimumSize width="240" height="30"/>
+                  <preferredSize width="240" height="30"/>
                 </properties>
                 <border type="empty" title-position="1">
                   <title-color color="-16777216"/>
@@ -1543,16 +1543,16 @@
                   </component>
                 </children>
               </grid>
-              <grid id="b68a5" binding="eurojobsLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="b68a5" binding="eurojobsLabelPanel" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
                   <alignmentY value="0.0"/>
                   <autoscrolls value="true"/>
                   <background color="-721665"/>
-                  <maximumSize width="210" height="30"/>
-                  <minimumSize width="180" height="30"/>
-                  <preferredSize width="180" height="30"/>
+                  <maximumSize width="240" height="30"/>
+                  <minimumSize width="240" height="30"/>
+                  <preferredSize width="240" height="30"/>
                 </properties>
                 <border type="empty" title-position="1">
                   <title-color color="-16777216"/>
@@ -1582,16 +1582,16 @@
                   </component>
                 </children>
               </grid>
-              <grid id="680f7" binding="technojobsCoUkLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="680f7" binding="technojobsCoUkLabelPanel" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
                   <alignmentY value="0.0"/>
                   <autoscrolls value="true"/>
                   <background color="-721665"/>
-                  <maximumSize width="210" height="30"/>
-                  <minimumSize width="180" height="30"/>
-                  <preferredSize width="180" height="30"/>
+                  <maximumSize width="240" height="30"/>
+                  <minimumSize width="240" height="30"/>
+                  <preferredSize width="240" height="30"/>
                 </properties>
                 <border type="empty" title-position="1">
                   <title-color color="-16777216"/>
@@ -1621,16 +1621,16 @@
                   </component>
                 </children>
               </grid>
-              <grid id="7d4db" binding="canadajobsLabelParser" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="7d4db" binding="canadajobsLabelParser" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
                   <alignmentY value="0.0"/>
                   <autoscrolls value="true"/>
                   <background color="-721665"/>
-                  <maximumSize width="210" height="30"/>
-                  <minimumSize width="180" height="30"/>
-                  <preferredSize width="180" height="30"/>
+                  <maximumSize width="240" height="30"/>
+                  <minimumSize width="240" height="30"/>
+                  <preferredSize width="240" height="30"/>
                 </properties>
                 <border type="empty" title-position="1">
                   <title-color color="-16777216"/>
@@ -1660,16 +1660,16 @@
                   </component>
                 </children>
               </grid>
-              <grid id="4fc35" binding="drupalOrgUkLabelParser" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="4fc35" binding="drupalOrgUkLabelParser" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
                   <alignmentY value="0.0"/>
                   <autoscrolls value="true"/>
                   <background color="-721665"/>
-                  <maximumSize width="210" height="30"/>
-                  <minimumSize width="180" height="30"/>
-                  <preferredSize width="180" height="30"/>
+                  <maximumSize width="240" height="30"/>
+                  <minimumSize width="240" height="30"/>
+                  <preferredSize width="240" height="30"/>
                 </properties>
                 <border type="empty" title-position="1">
                   <title-color color="-16777216"/>
@@ -1699,16 +1699,16 @@
                   </component>
                 </children>
               </grid>
-              <grid id="4c3e8" binding="ziprecruiterLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="4c3e8" binding="ziprecruiterLabelPanel" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
                   <alignmentY value="0.0"/>
                   <autoscrolls value="true"/>
                   <background color="-721665"/>
-                  <maximumSize width="210" height="30"/>
-                  <minimumSize width="180" height="30"/>
-                  <preferredSize width="180" height="30"/>
+                  <maximumSize width="240" height="30"/>
+                  <minimumSize width="240" height="30"/>
+                  <preferredSize width="240" height="30"/>
                 </properties>
                 <border type="empty" title-position="1">
                   <title-color color="-16777216"/>
@@ -1738,16 +1738,16 @@
                   </component>
                 </children>
               </grid>
-              <grid id="98b84" binding="drupalcenterLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="98b84" binding="drupalcenterLabelPanel" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
                   <alignmentY value="0.0"/>
                   <autoscrolls value="true"/>
                   <background color="-721665"/>
-                  <maximumSize width="210" height="30"/>
-                  <minimumSize width="180" height="30"/>
-                  <preferredSize width="180" height="30"/>
+                  <maximumSize width="240" height="30"/>
+                  <minimumSize width="240" height="30"/>
+                  <preferredSize width="240" height="30"/>
                 </properties>
                 <border type="empty" title-position="1">
                   <title-color color="-16777216"/>
@@ -1777,16 +1777,16 @@
                   </component>
                 </children>
               </grid>
-              <grid id="ea5a4" binding="indeedLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="ea5a4" binding="indeedLabelPanel" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
                   <alignmentY value="0.0"/>
                   <autoscrolls value="true"/>
                   <background color="-721665"/>
-                  <maximumSize width="210" height="30"/>
-                  <minimumSize width="180" height="30"/>
-                  <preferredSize width="180" height="30"/>
+                  <maximumSize width="240" height="30"/>
+                  <minimumSize width="240" height="30"/>
+                  <preferredSize width="240" height="30"/>
                 </properties>
                 <border type="empty" title-position="1">
                   <title-color color="-16777216"/>
@@ -1816,16 +1816,16 @@
                   </component>
                 </children>
               </grid>
-              <grid id="10cd9" binding="wowjobsLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="10cd9" binding="wowjobsLabelPanel" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
                   <alignmentY value="0.0"/>
                   <autoscrolls value="true"/>
                   <background color="-721665"/>
-                  <maximumSize width="210" height="30"/>
-                  <minimumSize width="180" height="30"/>
-                  <preferredSize width="180" height="30"/>
+                  <maximumSize width="240" height="30"/>
+                  <minimumSize width="240" height="30"/>
+                  <preferredSize width="240" height="30"/>
                 </properties>
                 <border type="empty" title-position="1">
                   <title-color color="-16777216"/>
@@ -1855,16 +1855,16 @@
                   </component>
                 </children>
               </grid>
-              <grid id="5f07e" binding="builtinaustinLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="5f07e" binding="builtinaustinLabelPanel" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
                   <alignmentY value="0.0"/>
                   <autoscrolls value="true"/>
                   <background color="-721665"/>
-                  <maximumSize width="210" height="30"/>
-                  <minimumSize width="180" height="30"/>
-                  <preferredSize width="180" height="30"/>
+                  <maximumSize width="240" height="30"/>
+                  <minimumSize width="240" height="30"/>
+                  <preferredSize width="240" height="30"/>
                 </properties>
                 <border type="empty" title-position="1">
                   <title-color color="-16777216"/>
@@ -1894,16 +1894,16 @@
                   </component>
                 </children>
               </grid>
-              <grid id="e69d7" binding="betalistLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="e69d7" binding="betalistLabelPanel" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
                   <alignmentY value="0.0"/>
                   <autoscrolls value="true"/>
                   <background color="-721665"/>
-                  <maximumSize width="210" height="30"/>
-                  <minimumSize width="180" height="30"/>
-                  <preferredSize width="180" height="30"/>
+                  <maximumSize width="240" height="30"/>
+                  <minimumSize width="240" height="30"/>
+                  <preferredSize width="240" height="30"/>
                 </properties>
                 <border type="empty" title-position="1">
                   <title-color color="-16777216"/>
@@ -1933,16 +1933,16 @@
                   </component>
                 </children>
               </grid>
-              <grid id="df86f" binding="unicornhuntLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="df86f" binding="unicornhuntLabelPanel" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
                   <alignmentY value="0.0"/>
                   <autoscrolls value="true"/>
                   <background color="-721665"/>
-                  <maximumSize width="210" height="30"/>
-                  <minimumSize width="180" height="30"/>
-                  <preferredSize width="180" height="30"/>
+                  <maximumSize width="240" height="30"/>
+                  <minimumSize width="240" height="30"/>
+                  <preferredSize width="240" height="30"/>
                 </properties>
                 <border type="empty" title-position="1">
                   <title-color color="-16777216"/>
@@ -1972,16 +1972,16 @@
                   </component>
                 </children>
               </grid>
-              <grid id="8ee17" binding="jobsJustlandedLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="8ee17" binding="jobsJustlandedLabelPanel" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
                   <alignmentY value="0.0"/>
                   <autoscrolls value="true"/>
                   <background color="-721665"/>
-                  <maximumSize width="210" height="30"/>
-                  <minimumSize width="180" height="30"/>
-                  <preferredSize width="180" height="30"/>
+                  <maximumSize width="240" height="30"/>
+                  <minimumSize width="240" height="30"/>
+                  <preferredSize width="240" height="30"/>
                 </properties>
                 <border type="empty" title-position="1">
                   <title-color color="-16777216"/>
@@ -2011,16 +2011,16 @@
                   </component>
                 </children>
               </grid>
-              <grid id="975e" binding="jobsRemotiveLabelPanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
+              <grid id="975e" binding="jobsRemotiveLabelPanel" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
                 <constraints/>
                 <properties>
                   <alignmentX value="0.0"/>
                   <alignmentY value="0.0"/>
                   <autoscrolls value="true"/>
                   <background color="-721665"/>
-                  <maximumSize width="210" height="30"/>
-                  <minimumSize width="180" height="30"/>
-                  <preferredSize width="180" height="30"/>
+                  <maximumSize width="240" height="30"/>
+                  <minimumSize width="240" height="30"/>
+                  <preferredSize width="240" height="30"/>
                 </properties>
                 <border type="empty" title-position="1">
                   <title-color color="-16777216"/>

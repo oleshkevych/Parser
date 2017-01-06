@@ -60,6 +60,7 @@ public class ParserAuthenticjobs implements ParserMain {
         startLinksList.add("https://authenticjobs.com/filter?page=1&query=mobile");
 
 
+        int c = 0;
         for (String linkS : startLinksList) {
 
             int counter = 1;
@@ -86,12 +87,15 @@ public class ParserAuthenticjobs implements ParserMain {
                     JsonObject jobJson;
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTime(new Date());
+                    if(jArray.size() == 0){
+                        c++;
+                    }
                     for (int i = 0; i < jArray.size(); i++) {
                         datePublished = null;
                         jobJson = (jArray.get(i).getAsJsonObject());
                         String title = jobJson.get("title").getAsString();
                         String place = jobJson.get("loc").getAsString();
-                        String link = startLink + jobJson.get("url_relative").getAsString() + title.toLowerCase().replaceAll("  ", " ").replaceAll(" ", "-").replaceAll("[()/\"'.@,]", "");
+                        String link = startLink + jobJson.get("url_relative").getAsString() + title.toLowerCase().replaceAll("  ", " ").replaceAll(" ", "-").replaceAll("[()/\"'.@,+-/*]", "");
                         String company = jobJson.get("company").getAsString();
                         String stringDate = jobJson.get("post_date_relative").getAsString();
                         if (stringDate.equals("Today") || stringDate.contains("minut") || stringDate.contains("hour")) {
@@ -108,18 +112,23 @@ public class ParserAuthenticjobs implements ParserMain {
                             }
                         }
 //                        System.out.println("text date : Parser" + datePublished);
+                        counter++;
 
                         if (dateClass.dateChecker(datePublished) && jobsInforms.size() < startLinksList.indexOf(linkS) * 20) {
-
-                            URL url1 = new URL(link);
-                            BufferedReader r1 = new BufferedReader(new InputStreamReader(
-                                    ((HttpURLConnection) url1.openConnection()).getInputStream()));
                             String content = "";
-                            while (r1.readLine() != null) {
-                                content += r1.readLine();
-                            }
+                            try {
+                                URL url1 = new URL(link);
+                                BufferedReader r1 = new BufferedReader(new InputStreamReader(
+                                        ((HttpURLConnection) url1.openConnection()).getInputStream()));
 
-                            r1.close();
+                                while (r1.readLine() != null) {
+                                    content += r1.readLine();
+                                }
+
+                                r1.close();
+                            }catch(Exception e){
+                                datePublished = null;
+                            }
                             doc = Jsoup.parse(content);
                             JobsInform jobsInform = new JobsInform();
                             jobsInform.setPublishedDate(datePublished);
@@ -134,11 +143,14 @@ public class ParserAuthenticjobs implements ParserMain {
                         }
                     }
 
-                    counter++;
                 } catch (Exception e) {
                     e.printStackTrace();
+                    c++;
                 }
             while (dateClass.dateChecker(datePublished) && jobsInforms.size() < startLinksList.indexOf(linkS) * 20 && counter<5);
+        }
+        if(c == startLinksList.size()){
+            jobsInforms = null;
         }
     }
 

@@ -194,7 +194,7 @@ public class ParserApp implements MouseListener {
     private List<JobsInformForSearch> testCorrectJobsList;
 
     private Map<String, ParserMain> mapParsers;
-
+    private List<LabelSort> labelSortList;
     public Map<String, ParserMain> getMapParsers() {
         return mapParsers;
     }
@@ -376,6 +376,59 @@ public class ParserApp implements MouseListener {
 //        executor.execute(new TaskStartParser(labelPanel, mapParsers.get(homeLink), homeLink, getParserApp()));
 //        executor.execute(new TaskStartParser((JPanel) linkPanel.getComponents()[1], new ParserF6s(), "jobs.remotive.io", getParserApp()));
 
+
+        List<String> labelText = new ArrayList<>();
+        for (int i = 0; i < linkPanel.getComponents().length; i++) {
+            JPanel labelPanel = (JPanel) linkPanel.getComponents()[i];
+            String text = ((JLabel) labelPanel.getComponent(0)).getText();
+            if(text.contains(" ")){
+                text = text.substring(0, text.indexOf(" "));
+            }
+            labelText.add(text);
+        }
+        labelSortList = new DbHelperSort().getLabelSortList(labelText);
+
+        String path = Main.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        path = path.substring(1, path.lastIndexOf("/"))+"/lib/";
+        path = path.replace("%20", " ");
+
+
+        System.out.println(path);
+        for (int i = 0; i < linkPanel.getComponents().length; i++) {
+            ImageIcon up = new ImageIcon(path+"up.png");
+            JLabel upLabel = new JLabel(up);
+            upLabel.setVisible(true);
+            upLabel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    moveLabel(e, true);
+                }
+            });
+            ImageIcon down = new ImageIcon(path+"down.png");
+            JLabel downLabel = new JLabel(down);
+            downLabel.setVisible(true);
+            downLabel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    moveLabel(e, false);
+                }
+            });
+            JPanel labelPanel = (JPanel) linkPanel.getComponents()[i];
+            String text = ((JLabel) labelPanel.getComponent(0)).getText();
+            if(text.contains(" ")){
+                text = text.substring(0, text.indexOf(" "));
+            }
+            int priority = 0;
+            for (LabelSort ls : labelSortList){
+                if(ls.getName().equals(text)){
+                    priority = ls.getTopPosition();
+                }
+            }
+            upLabel.setToolTipText("priority: "+priority+"+1");
+            downLabel.setToolTipText("priority: "+priority+"-1");
+            labelPanel.add(upLabel);
+            labelPanel.add(downLabel);
+        }
 
         sortLinks();
 
@@ -576,27 +629,48 @@ public class ParserApp implements MouseListener {
             }
             labelText.add(text);
         }
-        List<LabelSort> labelSortList = new DbHelperSort().getLabelSortList(labelText);
+        labelSortList = new DbHelperSort().getLabelSortList(labelText);
 //        System.out.println(labelSortList);
         labelSortList.sort((o1, o2) -> (o2.getTopPosition().compareTo(o1.getTopPosition())));
         System.out.println(labelSortList);
-//        linkPanel.removeAll();
+        linkPanel.removeAll();
         for (LabelSort s : labelSortList) {
             ids.add(labelText.indexOf(s.getName()));
         }
-        for (int i = 0; i< ids.size(); i++) {
-            System.out.println(ids.get(i));
-            System.out.println(labelText.get(i));
-        }
-        System.out.println(ids.size());
-        System.out.println(labelSortList.size());
-        System.out.println(labelPanelList.size());
+//        for (int i = 0; i< ids.size(); i++) {
+//            System.out.println(ids.get(i));
+//            System.out.println(labelText.get(i));
+//        }
+//        System.out.println(ids.size());
+//        System.out.println(labelSortList.size());
+//        System.out.println(labelPanelList.size());
 
         for (int i : ids) {
             labelPanelList.get(i).setVisible(true);
+            String text = ((JLabel) labelPanelList.get(i).getComponent(0)).getText();
+            if(text.contains(" ")){
+                text = text.substring(0, text.indexOf(" "));
+            }
+            int priority = 0;
+            for (LabelSort ls : labelSortList){
+                if(ls.getName().equals(text)){
+                    priority = ls.getTopPosition();
+                }
+            }
+            ((JLabel) labelPanelList.get(i).getComponent(1)).setToolTipText("priority: "+priority+"+1");
+            ((JLabel) labelPanelList.get(i).getComponent(2)).setToolTipText("priority: "+priority+"-1");
             linkPanel.add(labelPanelList.get(i));
-
         }
+    }
+
+    private void moveLabel(MouseEvent e, boolean isTop){
+        JPanel panel = (JPanel) e.getComponent().getParent();
+        String text = ((JLabel) panel.getComponent(0)).getText();
+        if(text.contains(" ")){
+            text = text.substring(0, text.indexOf(" "));
+        }
+        new DbHelperSort().setPriority(text, isTop);
+        sortLinks();
     }
 
 //    private static final Logger logger = LoggerFactory.getLogger(ParserApp.class);
@@ -1035,7 +1109,7 @@ public class ParserApp implements MouseListener {
         );
 
 
-        if(SwingUtilities.isLeftMouseButton(e) ) {
+
 
             if (executorDB.getQueue().size() < 2) {
                 openSearchButton.setVisible(true);
@@ -1081,14 +1155,6 @@ public class ParserApp implements MouseListener {
                 label.setForeground(colorB);
                 label.setForeground(new Color(-16777216));
             }
-        }else{
-            String text = ((JLabel) e.getComponent()).getText();
-            if(text.contains(" ")){
-                text = text.substring(0, text.indexOf(" "));
-            }
-            new DbHelperSort().setPriority(text, true);
-            sortLinks();
-        }
     }
 
     @Override
