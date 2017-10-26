@@ -6,6 +6,7 @@ import com.parser.entity.ListImpl;
 import com.parser.entity.ParserMain;
 import com.parser.parsers.PhantomJSStarter;
 import com.parser.parsers.PrintDescription;
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -42,7 +43,6 @@ public class ParserBetalist implements ParserMain {
     }
 
 
-
     private void parser() {
         List<String> stringCat = new ArrayList<>();
         stringCat.add("drupal");
@@ -60,7 +60,7 @@ public class ParserBetalist implements ParserMain {
             try {
 
                 doc = PhantomJSStarter.startGhost(startLink + category);
-                Elements tables2 = doc.select(".jobCards--searchResults .ais-hits--item");
+                Elements tables2 = doc.select(".content-wrapper .ais-hits .ais-hits--item");
                 runParse(tables2, 0);
 
             } catch (Exception e) {
@@ -70,8 +70,8 @@ public class ParserBetalist implements ParserMain {
     }
 
     private void runParse(Elements tables2, int counter) {
-        System.out.println("text date : " + tables2.size());
-        for (int i = counter; i < tables2.size(); i += 1) {
+//        System.out.println("text date : " + tables2.size());
+        for (int i = counter; i < tables2.size(); i++) {
             objectGenerator(tables2.get(i).select(".jobCard__details__location").first(), tables2.get(i).select(".jobCard__details__title").first(),
                     tables2.get(i).select(".jobCard__details__company").first(), tables2.get(i).select(".jobCard__details__title").first());
         }
@@ -94,12 +94,13 @@ public class ParserBetalist implements ParserMain {
     public static JobsInform getDescription(String linkToDescription, JobsInform jobsInform) {
 
         try {
-            Document document = Jsoup.connect(linkToDescription)
-                    .validateTLSCertificates(false)
+            Document document = Jsoup
+                    .connect(linkToDescription)
+                    .timeout(6000)
+                    .method(Connection.Method.GET)
                     .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-                    .timeout(5000)
-                    .get();
-
+                    .execute()
+                    .parse();
 
             Elements tablesDescription = document.select(".jobListing__main__text");
             Elements tablesHead = document.select(".visualHeader__title");

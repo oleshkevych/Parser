@@ -21,8 +21,7 @@ import java.util.List;
  */
 public class ParserLandingJobs implements ParserMain {
 
-
-    private String startLink = "https://landing.jobs/offers/?page=1&s=date&s_l=0&s_h=100&t_co=false&t_st=false";
+    private static final String START_LINK = "https://landing.jobs/offers/?page=1&s=date&s_l=0&s_h=100&t_co=false&t_st=false";
     private List<JobsInform> jobsInforms = new ArrayList<JobsInform>();
     private Document doc;
     private DateGenerator dateClass;
@@ -41,7 +40,7 @@ public class ParserLandingJobs implements ParserMain {
     }
 
     private void parser() {
-        Document doc = PhantomJSStarter.startGhost(startLink);
+        Document doc = PhantomJSStarter.startGhost(START_LINK);
         Elements tables2 = doc.select(".ld-job-offer");
         runParse(tables2, 0);
         if (tables2.size() == 0) {
@@ -51,13 +50,12 @@ public class ParserLandingJobs implements ParserMain {
 
     private void runParse(Elements tables2, int counter) {
         for (int i = counter; i < tables2.size(); i++) {
-            Date datePublished = null;
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-            String stringDate = tables2.get(i).select(".ld-action-time").attr("datetime");
             try {
-                datePublished = formatter.parse(stringDate);
-                objectGenerator(tables2.get(i).select(".ld-job-detail").first(), tables2.get(i).select(".ld-job-title").first(),
-                        tables2.get(i).select(".ld-job-company").first(), datePublished, tables2.get(i).select(".ld-job-offer-link").first());
+                objectGenerator(tables2.get(i).select("div.ld-job-detail").first(),
+                        tables2.get(i).select(".ld-job-title").first(),
+                        tables2.get(i).select(".ld-job-company").first(),
+                        new Date(1),
+                        tables2.get(i).select(".ld-job-offer-link").first());
             } catch (Exception e) {
                 System.out.println("error : ParserLandingJobs");
                 e.printStackTrace();
@@ -66,12 +64,12 @@ public class ParserLandingJobs implements ParserMain {
     }
 
     private void objectGenerator(Element place, Element headPost, Element company, Date datePublished, Element linkDescription) {
-        if (dateClass.dateChecker(datePublished) && jobsInforms.size() < 100) {
+        if (jobsInforms.size() < 100) {
             JobsInform jobsInform = new JobsInform();
             jobsInform.setPublishedDate(datePublished);
             jobsInform.setHeadPublication(headPost.text());
             jobsInform.setCompanyName(company.text());
-            jobsInform.setPlace(place.text());
+            jobsInform.setPlace(place.ownText());
             jobsInform.setPublicationLink(linkDescription.attr("abs:href"));
             jobsInform = getDescription(linkDescription.attr("abs:href"), jobsInform);
             if (!jobsInforms.contains(jobsInform)) {
@@ -99,7 +97,7 @@ public class ParserLandingJobs implements ParserMain {
                 Elements ps = tablesDescription.get(i).select("p");
                 Elements uls = tablesDescription.get(i).select("ul");
                 Elements h = tablesDescription.get(i).select("h1");
-                if (h != null) {
+                if (h != null && h.first() != null) {
                     list.add(addHead(h.first()));
                 }
 

@@ -5,6 +5,7 @@ import com.parser.entity.JobsInform;
 import com.parser.entity.ListImpl;
 import com.parser.entity.ParserMain;
 import com.parser.parsers.PrintDescription;
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -53,12 +54,13 @@ public class ParserStartus implements ParserMain {
 
 
                 // need http protocol
-                doc = Jsoup.connect(link)
-                        .validateTLSCertificates(false)
+                doc = Jsoup
+                        .connect(link)
+                        .timeout(6000)
+                        .method(Connection.Method.GET)
                         .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-                        .timeout(5000)
-                        .get();
-
+                        .execute()
+                        .parse();
                 Elements tables2 = doc.select(".views-row");
                 runParse(tables2, 0);
 
@@ -70,10 +72,11 @@ public class ParserStartus implements ParserMain {
                         datePublished = null;
                         // need http protocol
                         doc = Jsoup.connect(link + "?search=&radius[0]=50&job_geo_location=&lat=&lon=&country=&administrative_area_level_1=&page=" + count)
-                                .validateTLSCertificates(false)
+                                .timeout(6000)
+                                .method(Connection.Method.GET)
                                 .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-                                .timeout(5000)
-                                .get();
+                                .execute()
+                                .parse();
 
                         Elements tables1 = doc.select(".views-row");
                         datePublished = runParse(tables1, 0);
@@ -102,8 +105,11 @@ public class ParserStartus implements ParserMain {
         for (int i = counter; i < tables2.size(); i += 1) {
             try {
                 datePublished = formatter.parse(tables2.get(i).select(".date").text());
-                objectGenerator(tables2.get(i).select(".description").first(), tables2.get(i).select(".node__title").first(),
-                        tables2.get(i).select(".recruiter-company-profile-job-organization").first(), datePublished, tables2.get(i).select(".recruiter-job-link").first());
+                objectGenerator(tables2.get(i).select(".description span").last(),
+                        tables2.get(i).select(".node__title").first(),
+                        tables2.get(i).select(".recruiter-company-profile-job-organization").first(),
+                        datePublished,
+                        tables2.get(i).select(".recruiter-job-link").first());
             } catch (ParseException e) {
                 System.out.println(e.getMessage());
             }
@@ -152,25 +158,6 @@ public class ParserStartus implements ParserMain {
             List<ListImpl> list = new ArrayList<ListImpl>();
 
             list.add(addHead(tablesHead));
-//            for (int i = 0; i<tablesDescription.size(); i++) {
-//
-//
-//                Elements ps = tablesDescription.get(i).select("p");
-//                Elements uls = tablesDescription.get(i).select("ul");
-//
-//
-//
-//                if (ps.size() > 0) {
-//                    for(Element p: ps) {
-//                        list.add(addParagraph(p));
-//                    }
-//                }
-//                if (uls.size() > 0) {
-//                    for(Element ul: uls) {
-//                        list.add(addList(ul));
-//                    }
-//                }
-//            }
             if (tablesDescription.size() > 1)
                 list.addAll(new PrintDescription().generateListImpl(tablesDescription));
 

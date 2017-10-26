@@ -102,8 +102,11 @@ public class ParserMonsterDe implements ParserMain {
             String stringDate = tables2.get(i).select("time").first().attr("datetime").substring(0, 10);
             try {
                 datePublished = formatter.parse(stringDate);
-                objectGenerator(tables2.get(i).select(".location").first(), tables2.get(i).select(".jobTitle").first(),
-                        tables2.get(i).select(".company").first(), datePublished, tables2.get(i).select(".jobTitle a").first());
+                objectGenerator(tables2.get(i).select(".job-specs-location").first(),
+                        tables2.get(i).select(".jobTitle").first(),
+                        tables2.get(i).select(".company").first(),
+                        datePublished,
+                        tables2.get(i).select(".jobTitle a").first());
             } catch (ParseException e) {
                 System.out.println(e.getMessage());
             }

@@ -94,19 +94,19 @@ public class ParserJobsJustlanded implements ParserMain {
 
 
             Elements tablesDescription = document.select("[itemprop='description']").first().children();
-            Element tablesHead = document.select("[itemprop='title']").first();
+            Element tablesHead = document.select(".title-wrapper").first();
             Element tablesDate = document.select("time").first();
             Element tablesCompany = document.select(".postinfo span").first();
-            Element tablesPlace = document.select("[itemprop='jobLocation']").first();
+            Element tablesPlace = document.select("[itemprop='addressRegion']").first();
             jobsInform.setCompanyName(tablesCompany.text());
             jobsInform.setPlace(tablesPlace.text());
             jobsInform.setHeadPublication(tablesHead.text());
             List<ListImpl> list = new ArrayList<ListImpl>();
             list.add(addHead(tablesHead));
-            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
             String stringDate = tablesDate.text();
             String last = stringDate.substring(stringDate.lastIndexOf("/") + 1);
-            stringDate = stringDate.substring(0, stringDate.lastIndexOf("/") + 1) + 20 + last;
+            stringDate = stringDate.substring(0, stringDate.lastIndexOf("/") + 1) + last;
             jobsInform.setPublishedDate(formatter.parse(stringDate));
 
             list.addAll(new PrintDescription().generateListImpl(tablesDescription));

@@ -101,7 +101,7 @@ public class ParserRemote implements ParserMain {
     }
 
     public static JobsInform getDescription(String linkToDescription, JobsInform jobsInform) {
-        System.out.println("start");
+//        System.out.println("start");
 
         try {
             Document document = Jsoup.connect(linkToDescription)
@@ -112,26 +112,21 @@ public class ParserRemote implements ParserMain {
 
             Elements tablesDescription = document.select("[itemprop='description']").first().children();
             int c = 0;
-            System.out.println(tablesDescription.size());
+//            System.out.println(tablesDescription.size());
 
-            while (tablesDescription.size() < 2 && c < 10) {
-                tablesDescription = tablesDescription.first().children();
-                System.out.println("in" + tablesDescription.size());
-
-                c++;
-            }
-            Elements tablesHead = document.select(".entry-title");
+//            while (tablesDescription.size() < 2 && c < 10) {
+//                tablesDescription = tablesDescription.first().children();
+//                System.out.println("in" + tablesDescription.size());
+//                c++;
+//            }
+            Elements tablesHead = document.select(".title_sm");
             List<ListImpl> list = new ArrayList<ListImpl>();
 
             list.add(addHead(tablesHead.first()));
-            System.out.println("addhead");
             list.addAll(new PrintDescription().generateListImpl(tablesDescription));
 
             list.add(null);
             jobsInform.setOrder(list);
-
-            System.out.println("finish");
-
             return jobsInform;
         } catch (Exception e) {
             System.out.println("Error : " + e.getMessage() + " " + jobsInform.getPublicationLink());

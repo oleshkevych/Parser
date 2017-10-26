@@ -11,7 +11,7 @@ public class DateGenerator {
 
     public DateGenerator(){
         long DAY_IN_MS = 1000 * 60 * 60 * 24;
-        lastAvailable = new Date(System.currentTimeMillis() - (7 * DAY_IN_MS));
+        lastAvailable = new Date(System.currentTimeMillis() - (17 * DAY_IN_MS));
     }
     public Date getLastDate(){
         return lastAvailable;

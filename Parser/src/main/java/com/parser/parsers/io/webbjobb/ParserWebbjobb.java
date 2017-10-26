@@ -9,6 +9,10 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -26,17 +30,31 @@ public class ParserWebbjobb implements ParserMain {
     private List<JobsInform> jobsInforms = new ArrayList<JobsInform>();
     private Document doc;
     private DateGenerator dateClass;
+    private WebDriver ghostDriver;
 
     public ParserWebbjobb() {
     }
 
     public List<JobsInform> startParse() {
         dateClass = new DateGenerator();
-        parser();
+        ghostDriver = PhantomJSStarter.startPhantom();
+        try {
+            parser(0);
+        } finally {
+            ghostDriver.close();
+            ghostDriver.quit();
+        }
         return jobsInforms;
     }
 
-    private void parser() {
+    private Document startGhost(String link, WebDriver ghostDriver){
+            ghostDriver.get(link);
+            WebDriverWait wdw = new WebDriverWait(ghostDriver, 15);
+            wdw.until(ExpectedConditions.visibilityOfElementLocated(By.className("job")));
+            return Jsoup.parse(ghostDriver.getPageSource());
+    }
+
+    private void parser(int index) {
         List<String> stringCat = new ArrayList<>();
         stringCat.add("drupal");
         stringCat.add("angular");
@@ -48,12 +66,22 @@ public class ParserWebbjobb implements ParserMain {
         stringCat.add("ios");
         stringCat.add("mobile");
         int c = 0;
-        for (String s : stringCat) {
-            doc = PhantomJSStarter.startGhostWebbjobb(startLink.replace("TTTTT", s));
-            Elements tables3 = doc.select(".job");
-            runParse(tables3, 0);
-            if (tables3.size() == 0) {
-                c++;
+        try {
+            for (int i = index; i < stringCat.size(); i++) {
+                index = i;
+                System.out.println(startLink.replace("TTTTT", stringCat.get(i)));
+                doc = startGhost(startLink.replace("TTTTT", stringCat.get(i)), ghostDriver);
+                Elements tables3 = doc.select(".job");
+                runParse(tables3, 0);
+                if (tables3.size() == 0) {
+                    c++;
+                }
+            }
+        } catch (Exception e) {
+            if (e.getMessage().startsWith("Timed out after 15") && index < stringCat.size() - 1) {
+                parser (index + 1);
+            } else {
+                throw e;
             }
         }
         if (c == stringCat.size()) {

@@ -109,8 +109,10 @@ public class ParserIndeed implements ParserMain {
                 }
 //                System.out.println("  date D: " + datePublished);
 
-                objectGenerator(tables2.get(i).select("[itemprop='addressLocality']").first(), tables2.get(i).select("[itemprop='title']").first(),
-                        tables2.get(i).select("[itemprop='hiringOrganization']").first(), tables2.get(i).select("a").first(), datePublished, country);
+                objectGenerator(tables2.get(i).select(".location").first(),
+                        tables2.get(i).select(".jobtitle").first(),
+                        tables2.get(i).select(".company").first(),
+                        tables2.get(i).select("a").first(), datePublished, country);
             }
 
         }

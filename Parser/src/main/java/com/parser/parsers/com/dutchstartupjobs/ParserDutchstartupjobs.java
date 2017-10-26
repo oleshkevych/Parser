@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class ParserDutchstartupjobs implements ParserMain {
 
-    private String startLink = "https://dutchstartupjobs.com/?post_type=noo_job&s=&category%5B%5D=software-development-3&type=";
+    private static final String startLink = "https://dutchstartupjobs.com/?post_type=noo_job&s=&category%5B%5D=software-development-3&type=";
     private List<JobsInform> jobsInforms = new ArrayList<JobsInform>();
     private Document doc;
     private DateGenerator dateClass;

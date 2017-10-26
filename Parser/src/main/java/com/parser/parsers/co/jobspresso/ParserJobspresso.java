@@ -5,6 +5,7 @@ import com.parser.entity.DateGenerator;
 import com.parser.entity.JobsInform;
 import com.parser.entity.ListImpl;
 import com.parser.entity.ParserMain;
+import com.parser.parsers.util.DateUtil;
 import org.apache.regexp.RE;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
@@ -16,6 +17,8 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -68,26 +71,21 @@ public class ParserJobspresso implements ParserMain {
     private Date runParse(Elements tables2, int counter) {
         System.out.println("text date : " + tables2.size());
         Date datePublished = null;
+        SimpleDateFormat formatter = new SimpleDateFormat("MMM dd yyyy");
         for (int i = counter; i < tables2.size(); i += 1) {
             datePublished = null;
-            String stringDate = tables2.get(i).select(".job_listing-date").text();
-            if (stringDate.contains("minut") || stringDate.contains("hour")) {
-                datePublished = new Date();
-            } else if (stringDate.contains("yesterday") || stringDate.contains("1 day")) {
-                datePublished = new Date(new Date().getTime() - 1 * 24 * 3600 * 1000);
-            } else if (stringDate.contains("2 day")) {
-                datePublished = new Date(new Date().getTime() - 2 * 24 * 3600 * 1000);
-            } else if (stringDate.contains("3 day")) {
-                datePublished = new Date(new Date().getTime() - 3 * 24 * 3600 * 1000);
-            } else if (stringDate.contains("4 day")) {
-                datePublished = new Date(new Date().getTime() - 4 * 24 * 3600 * 1000);
-            } else if (stringDate.contains("5 day")) {
-                datePublished = new Date(new Date().getTime() - 5 * 24 * 3600 * 1000);
-            } else if (stringDate.contains("6 day")) {
-                datePublished = new Date(new Date().getTime() - 6 * 24 * 3600 * 1000);
+
+            String stringDate = tables2.get(i).select("date").first().text() + " " + DateUtil.getCurrentYear();
+            try {
+                datePublished = formatter.parse(stringDate);
+                objectGenerator(tables2.get(i).select(".job_listing-location").first(),
+                        tables2.get(i).select(".job_listing-title").first(),
+                        tables2.get(i).select(".job_listing-company strong").first(),
+                        datePublished,
+                        tables2.get(i).select("a").first());
+            } catch (ParseException e) {
+                System.out.println(e.getMessage());
             }
-            objectGenerator(tables2.get(i).select(".job_listing-location").first(), tables2.get(i).select(".job_listing-title").first(),
-                    tables2.get(i).select(".job_listing-company strong").first(), datePublished, tables2.get(i).select("a").first());
         }
         return datePublished;
     }
@@ -116,7 +114,7 @@ public class ParserJobspresso implements ParserMain {
                     .timeout(5000)
                     .get();
 
-            Elements tablesDescription = document.select("[itemprop='description']").first().children();
+            Elements tablesDescription = document.select(".job_listing-description").first().children();
             Elements tablesHead = document.select(".page-title");
             List<ListImpl> list = new ArrayList<ListImpl>();
 

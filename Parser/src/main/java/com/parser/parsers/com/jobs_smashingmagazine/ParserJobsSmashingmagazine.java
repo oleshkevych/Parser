@@ -4,10 +4,14 @@ import com.parser.entity.DateGenerator;
 import com.parser.entity.JobsInform;
 import com.parser.entity.ListImpl;
 import com.parser.entity.ParserMain;
+import com.parser.parsers.PhantomJSStarter;
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -16,14 +20,17 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static com.parser.parsers.PhantomJSStarter.startPhantom;
+
 /**
  * Created by rolique_pc on 12/15/2016.
  */
 public class ParserJobsSmashingmagazine implements ParserMain {
-    private String startLink = "http://jobs.smashingmagazine.com/";
+
+    private final static String START_LINK = "http://jobs.smashingmagazine.com/";
     private List<JobsInform> jobsInforms = new ArrayList<JobsInform>();
-    private Document doc;
     private DateGenerator dateClass;
+    private WebDriver ghostDriver;
 
     public ParserJobsSmashingmagazine() {
     }
@@ -34,33 +41,51 @@ public class ParserJobsSmashingmagazine implements ParserMain {
         return jobsInforms;
     }
 
+    private Document startGhost(String link) {
+
+        if (ghostDriver == null) ghostDriver = startPhantom();
+        ghostDriver.get(link);
+        new WebDriverWait(ghostDriver, 15);
+        return Jsoup.parse(ghostDriver.getPageSource());
+    }
+
     private void parser() {
-        try {
+//        try {
 
 
 //         need http protocol
-            doc = Jsoup.connect(startLink)
-                    .validateTLSCertificates(false)
-                    .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-                    .timeout(5000)
-                    .get();
-            Elements tables2 = doc.select(".entry-list").first().children();
-            runParse(tables2, 0);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Document doc = startGhost(START_LINK);
+//                    Jsoup
+//                    .connect(START_LINK)
+//                    .timeout(6000)
+//                    .method(Connection.Method.GET)
+//                    .validateTLSCertificates(false)
+//                    .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
+//                    .execute()
+//                    .parse();
+        Elements tables2 = doc.select(".entry-list").first().children();
+        runParse(tables2, 0);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
     }
 
     private void runParse(Elements tables2, int counter) {
-        System.out.println("text date : " + tables2.size());
-        for (int i = counter; i < tables2.size(); i += 1) {
-            objectGenerator(tables2.get(i).select(".entry-company").first(), tables2.get(i).select(".entry").first().child(0),
-                    tables2.get(i).select(".entry-company strong").first(), tables2.get(i).select("a").first());
+        try {
+            System.out.println("text date : " + tables2.size());
+            for (int i = counter; i < tables2.size(); i += 1) {
+                objectGenerator(tables2.get(i).select(".entry-company").first(), tables2.get(i).select(".entry").first().child(0),
+                        tables2.get(i).select(".entry-company strong").first(), tables2.get(i).select("a").first());
+            }
+        } finally {
+            ghostDriver.close();
+            ghostDriver.quit();
         }
     }
 
     private void objectGenerator(Element place, Element headPost, Element company, Element linkDescription) {
+
         JobsInform jobsInform = new JobsInform();
         jobsInform.setHeadPublication(headPost.text());
         jobsInform.setCompanyName(company.text());
@@ -72,15 +97,11 @@ public class ParserJobsSmashingmagazine implements ParserMain {
         }
     }
 
-    public static JobsInform getDescription(String linkToDescription, JobsInform jobsInform) {
+    private JobsInform getDescription(String linkToDescription, JobsInform jobsInform) {
 //        System.out.println("text link1 : " + linkToDescription);
 
         try {
-            Document document = Jsoup.connect(linkToDescription)
-                    .validateTLSCertificates(false)
-                    .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-                    .timeout(5000)
-                    .get();
+            Document document = startGhost(linkToDescription);
 
 
             Elements tablesDescription = document.select("article").first().children();
@@ -106,7 +127,7 @@ public class ParserJobsSmashingmagazine implements ParserMain {
                     list.add(addList(tablesDescription.get(i)));
                 }
 
-                }
+            }
 
             list.add(null);
             jobsInform.setOrder(list);

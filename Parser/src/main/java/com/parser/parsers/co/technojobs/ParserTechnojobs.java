@@ -85,8 +85,11 @@ public class ParserTechnojobs implements ParserMain {
             String stringDate = tables2.get(i).select("time").attr("datetime");
             try {
                 datePublished = formatter.parse(stringDate);
-                objectGenerator(tables2.get(i).select("[itemprop='jobLocation']").first(), tables2.get(i).select(".job-ti").first(),
-                        tables2.get(i), datePublished, tables2.get(i).select(".job-ti a").last());
+                objectGenerator(tables2.get(i).select(".job-details").first(),
+                        tables2.get(i).select(".job-ti").first(),
+                        tables2.get(i),
+                        datePublished,
+                        tables2.get(i).select(".job-ti a").last());
             } catch (ParseException e) {
                 System.out.println(e.getMessage());
             }
@@ -100,8 +103,10 @@ public class ParserTechnojobs implements ParserMain {
             JobsInform jobsInform = new JobsInform();
             jobsInform.setPublishedDate(datePublished);
             jobsInform.setHeadPublication(headPost.text());
+            String placeString = place.text();
+            placeString = placeString.substring(placeString.indexOf("Location:") + 9, placeString.indexOf("Salary"));
 //            jobsInform.setCompanyName(company.text());
-            jobsInform.setPlace(place.text());
+            jobsInform.setPlace(placeString);
             jobsInform.setPublicationLink(linkDescription.attr("abs:href"));
             jobsInform = getDescription(linkDescription.attr("abs:href"), jobsInform);
             if (!jobsInforms.contains(jobsInform)) {

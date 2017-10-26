@@ -19,7 +19,7 @@ import java.util.List;
  * Created by rolique_pc on 12/16/2016.
  */
 public class ParserDrupalOrgUk implements ParserMain {
-    private String startLink = "http://www.drupal.org.uk/wanted";
+    private static final String START_LINK = "http://www.drupal.org.uk/wanted";
     private List<JobsInform> jobsInforms = new ArrayList<JobsInform>();
     private Document doc;
     private DateGenerator dateClass;
@@ -41,7 +41,7 @@ public class ParserDrupalOrgUk implements ParserMain {
             try {
 
                 datePublished = null;
-                doc = Jsoup.connect(startLink)
+                doc = Jsoup.connect(START_LINK)
                         .validateTLSCertificates(false)
                         .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
                         .timeout(5000)

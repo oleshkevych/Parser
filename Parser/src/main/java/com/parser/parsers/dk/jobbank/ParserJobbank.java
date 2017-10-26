@@ -135,9 +135,9 @@ public class ParserJobbank implements ParserMain {
 
 
             Elements tablesDescription = document.select(".jobContent").first().children();
-            Elements tablesHead = document.select(".job-view-title");
-            Element tablesPlace = document.select("span[itemprop=\"jobLocation\"]").first();
-            Element tablesCompany = document.select("b[itemprop=\"hiringOrganization\"]").first();
+            Elements tablesHead = document.select(".job-title-box-header");
+            Element tablesPlace = document.select("span[itemprop=\"addressRegion\"]").first();
+            Element tablesCompany = document.select(".job-company").first();
             List<ListImpl> list = new ArrayList<ListImpl>();
             jobsInform.setCompanyName(tablesCompany.text());
             jobsInform.setPlace(tablesPlace.text());

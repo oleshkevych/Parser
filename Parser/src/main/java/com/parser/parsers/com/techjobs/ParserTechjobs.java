@@ -19,8 +19,7 @@ import java.util.List;
  */
 public class ParserTechjobs implements ParserMain {
 
-    private String startLink = "http://www.techjobs.com/SearchResults.aspx?query=djAuMXxSVjpRdWlja2xpc3Rpbmd8U086ZGF0ZSBkZXNjfFBOOjF8UFM6NTB8Q1I6c2VhcmNoc3RhcnRkYXRlOkRhdGVSZXN0cmljdGVkJm13ZW5jMztAVG9kYXktNyZtd2VuYzM7T1AmbXdlbmMzO1JhbmdlfElWOnNlYXJjaHN0YXJ0ZGF0ZTpEYXRlUmVzdHJpY3RlZF9AVG9kYXktN19PUF9SYW5nZXxOQTp3b3JrYXJlYTpeQ29tcHV0aW5nL0lUJF9Db21wdXRpbmcvSVR8djAuMQ==&params=c2VhcmNoc3RhcnRkYXRlOjF8cXVlcnlmaWx0ZXI6fHdvcmthcmVhOjB8d29ya2FyZWFfbW9yZTowfEpvYmxvY2F0aW9uMTowfEpvYmxvY2F0aW9uMV9tb3JlOjB8Sm9ibG9jYXRpb246MHxKb2Jsb2NhdGlvbl9tb3JlOjB8Sm9ibG9jYXRpb24zOjB8Sm9ibG9jYXRpb24zX21vcmU6MHxKb2Jsb2NhdGlvbjQ6MHxKb2Jsb2NhdGlvbjRfbW9yZTowfEpvYmxvY2F0aW9uNTowfEpvYmxvY2F0aW9uNV9tb3JlOjB8Sm9idHlwZTowfEpvYnR5cGVfbW9yZTow";
-    private List<JobsInform> jobsInforms = new ArrayList<JobsInform>();
+    private String startLink = "http://www.techjobs.com/SearchResults.aspx?query=djAuMXxSVjpRdWlja2xpc3Rpbmd8U086ZGF0ZSBkZXNjfFBOOjF8UFM6NTB8Q1I6c2VhcmNoc3RhcnRkYXRlOkRhdGVSZXN0cmljdGVkJm13ZW5jMztAVG9kYXktNyZtd2VuYzM7T1AmbXdlbmMzO1JhbmdlfElWOnNlYXJjaHN0YXJ0ZGF0ZTpEYXRlUmVzdHJpY3RlZF9AVG9kYXktN19PUF9SYW5nZXxOQTp3b3JrYXJlYTpeRGV2ZWxvcGVyJF9EZXZlbG9wZXJ+XiJJVCBTeXN0ZW1zIiRfSVQgU3lzdGVtc35eIklUIFN1cHBvcnQiJF9JVCBTdXBwb3J0fl4iU29mdHdhcmUgRW5naW5lZXJpbmciJF9Tb2Z0d2FyZSBFbmdpbmVlcmluZ35eIklUIFNlY3VyaXR5IiRfSVQgU2VjdXJpdHl+XkRhdGFiYXNlcyRfRGF0YWJhc2Vzfl4iUUEgLyBUZXN0aW5nIiRfUUEgLyBUZXN0aW5nfl4iVUkgRGVzaWduIiRfVUkgRGVzaWdufl4iTW9iaWxlIC8gQXBwcyIkX01vYmlsZSAvIEFwcHN8djAuMQ==&params=c2VhcmNoc3RhcnRkYXRlOjF8cXVlcnlmaWx0ZXI6fHdvcmthcmVhOjB8d29ya2FyZWFfbW9yZToxfEpvYmxvY2F0aW9uMTowfEpvYmxvY2F0aW9uMV9tb3JlOjB8Sm9ibG9jYXRpb246MHxKb2Jsb2NhdGlvbl9tb3JlOjB8Sm9ibG9jYXRpb24zOjB8Sm9ibG9jYXRpb24zX21vcmU6MHxKb2Jsb2NhdGlvbjQ6MHxKb2Jsb2NhdGlvbjRfbW9yZTowfEpvYmxvY2F0aW9uNTowfEpvYmxvY2F0aW9uNV9tb3JlOjB8Sm9idHlwZTowfEpvYnR5cGVfbW9yZTow";    private List<JobsInform> jobsInforms = new ArrayList<JobsInform>();
     private Document doc;
 
 
@@ -66,7 +65,6 @@ public class ParserTechjobs implements ParserMain {
         list.add(list2);
         jobsInform.setOrder(list);
         String link = linkDescription.attr("href");
-
 
         String jobIdNumber = link.substring(link.indexOf("LJA") + 3, link.indexOf(",") - 1);
         String jobName = jobsInform.getHeadPublication().toLowerCase().replaceAll(" ", "_").replaceAll("[\\W]", "").replace("_", "-");

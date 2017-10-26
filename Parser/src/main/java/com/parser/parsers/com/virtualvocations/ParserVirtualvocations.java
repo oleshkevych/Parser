@@ -4,6 +4,7 @@ import com.parser.entity.DateGenerator;
 import com.parser.entity.JobsInform;
 import com.parser.entity.ListImpl;
 import com.parser.entity.ParserMain;
+import com.parser.parsers.PrintDescription;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -101,7 +102,7 @@ public class ParserVirtualvocations implements ParserMain {
     private Date runParse(Elements tables2, int counter) {
         Date datePublished = null;
         for (int i = counter; i < tables2.size(); i += 1) {
-            String stringDate = tables2.get(i).select(".default-orange").text();
+            String stringDate = tables2.get(i).select(".meta").text();
             if (stringDate.contains("minut") || stringDate.contains("hour")) {
                 datePublished = new Date();
             } else if (stringDate.contains("1 day")) {
@@ -117,8 +118,11 @@ public class ParserVirtualvocations implements ParserMain {
             } else if (stringDate.contains("6 day")) {
                 datePublished = new Date(new Date().getTime() - 6 * 24 * 3600 * 1000);
             }
-            objectGenerator(tables2.get(i).select("h2 a").first(), tables2.get(i).select("h2 a").first(),
-                    tables2.get(i).select(".recruiter-company-profile-job-organization").first(), datePublished, tables2.get(i).select("h2 a").first());
+            objectGenerator(tables2.get(i).select("h2 a").first(),
+                    tables2.get(i).select("h2 a").first(),
+                    tables2.get(i).select(".recruiter-company-profile-job-organization").first(),
+                    datePublished,
+                    tables2.get(i).select("h2 a").first());
         }
         return datePublished;
     }
@@ -129,7 +133,7 @@ public class ParserVirtualvocations implements ParserMain {
             jobsInform.setPublishedDate(datePublished);
             jobsInform.setHeadPublication(headPost.attr("title"));
             jobsInform.setCompanyName("");
-            jobsInform.setPlace(place.text().replaceFirst(headPost.attr("title"), ""));
+            jobsInform.setPlace(place.text().replaceFirst((headPost.attr("title") + " -"), ""));
             jobsInform.setPublicationLink(linkDescription.attr("href"));
             jobsInform = getDescription(linkDescription.attr("href"), jobsInform);
             if (!jobsInforms.contains(jobsInform)) {
@@ -149,7 +153,7 @@ public class ParserVirtualvocations implements ParserMain {
 
 
             Element tablesDescription = document.select("#job_details").first();
-            String place = tablesDescription.select(".row").first().text();
+            String place = document.select(".details-side div div").first().text();
             List<ListImpl> list = new ArrayList<ListImpl>();
             if (place.length() > 0) {
                 jobsInform.setPlace(place.substring(place.indexOf("Location:"), place.indexOf("Compensation:"))
@@ -157,23 +161,7 @@ public class ParserVirtualvocations implements ParserMain {
             }
 
 
-            list.add(addHead(tablesDescription.select("h1").first()));
-
-            Elements ps = tablesDescription.select("p");
-            Elements uls = tablesDescription.select("ul");
-
-
-            if (ps.size() > 0) {
-                for (Element p : ps) {
-                    list.add(addParagraph(p));
-                }
-            }
-            if (uls.size() > 0) {
-                for (Element ul : uls) {
-                    list.add(addList(ul));
-                }
-            }
-//            }
+            list.addAll(new PrintDescription().generateListImpl(tablesDescription.children()));
 
             list.add(null);
             jobsInform.setOrder(list);

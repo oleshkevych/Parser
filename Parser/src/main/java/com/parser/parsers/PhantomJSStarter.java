@@ -1,5 +1,6 @@
 package com.parser.parsers;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
 import com.parser.Main;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -24,49 +25,51 @@ public class PhantomJSStarter {
             ghostDriver.get(link);
             new WebDriverWait(ghostDriver, 15);
             return Jsoup.parse(ghostDriver.getPageSource());
-        }finally {
+        } finally {
             ghostDriver.close();
             ghostDriver.quit();
         }
     }
 
-    public static Document startGhostJustlanded(String link){
+    public static Document startGhostJobsRemotive(String link) {
+        WebDriver ghostDriver = startPhantom();
+        try {
+            ghostDriver.get(link);
+            WebDriverWait wdw = new WebDriverWait(ghostDriver, 30);
+            wdw.until(ExpectedConditions.visibilityOfElementLocated(By.className("job_listing-location")));
+            return Jsoup.parse(ghostDriver.getPageSource());
+        } finally {
+            ghostDriver.close();
+            ghostDriver.quit();
+        }
+    }
+
+    public static Document startGhostJustlanded(String link) {
         WebDriver ghostDriver = startPhantom();
         try {
             ghostDriver.get(link);
             WebDriverWait wdw = new WebDriverWait(ghostDriver, 15);
             wdw.until(ExpectedConditions.visibilityOfElementLocated(By.className("listings")));
             return Jsoup.parse(ghostDriver.getPageSource());
-        }finally {
+        } finally {
             ghostDriver.close();
             ghostDriver.quit();
         }
     }
 
-    public static Document startGhostWebbjobb(String link){
-        WebDriver ghostDriver = startPhantom();
-        try {
-            ghostDriver.get(link);
-            WebDriverWait wdw = new WebDriverWait(ghostDriver, 15);
-            wdw.until(ExpectedConditions.visibilityOfElementLocated(By.className("job")));
-            return Jsoup.parse(ghostDriver.getPageSource());
-        }finally {
-            ghostDriver.close();
-            ghostDriver.quit();
-        }
-    }
-    public static Document startGhostF6s(String link){
+    public static Document startGhostF6s(String link) {
         WebDriver ghostDriver = startPhantom();
         try {
             ghostDriver.get(link);
             WebDriverWait wdw = new WebDriverWait(ghostDriver, 15);
             wdw.until(ExpectedConditions.visibilityOfElementLocated(By.className("result-info")));
             return Jsoup.parse(ghostDriver.getPageSource());
-        }finally {
+        } finally {
             ghostDriver.close();
             ghostDriver.quit();
         }
     }
+
     public static Document renderPage(String url, boolean description) {
 
         WebDriver ghostDriver = startPhantom();
@@ -87,8 +90,9 @@ public class PhantomJSStarter {
 
     public static PhantomJSDriver startPhantom() {
         String path = Main.class.getProtectionDomain().getCodeSource().getLocation().getPath().substring(1);
-        path = path.substring(0, path.lastIndexOf("/"))+File.separator+"lib"+File.separator+"phantomjs"+File.separator+"phantomjs.exe";
+        path = path.substring(0, path.lastIndexOf("/")) + File.separator + "lib" + File.separator + "phantomjs" + File.separator + "phantomjs.exe";
 
+        path = path.replaceAll("%20", " ");
         DesiredCapabilities caps = new DesiredCapabilities();
         caps.setJavascriptEnabled(true);
         caps.setCapability("takesScreenshot", false);

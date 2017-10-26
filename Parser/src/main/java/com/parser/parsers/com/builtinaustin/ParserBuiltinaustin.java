@@ -70,11 +70,11 @@ public class ParserBuiltinaustin implements ParserMain {
     }
 
     private Date runParse(Elements tables2, int counter) {
-//        System.out.println("text date : " + tables2.size());
+        System.out.println("text date : " + tables2.size());
         Date datePublished = null;
         for (int i = counter; i < tables2.size(); i += 1) {
             datePublished = null;
-            String stringDate = tables2.get(i).select(".posted-date").text();
+            String stringDate = tables2.get(i).select(".job-date").text();
             if (stringDate.contains("minut") || stringDate.contains("hour")) {
                 datePublished = new Date();
             } else if (stringDate.contains("1 day")) {
@@ -91,8 +91,11 @@ public class ParserBuiltinaustin implements ParserMain {
                 datePublished = new Date(new Date().getTime() - 6 * 24 * 3600 * 1000);
             }
 
-            objectGenerator(tables2.get(i).select(".views-field-field-job-city-value").first(), tables2.get(i).select(".job-title a").first(),
-                    tables2.get(i).select(".job-company").first(), datePublished, tables2.get(i).select(".job-title a").first());
+            objectGenerator(tables2.get(i).select(".job-location").first(),
+                    tables2.get(i).select(".title").first(),
+                    tables2.get(i).select(".company-title").first(),
+                    datePublished,
+                    tables2.get(i).select("a").first());
         }
         return datePublished;
     }
@@ -104,8 +107,8 @@ public class ParserBuiltinaustin implements ParserMain {
             jobsInform.setHeadPublication(headPost.text());
             jobsInform.setCompanyName(company.text());
             jobsInform.setPlace(place.text());
-            jobsInform.setPublicationLink("http://www.builtinaustin.com/" + linkDescription.attr("href"));
-            jobsInform = getDescription("http://www.builtinaustin.com/" + linkDescription.attr("href"), jobsInform);
+            jobsInform.setPublicationLink("http://www.builtinaustin.com" + linkDescription.attr("href"));
+            jobsInform = getDescription("http://www.builtinaustin.com" + linkDescription.attr("href"), jobsInform);
             if (!jobsInforms.contains(jobsInform)) {
                 jobsInforms.add(jobsInform);
             }
@@ -122,8 +125,8 @@ public class ParserBuiltinaustin implements ParserMain {
                     .get();
 
 
-            Elements tablesDescription = document.select(".nj-job-body").first().children();
-            Elements tablesHead = document.select(".nj-job-title");
+            Elements tablesDescription = document.select(".job-description div").first().children();
+            Elements tablesHead = document.select(".node-title span");
             List<ListImpl> list = new ArrayList<ListImpl>();
 
             list.add(addHead(tablesHead.first()));

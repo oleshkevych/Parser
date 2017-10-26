@@ -5,6 +5,7 @@ import com.parser.entity.DateGenerator;
 import com.parser.entity.JobsInform;
 import com.parser.entity.ListImpl;
 import com.parser.entity.ParserMain;
+import com.parser.parsers.PrintDescription;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -73,7 +74,7 @@ public class ParserStackoverflow implements ParserMain {
         Date datePublished = null;
         for (int i = counter; i < tables2.size(); i += 1) {
             datePublished = null;
-            String stringDate = tables2.get(i).select(".posted").text();
+            String stringDate = tables2.get(i).select(".-posted-date").text();
             if (stringDate.contains("minut") || stringDate.contains("hour")) {
                 datePublished = new Date();
             } else if (stringDate.contains("yesterday")) {
@@ -89,8 +90,11 @@ public class ParserStackoverflow implements ParserMain {
             } else if (stringDate.contains("6 day")) {
                 datePublished = new Date(new Date().getTime() - 6 * 24 * 3600 * 1000);
             }
-            objectGenerator(tables2.get(i).select(".location").first(), tables2.get(i).select(".-title").first(),
-                    tables2.get(i).select(".employer").first(), datePublished, tables2.get(i).select(".job-link").first());
+            objectGenerator(tables2.get(i).select(".-company .-location").first(),
+                    tables2.get(i).select(".job-link").first(),
+                    tables2.get(i).select(".-company .-name").first(),
+                    datePublished,
+                    tables2.get(i).select(".job-link").first());
         }
         return datePublished;
     }
@@ -121,32 +125,12 @@ public class ParserStackoverflow implements ParserMain {
 
 
             Elements tablesDescription = document.select(".description");
-            Elements tablesHead = document.select(".detail-sectionTitle");
+            Element tablesHead = document.select(".job-link").first();
             List<ListImpl> list = new ArrayList<ListImpl>();
+            list.add(addHead(tablesHead));
 
-            for (int i = 0; i < tablesDescription.size(); i++) {
-
-
-                Elements ps = tablesDescription.get(i).select("p");
-                Elements uls = tablesDescription.get(i).select("ul");
-                list.add(addHead(tablesHead.get(i)));
-
-                if (ps.size() > 0) {
-                    for (Element p : ps) {
-                        list.add(addParagraph(p));
-                    }
-                }
-                if (uls.size() > 0) {
-                    for (Element ul : uls) {
-                        list.add(addList(ul));
-                    }
-                }
-            }
-
-            list.add(null);
+            list.addAll(new PrintDescription().generateListImpl(tablesDescription));
             jobsInform.setOrder(list);
-
-
             return jobsInform;
         } catch (Exception e) {
             System.out.println("Error : " + e.getMessage() + " " + jobsInform.getPublicationLink());
@@ -161,27 +145,4 @@ public class ParserStackoverflow implements ParserMain {
         list.setListHeader(element.text());
         return list;
     }
-
-    private static ListImpl addParagraph(Element element) {
-        if (element.select("strong").size() > 0) {
-            return addHead(element.select("strong").first());
-        } else {
-
-
-            ListImpl list = new ListImpl();
-            list.setTextFieldImpl(element.text());
-            return list;
-        }
-    }
-
-    private static ListImpl addList(Element element) {
-        ListImpl list = new ListImpl();
-        List<String> strings = new ArrayList<String>();
-        for (Element e : element.getAllElements()) {
-            strings.add(e.text());
-        }
-        list.setListItem(strings);
-        return list;
-    }
-
 }

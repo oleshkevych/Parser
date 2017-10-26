@@ -95,7 +95,7 @@ public class ParserSimplyhired implements ParserMain {
         System.out.println("text date : " + tables2.size());
         Date datePublished = null;
         for (int i = counter; i < tables2.size(); i += 1) {
-            String stringDate = tables2.get(i).select(".serp-timestamp").text();
+            String stringDate = tables2.get(i).select(".jobposting-timestamp").text();
             if (stringDate.contains("minut") || stringDate.contains("hour")) {
                 datePublished = new Date();
             } else if (stringDate.contains("1 day")) {
@@ -112,8 +112,11 @@ public class ParserSimplyhired implements ParserMain {
                 datePublished = new Date(new Date().getTime() - 6 * 24 * 3600 * 1000);
             }
 
-            objectGenerator(tables2.get(i).select(".serp-location").first(), tables2.get(i).select(".serp-title").first(),
-                    tables2.get(i).select(".serp-company").first(), datePublished, tables2.get(i).select(".card-link").first());
+            objectGenerator(tables2.get(i).select(".jobposting-location").first(),
+                    tables2.get(i).select(".jobposting-title").first(),
+                    tables2.get(i).select(".jobposting-company").first(),
+                    datePublished,
+                    tables2.get(i).select(".jobposting-title a").first());
         }
         return datePublished;
     }

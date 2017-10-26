@@ -93,14 +93,15 @@ public class ParserBerlinstartupjobs implements ParserMain {
             String stringDate = tables2.get(i).select(".product-listing-date").text();
             try {
                 datePublished = formatter.parse(stringDate);
-                objectGenerator(tables2.get(i).select(".location").first(), tables2.get(i).select(".product-listing-h2").first(),
-                        tables2.get(i).select(".category-tag a").first(), datePublished, tables2.get(i).select(".product-listing-h2 a").first());
+                objectGenerator(tables2.get(i).select(".location").first(),
+                        tables2.get(i).select(".product-listing-h2").first(),
+                        tables2.get(i).select(".category-tag").first(),
+                        datePublished,
+                        tables2.get(i).select(".product-listing-h2 a").first());
             } catch (ParseException e) {
                 System.out.println("ParserBerlinstartupjobs "+ e.getMessage());
                 System.out.println(stringDate);
-
             }
-
         }
         return datePublished;
     }
@@ -109,8 +110,8 @@ public class ParserBerlinstartupjobs implements ParserMain {
         if (dateClass.dateChecker(datePublished) && jobsInforms.size()<100) {
             JobsInform jobsInform = new JobsInform();
             jobsInform.setPublishedDate(datePublished);
-            jobsInform.setHeadPublication(headPost.text().substring(0, headPost.text().indexOf("//")));
-            jobsInform.setCompanyName(headPost.text().substring(headPost.text().indexOf("//"), headPost.text().length()));
+            jobsInform.setHeadPublication(headPost.text());
+            jobsInform.setCompanyName(company.text().substring(0, company.text().indexOf("//")));
             jobsInform.setPlace("");
             jobsInform.setPublicationLink(linkDescription.attr("abs:href"));
             jobsInform = getDescription(linkDescription.attr("abs:href"), jobsInform);
@@ -137,12 +138,8 @@ public class ParserBerlinstartupjobs implements ParserMain {
             list.add(addHead(tablesDescription.select("h1").first()));
             list.addAll(new PrintDescription().generateListImpl(tablesCompAbout));
             list.addAll(new PrintDescription().generateListImpl(tablesDescriptionJob));
-//            list.addAll(tablesCompAbout.stream().map(ParserBerlinstartupjobs::checker).collect(Collectors.toList()));
-//            list.addAll(tablesDescriptionJob.stream().map(ParserBerlinstartupjobs::checker).collect(Collectors.toList()));
-
             list.add(null);
             jobsInform.setOrder(list);
-
 
             return jobsInform;
         } catch (Exception e) {
@@ -150,16 +147,13 @@ public class ParserBerlinstartupjobs implements ParserMain {
             e.printStackTrace();
             return jobsInform;
         }
-
     }
 
     private static ListImpl checker(Element element) {
         if (element.tagName().equals("p")) {
             return (addParagraph(element));
-
         } else if (element.tagName().equals("ul")) {
             return (addList(element));
-
         }
         return new ListImpl();
     }

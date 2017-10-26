@@ -1159,25 +1159,22 @@ public class ParserApp implements MouseListener {
 
     @Override
     public void mousePressed(MouseEvent e) {
-        System.out.println("text speciality :mousePressed ");
+//        System.out.println("text speciality :mousePressed ");
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        System.out.println("text speciality :mouseReleased ");
-
+//        System.out.println("text speciality :mouseReleased ");
     }
 
     @Override
     public void mouseEntered(MouseEvent e) {
-        System.out.println("text speciality :mouseEntered ");
-
+//        System.out.println("text speciality :mouseEntered ");
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
-        System.out.println("text speciality :mouseExited ");
-
+//        System.out.println("text speciality :mouseExited ");
     }
 
 

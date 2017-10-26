@@ -4,6 +4,7 @@ import com.parser.entity.DateGenerator;
 import com.parser.entity.JobsInform;
 import com.parser.entity.ListImpl;
 import com.parser.entity.ParserMain;
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -41,18 +42,20 @@ public class ParserWeworkremotely implements ParserMain {
         try {
 
             doc = Jsoup.connect(startLink1)
-                    .validateTLSCertificates(false)
+                    .timeout(6000)
+                    .method(Connection.Method.GET)
                     .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-                    .timeout(5000)
-                    .get();
+                    .execute()
+                    .parse();
 
             Elements tables2 = doc.select(".jobs li");
             runParse(tables2, 0);
             doc = Jsoup.connect(startLink2)
-                    .validateTLSCertificates(false)
+                    .timeout(6000)
+                    .method(Connection.Method.GET)
                     .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-                    .timeout(5000)
-                    .get();
+                    .execute()
+                    .parse();
 
             Elements tables = doc.select(".jobs li");
             runParse(tables, 0);
@@ -113,10 +116,11 @@ public class ParserWeworkremotely implements ParserMain {
 
         try {
             Document document = Jsoup.connect(linkToDescription)
-                    .validateTLSCertificates(false)
+                    .timeout(6000)
+                    .method(Connection.Method.GET)
                     .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-                    .timeout(5000)
-                    .get();
+                    .execute()
+                    .parse();
 
 
             Elements tablesDescription = document.select(".listing-container").first().children();

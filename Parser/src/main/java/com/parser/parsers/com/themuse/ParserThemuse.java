@@ -39,7 +39,7 @@ public class ParserThemuse implements ParserMain {
         ghostDriver.get(url);
         try {
             WebDriverWait wait = new WebDriverWait(ghostDriver, 10);
-            wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("job-element")));
+            wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("job-list-individual__header-section")));
         } catch (Exception e) {
             System.out.println("themuse");
             e.printStackTrace();
@@ -63,7 +63,7 @@ public class ParserThemuse implements ParserMain {
             stringCat.add("mobile");
             for (String s : stringCat) {
                 doc = startParser(startLink.replace("TTTTT", s));
-                Elements tables2 = doc.select(".job-element");
+                Elements tables2 = doc.select(".job-list-individual");
                 if (tables2.size() == 0) {
                     c++;
                 }
@@ -83,8 +83,10 @@ public class ParserThemuse implements ParserMain {
 
     private void runParse(Elements tables2, int counter) {
         for (int i = counter; i < tables2.size(); i += 1) {
-            objectGenerator(tables2.get(i).select("li").first(), tables2.get(i).select("h3").first(),
-                    tables2.get(i).select("span").first(), tables2.get(i).select("a").first());
+            objectGenerator(tables2.get(i).select(".location-value").first(),
+                    tables2.get(i).select("h2").first(),
+                    tables2.get(i).select(".header-text").first(),
+                    tables2.get(i).select("a").first());
         }
     }
 
@@ -94,14 +96,14 @@ public class ParserThemuse implements ParserMain {
         jobsInform.setPublishedDate(null);
         jobsInform.setHeadPublication(headPost.ownText());
         jobsInform.setCompanyName(company.text());
-        jobsInform.setPlace(place.text());
+        jobsInform.setPlace(place == null ? "" : place.text());
         jobsInform.setPublicationLink("https://www.themuse.com" + linkDescription.attr("href"));
         if (!jobsInforms.contains(jobsInform)) {
             jobsInforms.add(jobsInform);
         }
     }
 
-    public JobsInform getDescription(String linkToDescription, JobsInform jobsInform) {
+    private JobsInform getDescription(String linkToDescription, JobsInform jobsInform) {
         try {
             ghostDriver.get(linkToDescription);
             Document document = Jsoup.parse(ghostDriver.getPageSource());

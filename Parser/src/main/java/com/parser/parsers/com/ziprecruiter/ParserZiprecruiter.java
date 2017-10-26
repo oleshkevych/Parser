@@ -5,6 +5,7 @@ import com.parser.entity.JobsInform;
 import com.parser.entity.ListImpl;
 import com.parser.entity.ParserMain;
 import com.parser.parsers.PrintDescription;
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -52,12 +53,13 @@ public class ParserZiprecruiter implements ParserMain {
         for (String link : startLinksList) {
             try {
                 doc = Jsoup.connect(link)
-                        .validateTLSCertificates(false)
+                        .timeout(6000)
+                        .method(Connection.Method.GET)
                         .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-                        .timeout(5000)
-                        .get();
+                        .execute()
+                        .parse();
 
-                Elements tables2 = doc.select("#job_list article");
+                Elements tables2 = doc.select("article.job_result");
                 runParse(tables2, 0);
 
             } catch (IOException e) {
@@ -73,20 +75,15 @@ public class ParserZiprecruiter implements ParserMain {
 
     private void runParse(Elements tables2, int counter) {
         System.out.println("text date : " + tables2.size());
-//        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
-        for (int i = counter; i < tables2.size(); i += 1) {
-//            try {
-
-            objectGenerator(tables2.get(i).select("[itemprop='addressLocality']").first(), tables2.get(i).select("[itemprop='title']").first(),
-                    tables2.get(i).select("[itemprop='name']").first(), tables2.get(i).select("[itemprop='url']").first());
-//            } catch (ParseException e) {
-//                System.out.println(e.getMessage());
-//            }
+        for (int i = counter; i < tables2.size(); i++) {
+            objectGenerator(tables2.get(i).select(".location").first(),
+                    tables2.get(i).select(".just_job_title").first(),
+                    tables2.get(i).select(".job_org").first(),
+                    tables2.get(i).select("a.job_link").first());
         }
     }
 
     private void objectGenerator(Element place, Element headPost, Element company, Element linkDescription) {
-
         JobsInform jobsInform = new JobsInform();
         jobsInform.setHeadPublication(headPost.text());
         jobsInform.setCompanyName(company.text());
@@ -102,10 +99,11 @@ public class ParserZiprecruiter implements ParserMain {
 
         try {
             Document document = Jsoup.connect(linkToDescription)
-                    .validateTLSCertificates(false)
+                    .timeout(6000)
+                    .method(Connection.Method.GET)
                     .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-                    .timeout(5000)
-                    .get();
+                    .execute()
+                    .parse();
             Elements tablesDate = document.select(".posted_date");
 
             if (tablesDate.size() > 0) {
@@ -137,49 +135,22 @@ public class ParserZiprecruiter implements ParserMain {
                 tablesDescription = document.select(".companyDescriptionSection");
             } else if (tablesDescription.size() < 1) {
                 tablesDescription = document.select(".featured-job-description .ng-scope div");
-//            } else if (tablesDescription.size() < 1) {
-//                tablesDescription = document.select(".custom-copy");
-//            } else if (tablesDescription.size() < 1) {
-//                tablesDescription = document.select(".jvdescriptionbody");
             }
-            List<ListImpl> list = new ArrayList<ListImpl>();
 
+            List<ListImpl> list = new ArrayList<ListImpl>();
             if (tablesHead.size() > 0) {
                 list.add(addHead(tablesHead.first()));
             }
-//            for (int i = 0; i<tablesDescription.size(); i++) {
-//
-//
-//                Elements ps = tablesDescription.get(i).select("p");
-//                Elements uls = tablesDescription.get(i).select("ul");
-//
-//
-//
-//                if (ps.size() > 0) {
-//                    for(Element p: ps) {
-//                        list.add(addParagraph(p));
-//                    }
-//                }
-//                if (uls.size() > 0) {
-//                    for(Element ul: uls) {
-//                        list.add(addList(ul));
-//                    }
-//                }
-//            }
             if (tablesDescription.size() > 1)
                 list.addAll(new PrintDescription().generateListImpl(tablesDescription));
-
             list.add(null);
             jobsInform.setOrder(list);
-
-
             return jobsInform;
         } catch (Exception e) {
             System.out.println("Error : " + e.getMessage() + " " + jobsInform.getPublicationLink());
             e.printStackTrace();
             return jobsInform;
         }
-
     }
 
     private static ListImpl addHead(Element element) {
@@ -187,27 +158,4 @@ public class ParserZiprecruiter implements ParserMain {
         list.setListHeader(element.text());
         return list;
     }
-
-    private static ListImpl addParagraph(Element element) {
-        if (element.select("strong").size() > 0) {
-            return addHead(element.select("strong").first());
-        } else {
-
-
-            ListImpl list = new ListImpl();
-            list.setTextFieldImpl(element.text());
-            return list;
-        }
-    }
-
-    private static ListImpl addList(Element element) {
-        ListImpl list = new ListImpl();
-        List<String> strings = new ArrayList<String>();
-        for (Element e : element.getAllElements()) {
-            strings.add(e.text());
-        }
-        list.setListItem(strings);
-        return list;
-    }
-
 }

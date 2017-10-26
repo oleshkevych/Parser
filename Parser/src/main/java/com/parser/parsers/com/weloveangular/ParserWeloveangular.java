@@ -6,6 +6,7 @@ import com.parser.entity.JobsInform;
 import com.parser.entity.ListImpl;
 import com.parser.entity.ParserMain;
 import com.parser.parsers.PrintDescription;
+import com.parser.parsers.util.DateUtil;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -60,7 +61,7 @@ public class ParserWeloveangular implements ParserMain {
         SimpleDateFormat formatter = new SimpleDateFormat("MMM dd yyyy");
         for (int i = counter; i < tables2.size(); i += 1) {
 
-            String stringDate = tables2.get(i).select(".date").first().text() + " 2016";
+            String stringDate = tables2.get(i).select(".date").first().text() + " " + DateUtil.getCurrentYear();
             if (stringDate.length() < 11) {
                 String day = stringDate.substring(4);
                 stringDate = stringDate.substring(0, 4) + day;

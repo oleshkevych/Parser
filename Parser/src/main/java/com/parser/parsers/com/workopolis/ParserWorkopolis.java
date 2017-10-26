@@ -4,6 +4,7 @@ import com.parser.entity.DateGenerator;
 import com.parser.entity.JobsInform;
 import com.parser.entity.ListImpl;
 import com.parser.entity.ParserMain;
+import com.parser.parsers.PhantomJSStarter;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -49,22 +50,23 @@ public class ParserWorkopolis implements ParserMain {
 
         int c = 0;
         for (String link : startLinksList) {
-            Date datePublished = null;
+//            Date datePublished = null;
             int count = 1;
             try {
-                do {
-                    datePublished = null;
+//                do {
+//                    datePublished = null;
 
                     doc = Jsoup.connect(link + count)
                             .validateTLSCertificates(false)
                             .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
                             .timeout(5000)
                             .get();
-                    Elements tables1 = doc.select("article");
-                    datePublished = runParse(tables1, 0);
+                    Elements tables1 = doc.select(".search-result-item-link");
+//                    datePublished = runParse(tables1, 0);
+                    runParse(tables1, 0);
                     count++;
-                }
-                while (count < 2 && dateClass.dateChecker(datePublished) && jobsInforms.size() < (startLinksList.indexOf(link) + 1) * 20);
+//                }
+//                while (count < 2 && dateClass.dateChecker(datePublished) && jobsInforms.size() < (startLinksList.indexOf(link) + 1) * 20);
             } catch (IOException e) {
                 e.printStackTrace();
                 c++;
@@ -76,39 +78,43 @@ public class ParserWorkopolis implements ParserMain {
 
     }
 
-    private Date runParse(Elements tables2, int counter) {
+    private void runParse(Elements tables2, int counter) {
         System.out.println("text date : " + tables2.size());
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        Date datePublished = null;
+//        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+//        Date datePublished = null;
         for (int i = counter; i < tables2.size(); i += 1) {
-            datePublished = null;
-            String stringDate = tables2.get(i).select("time").attr("datetime");
-            stringDate = stringDate.substring(0, stringDate.indexOf(" "));
-            try {
-                datePublished = formatter.parse(stringDate);
-                objectGenerator(tables2.get(i).select("[itemprop='jobLocation']").first(), tables2.get(i).select(".link").first(),
-                        tables2.get(i).select("[itemprop='name']").first(), datePublished, tables2.get(i).select("a").first());
-            } catch (ParseException e) {
-                System.out.println(e.getMessage());
-            }
+//            datePublished = null;
+//            String stringDate = tables2.get(i).select("time").attr("datetime");
+//            if (stringDate.isEmpty()) continue;
+//            stringDate = stringDate.substring(0, stringDate.indexOf(" "));
+//            try {
+//                datePublished = formatter.parse(stringDate);
+                objectGenerator(tables2.get(i).select(".location").first(),
+                        tables2.get(i).select(".job-title").first(),
+                        tables2.get(i).select(".company").first(),
+//                        datePublished,
+                        tables2.get(i).select("a.search-result-item-link").first());
+//            } catch (ParseException e) {
+//                System.out.println(e.getMessage());
+//            }
 
         }
-        return datePublished;
+//        return datePublished;
     }
 
-    private void objectGenerator(Element place, Element headPost, Element company, Date datePublished, Element linkDescription) {
-        if (dateClass.dateChecker(datePublished)) {
+    private void objectGenerator(Element place, Element headPost, Element company, Element linkDescription) {
+//        if (dateClass.dateChecker(datePublished)) {
             JobsInform jobsInform = new JobsInform();
-            jobsInform.setPublishedDate(datePublished);
+//            jobsInform.setPublishedDate(datePublished);
             jobsInform.setHeadPublication(headPost.text());
-            jobsInform.setCompanyName(company.ownText());
+            jobsInform.setCompanyName(company.text());
             jobsInform.setPlace(place.text());
             jobsInform.setPublicationLink("http://www.workopolis.com" + linkDescription.attr("href"));
             jobsInform = getDescription("http://www.workopolis.com" + linkDescription.attr("href"), jobsInform);
             if (!jobsInforms.contains(jobsInform)) {
                 jobsInforms.add(jobsInform);
             }
-        }
+//        }
     }
 
     public static JobsInform getDescription(String linkToDescription, JobsInform jobsInform) {
