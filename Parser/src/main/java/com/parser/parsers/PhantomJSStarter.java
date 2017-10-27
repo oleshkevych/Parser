@@ -44,19 +44,6 @@ public class PhantomJSStarter {
         }
     }
 
-    public static Document startGhostJustlanded(String link) {
-        WebDriver ghostDriver = startPhantom();
-        try {
-            ghostDriver.get(link);
-            WebDriverWait wdw = new WebDriverWait(ghostDriver, 15);
-            wdw.until(ExpectedConditions.visibilityOfElementLocated(By.className("listings")));
-            return Jsoup.parse(ghostDriver.getPageSource());
-        } finally {
-            ghostDriver.close();
-            ghostDriver.quit();
-        }
-    }
-
     public static Document startGhostF6s(String link) {
         WebDriver ghostDriver = startPhantom();
         try {

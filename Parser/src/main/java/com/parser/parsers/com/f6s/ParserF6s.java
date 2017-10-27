@@ -44,9 +44,7 @@ public class ParserF6s implements ParserMain {
     private Document doc;
     private DateGenerator dateClass;
 
-    public ParserF6s(){
-
-
+    public ParserF6s() {
     }
 
     @Override
@@ -88,9 +86,9 @@ public class ParserF6s implements ParserMain {
         stringCat.add("ios");
         stringCat.add("mobile");
 //        for (String s : stringCat) {
-            doc = PhantomJSStarter.startGhostF6s(startLink.replace("TTTTT", stringCat.get(1)));
-            Elements tables2 = doc.select(".result-info");
-            runParse(tables2, 0);
+        doc = PhantomJSStarter.startGhostF6s(startLink.replace("TTTTT", stringCat.get(1)));
+        Elements tables2 = doc.select(".result-info");
+        runParse(tables2, 0);
 //            System.out.println("text : " + doc);
 //        }
 //            System.out.println("text : " + tables2);
@@ -140,7 +138,7 @@ public class ParserF6s implements ParserMain {
         System.out.println("text date : " + tables2.size());
         Date datePublished = null;
 //        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
-        for (int i = counter; i<tables2.size(); i+=1) {
+        for (int i = counter; i < tables2.size(); i += 1) {
 //            System.out.println("text date : " + tables2.get(i));
 
 //                 for (int i = counter; i<tables2.size(); i+=1) {
@@ -168,129 +166,126 @@ public class ParserF6s implements ParserMain {
             try {
 //                datePublished = formatter.parse(tables2.get(i).select(".date").text());
 //                    System.out.println("text date : " + datePublished);
-            JobsInform jobsInform = objectGenerator(tables2.get(i).select(".subtitle span").first(), tables2.get(i).select(".title").first(),
-                    tables2.get(i).select(".subtitle span a").first(), tables2.get(i).select(".title").first().select("a").first());
-            if(dateClass.dateChecker(jobsInform.getPublishedDate())) {
-                datePublished = jobsInform.getPublishedDate();
-                if(!jobsInforms.contains(jobsInform)) {
-                    jobsInforms.add(jobsInform);
+                JobsInform jobsInform = objectGenerator(tables2.get(i).select(".subtitle span").first(), tables2.get(i).select(".title").first(),
+                        tables2.get(i).select(".subtitle span a").first(), tables2.get(i).select(".title").first().select("a").first());
+                if (dateClass.dateChecker(jobsInform.getPublishedDate())) {
+                    datePublished = jobsInform.getPublishedDate();
+                    if (!jobsInforms.contains(jobsInform)) {
+                        jobsInforms.add(jobsInform);
+                    }
                 }
-            }
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
-
         }
         return datePublished;
     }
 
-    private JobsInform objectGenerator(Element place, Element headPost, Element company, Element linkDescription){
+    private JobsInform objectGenerator(Element place, Element headPost, Element company, Element linkDescription) {
 
-            JobsInform jobsInform = new JobsInform();
-                System.out.println("text place : " + place.ownText());
-                System.out.println("text headPost : " + headPost.text());
-                System.out.println("text company : " + company.text());
-//                System.out.println("text link1 : " + linkDescription.attr("abs:href"));
-
-            jobsInform.setHeadPublication(headPost.text());
-            jobsInform.setCompanyName(company.text());
-            jobsInform.setPlace(place.ownText());
-            jobsInform.setPublicationLink(baseUrl + linkDescription.attr("href"));
-            jobsInform = getDescription(baseUrl + linkDescription.attr("href"), jobsInform);
+        JobsInform jobsInform = new JobsInform();
+        jobsInform.setHeadPublication(headPost.text());
+        jobsInform.setCompanyName(company.text());
+        jobsInform.setPlace(place.ownText());
+        jobsInform.setPublicationLink(baseUrl + linkDescription.attr("href"));
+//        jobsInform = getDescription(baseUrl + linkDescription.attr("href"), jobsInform);
         return jobsInform;
     }
-    public static JobsInform getDescription(String linkToDescription, JobsInform jobsInform){
 
-        try {
-            Document document = Jsoup.connect(linkToDescription)
-                    .validateTLSCertificates(false)
-                    .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-                    .timeout(5000)
-                    .get();
-
-            System.out.println("text link1 : " + document.select("body"));
-
-            Element time = document.select("#jobApplicationWrapper").first().select(".t14").first().child(2);
-            String stringDate = time.text();
-            Date datePublished = null;
-            if(stringDate.contains("minut")||stringDate.contains("hour")){
-                datePublished = new Date();
-            }else if(stringDate.contains("Yesterday")){
-                datePublished = new Date(new Date().getTime() - 1*24*3600*1000);
-            }else if(stringDate.contains("2 day")){
-                datePublished = new Date(new Date().getTime() - 2*24*3600*1000);
-            }else if(stringDate.contains("3 day")){
-                datePublished = new Date(new Date().getTime() - 3*24*3600*1000);
-            }else if(stringDate.contains("4 day")){
-                datePublished = new Date(new Date().getTime() - 4*24*3600*1000);
-            }else if(stringDate.contains("5 day")){
-                datePublished = new Date(new Date().getTime() - 5*24*3600*1000);
-            }else if(stringDate.contains("6 day")){
-                datePublished = new Date(new Date().getTime() - 6*24*3600*1000);
-            }
-
-            jobsInform.setPublishedDate(datePublished);
-                Elements tablesDescription = document.select(".job-description");
-            Element tablesHead = document.select(".job-info h1").first();
-            List<ListImpl> list = new ArrayList<ListImpl>();
-//            System.out.println("text link1 : " + tablesDescription);
-            list.add(addHead(tablesHead));
-            list.add(addParagraph(tablesDescription.first()));
-//            for (int i = 0; i<tablesDescription.size(); i++) {
+//    public static JobsInform getDescription(String linkToDescription, JobsInform jobsInform) {
 //
+//        try {
+//            Document document = Jsoup.connect(linkToDescription)
+//                    .validateTLSCertificates(false)
+//                    .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
+//                    .timeout(5000)
+//                    .get();
 //
-//                Elements ps = tablesDescription.get(i).select("p");
-//                Elements uls = tablesDescription.get(i).select("ul");
-//                list.add(addHead(tablesHead.get(i)));
+//            System.out.println("text link1 : " + document.select("body"));
 //
-//                if (ps.size() > 0) {
-//                    for (Element p : ps) {
-//                        list.add(addParagraph(p));
-//                    }
-//                }
-//                if (uls.size() > 0) {
-//                    for(Element ul: uls) {
-//                        list.add(addList(ul));
-//                    }
-//                }
+//            Element time = document.select("#jobApplicationWrapper").first().select(".t14").first().child(2);
+//            String stringDate = time.text();
+//            Date datePublished = null;
+//            if (stringDate.contains("minut") || stringDate.contains("hour")) {
+//                datePublished = new Date();
+//            } else if (stringDate.contains("Yesterday")) {
+//                datePublished = new Date(new Date().getTime() - 1 * 24 * 3600 * 1000);
+//            } else if (stringDate.contains("2 day")) {
+//                datePublished = new Date(new Date().getTime() - 2 * 24 * 3600 * 1000);
+//            } else if (stringDate.contains("3 day")) {
+//                datePublished = new Date(new Date().getTime() - 3 * 24 * 3600 * 1000);
+//            } else if (stringDate.contains("4 day")) {
+//                datePublished = new Date(new Date().getTime() - 4 * 24 * 3600 * 1000);
+//            } else if (stringDate.contains("5 day")) {
+//                datePublished = new Date(new Date().getTime() - 5 * 24 * 3600 * 1000);
+//            } else if (stringDate.contains("6 day")) {
+//                datePublished = new Date(new Date().getTime() - 6 * 24 * 3600 * 1000);
 //            }
-
-            list.add(null);
-            jobsInform.setOrder(list);
-
-
-            return jobsInform;
-        } catch (Exception e) {
-            System.out.println("Error : " + e.getMessage() + " " + jobsInform.getPublicationLink());
-            e.printStackTrace();
-            return jobsInform;
-        }
-
-    }
-    private static ListImpl addHead(Element element){
-        ListImpl list = new ListImpl();
-        list.setListHeader(element.ownText());
-        return list;
-    }
-    private static ListImpl addParagraph(Element element){
-        if(element.select("strong").size()>0){
-            return addHead(element.select("strong").first());
-        }else {
-
-
-            ListImpl list = new ListImpl();
-            list.setTextFieldImpl(element.text());
-            return list;
-        }
-    }
-
-    private static ListImpl addList(Element element){
-        ListImpl list = new ListImpl();
-        List<String> strings = new ArrayList<String>();
-        for(Element e : element.getAllElements()) {
-            strings.add(e.text());
-        }
-        list.setListItem(strings);
-        return list;
-    }
+//
+//            jobsInform.setPublishedDate(datePublished);
+//            Elements tablesDescription = document.select(".job-description");
+//            Element tablesHead = document.select(".job-info h1").first();
+//            List<ListImpl> list = new ArrayList<ListImpl>();
+////            System.out.println("text link1 : " + tablesDescription);
+//            list.add(addHead(tablesHead));
+//            list.add(addParagraph(tablesDescription.first()));
+////            for (int i = 0; i<tablesDescription.size(); i++) {
+////
+////
+////                Elements ps = tablesDescription.get(i).select("p");
+////                Elements uls = tablesDescription.get(i).select("ul");
+////                list.add(addHead(tablesHead.get(i)));
+////
+////                if (ps.size() > 0) {
+////                    for (Element p : ps) {
+////                        list.add(addParagraph(p));
+////                    }
+////                }
+////                if (uls.size() > 0) {
+////                    for(Element ul: uls) {
+////                        list.add(addList(ul));
+////                    }
+////                }
+////            }
+//
+//            list.add(null);
+//            jobsInform.setOrder(list);
+//
+//
+//            return jobsInform;
+//        } catch (Exception e) {
+//            System.out.println("Error : " + e.getMessage() + " " + jobsInform.getPublicationLink());
+//            e.printStackTrace();
+//            return jobsInform;
+//        }
+//
+//    }
+//
+//    private static ListImpl addHead(Element element) {
+//        ListImpl list = new ListImpl();
+//        list.setListHeader(element.ownText());
+//        return list;
+//    }
+//
+//    private static ListImpl addParagraph(Element element) {
+//        if (element.select("strong").size() > 0) {
+//            return addHead(element.select("strong").first());
+//        } else {
+//
+//
+//            ListImpl list = new ListImpl();
+//            list.setTextFieldImpl(element.text());
+//            return list;
+//        }
+//    }
+//
+//    private static ListImpl addList(Element element) {
+//        ListImpl list = new ListImpl();
+//        List<String> strings = new ArrayList<String>();
+//        for (Element e : element.getAllElements()) {
+//            strings.add(e.text());
+//        }
+//        list.setListItem(strings);
+//        return list;
+//    }
 }

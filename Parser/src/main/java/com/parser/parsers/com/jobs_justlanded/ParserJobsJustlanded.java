@@ -10,27 +10,49 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import static com.parser.parsers.PhantomJSStarter.startPhantom;
 
 /**
  * Created by rolique_pc on 1/3/2017.
  */
 public class ParserJobsJustlanded implements ParserMain {
+
     private String startLink = "https://jobs.justlanded.com/en/TTTTT/Web-development?q_cid=10&q_ji=&q_jt=&q_k=&q_l%5B%5D=en&q_l_opt=all&q_salary_max=&q_salary_min=&q_salary_period_id=";
     private List<JobsInform> jobsInforms = new ArrayList<JobsInform>();
     private Document doc;
     private DateGenerator dateClass;
+    private WebDriver ghostDriver;
 
     public ParserJobsJustlanded() {
     }
 
     public List<JobsInform> startParse() {
         dateClass = new DateGenerator();
-        parser();
+        try {
+            parser();
+        } finally {
+            ghostDriver.close();
+            ghostDriver.quit();
+        }
         return jobsInforms;
+    }
+
+    private Document startGhost(String link) {
+        if (ghostDriver == null) ghostDriver = startPhantom();
+        ghostDriver.get(link);
+        WebDriverWait wdw = new WebDriverWait(ghostDriver, 15);
+        wdw.until(ExpectedConditions.visibilityOfElementLocated(By.className("listings")));
+        return Jsoup.parse(ghostDriver.getPageSource());
     }
 
     private void parser() {
@@ -51,81 +73,43 @@ public class ParserJobsJustlanded implements ParserMain {
         countries.add("United-Kingdom");
         countries.add("United-States");
         for (String s : countries) {
-            doc = PhantomJSStarter.startGhostJustlanded(startLink.replace("TTTTT", s));
-
-            Elements tables2 = doc.select(".listings li");
-            runParse(tables2, 0, s);
-
+            doc = startGhost(startLink.replace("TTTTT", s));
+            Elements tables2 = doc.select(".listings li .item-content-wrap");
+            runParse(tables2, s);
         }
     }
 
-    private void runParse(Elements tables2, int counter, String s) {
+    private void runParse(Elements tables2, String s) {
         System.out.println("text date : " + tables2.size());
-        for (int i = counter; i < tables2.size(); i += 1) {
-            objectGenerator(s, tables2.get(i).select("[itemprop='title']").first(),
-                    tables2.get(i).select("a").first(), tables2.get(i).select(".title-wrapper a").first());
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        for (Element element : tables2) {
+            Date datePublished = null;
+            String stringDate = element.select("time").first().attr("datetime").substring(0, 10);
+            try {
+                datePublished = formatter.parse(stringDate);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            objectGenerator(s,
+                    element.select(".title-wrapper").first(),
+                    element.select("a").first(),
+                    datePublished);
         }
-
     }
 
-    private void objectGenerator(String place, Element headPost, Element company, Element linkDescription) {
-
-        JobsInform jobsInform = new JobsInform();
-        jobsInform.setPlace(place);
-        if (linkDescription != null) {
+    private void objectGenerator(String place, Element headPost, Element linkDescription, Date date) {
+        try {
+            JobsInform jobsInform = new JobsInform();
+            jobsInform.setPlace(place);
+            jobsInform.setHeadPublication(headPost.text());
+            jobsInform.setPublishedDate(date);
+            jobsInform.setCompanyName("");
             jobsInform.setPublicationLink(linkDescription.attr("href"));
-            jobsInform = getDescription(linkDescription.attr("href"), jobsInform);
-
             if (dateClass.dateChecker(jobsInform.getPublishedDate()) && !jobsInforms.contains(jobsInform)) {
                 jobsInforms.add(jobsInform);
             }
+        } catch (NullPointerException e) {
+            System.out.println(place + " " + date);
         }
-
-    }
-
-    public static JobsInform getDescription(String linkToDescription, JobsInform jobsInform) {
-
-        try {
-            Document document = Jsoup.connect(linkToDescription)
-                    .validateTLSCertificates(false)
-                    .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-                    .timeout(5000)
-                    .get();
-
-
-            Elements tablesDescription = document.select("[itemprop='description']").first().children();
-            Element tablesHead = document.select(".title-wrapper").first();
-            Element tablesDate = document.select("time").first();
-            Element tablesCompany = document.select(".postinfo span").first();
-            Element tablesPlace = document.select("[itemprop='addressRegion']").first();
-            jobsInform.setCompanyName(tablesCompany.text());
-            jobsInform.setPlace(tablesPlace.text());
-            jobsInform.setHeadPublication(tablesHead.text());
-            List<ListImpl> list = new ArrayList<ListImpl>();
-            list.add(addHead(tablesHead));
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-            String stringDate = tablesDate.text();
-            String last = stringDate.substring(stringDate.lastIndexOf("/") + 1);
-            stringDate = stringDate.substring(0, stringDate.lastIndexOf("/") + 1) + last;
-            jobsInform.setPublishedDate(formatter.parse(stringDate));
-
-            list.addAll(new PrintDescription().generateListImpl(tablesDescription));
-            list.add(null);
-            jobsInform.setOrder(list);
-
-
-            return jobsInform;
-        } catch (Exception e) {
-            System.out.println("Error : " + e.getMessage() + " " + jobsInform.getPublicationLink());
-            e.printStackTrace();
-            return jobsInform;
-        }
-
-    }
-
-    private static ListImpl addHead(Element element) {
-        ListImpl list = new ListImpl();
-        list.setListHeader(element.text());
-        return list;
     }
 }

@@ -100,132 +100,30 @@ public class ParserIndeed implements ParserMain {
             datePublished = null;
             String stringDate = tables2.get(i).select(".date").text();
             String date = stringDate.replaceAll("[^0-9]", "");
-//            System.out.println("  date S: " + stringDate);
             if (!stringDate.contains("+") || (date.length() != 0 && Integer.parseInt(date) < 6)) {
                 if (date.length() == 0) {
                     datePublished = new Date();
                 } else {
                     datePublished = new Date(new Date().getTime() - Integer.parseInt(date) * 24 * 3600 * 1000);
                 }
-//                System.out.println("  date D: " + datePublished);
-
                 objectGenerator(tables2.get(i).select(".location").first(),
                         tables2.get(i).select(".jobtitle").first(),
                         tables2.get(i).select(".company").first(),
                         tables2.get(i).select("a").first(), datePublished, country);
             }
-
         }
         return datePublished;
     }
 
     private void objectGenerator(Element place, Element headPost, Element company, Element linkDescription, Date datePublished, String country) {
-//        System.out.println("text date P: " + place);
         JobsInform jobsInform = new JobsInform();
         jobsInform.setPublishedDate(datePublished);
         jobsInform.setHeadPublication(headPost != null ? headPost.text() : "");
         jobsInform.setCompanyName(company != null ? company.text() : "");
         jobsInform.setPlace(country + " " + (place != null ? place.text() : ""));
-//        System.out.println("text date P: " + (headPost != null ? headPost.text() : ""));
-//        System.out.println("text date P: " + (company != null ? company.text() : ""));
-//        System.out.println("text date P: " + (place != null ? place.text() : ""));
-//        System.out.println("text date P: " + linkDescription.attr("abs:href"));
-
         jobsInform.setPublicationLink(linkDescription.attr("abs:href"));
-        List<ListImpl> list = new ArrayList<ListImpl>();
-        list.add(addHead(headPost));
-        jobsInform.setOrder(list);
-//            jobsInform = getDescription(linkDescription.attr("abs:href"), jobsInform);
-//        if (dateClass.dateChecker(jobsInform.getPublishedDate())) {
         if (!jobsInforms.contains(jobsInform)) {
             jobsInforms.add(jobsInform);
         }
-//        }
-    }
-
-    public static JobsInform getDescription(String linkToDescription, JobsInform jobsInform) {
-
-        try {
-            Document document = Jsoup.connect(linkToDescription)
-                    .validateTLSCertificates(false)
-                    .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-                    .timeout(5000)
-                    .get();
-
-
-            Elements tablesDescription = document.select(".snip span").first().children();
-            Element tablesHead = document.select("font").first();
-            Element tablesDate = document.select(".date").first();
-            String stringDate = tablesDate.text();
-            Date datePublished = null;
-            String date = stringDate.replaceAll("[^0-9]", "");
-            if (!stringDate.contains("+") || Integer.parseInt(date) < 6) {
-
-                datePublished = new Date(new Date().getTime() - Integer.parseInt(date) * 24 * 3600 * 1000);
-            }
-            jobsInform.setPublishedDate(datePublished);
-            List<ListImpl> list = new ArrayList<ListImpl>();
-            list.add(addHead(tablesHead));
-            ListImpl list1 = new ListImpl();
-            list1.setTextFieldImpl(document.select(".snip span").first().ownText());
-            list.add(list1);
-
-//            for (int i = 0; i < tablesDescription.size(); i++) {
-//
-//
-//
-//                if (tablesDescription.get(i).tagName().equals("p")) {
-//                    list.add(addParagraph(tablesDescription.get(i)));
-//                } else if (tablesDescription.get(i).tagName().equals("ul")) {
-//                    list.add(addList(tablesDescription.get(i)));
-//                } else if (tablesDescription.get(i).tagName().contains("h")) {
-//                    list.add(addHead(tablesDescription.get(i)));
-//                } else if (tablesDescription.get(i).tagName().equals("div")) {
-//                    ListImpl list2 = new ListImpl();
-//                    list1.setTextFieldImpl(tablesDescription.get(i).ownText());
-//                    list.add(list1);
-//                }
-//            }
-
-            list.addAll(new PrintDescription().generateListImpl(tablesDescription));
-            list.add(null);
-            jobsInform.setOrder(list);
-
-
-            return jobsInform;
-        } catch (Exception e) {
-            System.out.println("Error : " + e.getMessage() + " " + jobsInform.getPublicationLink());
-            e.printStackTrace();
-            return jobsInform;
-        }
-
-    }
-
-    private static ListImpl addHead(Element element) {
-        ListImpl list = new ListImpl();
-        list.setListHeader(element.ownText());
-        return list;
-    }
-
-    private static ListImpl addParagraph(Element element) {
-        if (element.select("strong").size() > 0) {
-            return addHead(element.select("strong").first());
-        } else {
-
-
-            ListImpl list = new ListImpl();
-            list.setTextFieldImpl(element.text());
-            return list;
-        }
-    }
-
-    private static ListImpl addList(Element element) {
-        ListImpl list = new ListImpl();
-        List<String> strings = new ArrayList<String>();
-        for (Element e : element.getAllElements()) {
-            strings.add(e.text());
-        }
-        list.setListItem(strings);
-        return list;
     }
 }

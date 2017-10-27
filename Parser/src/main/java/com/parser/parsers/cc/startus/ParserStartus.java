@@ -23,8 +23,6 @@ import java.util.List;
  */
 public class ParserStartus implements ParserMain {
 
-
-//    private String startLink = "https://www.startus.cc/jobs?search=&radius[0]=50&job_geo_location=&lat=&lon=&country=&administrative_area_level_1=";
     private List<JobsInform> jobsInforms = new ArrayList<JobsInform>();
     private Document doc;
     private DateGenerator dateClass;
@@ -48,7 +46,7 @@ public class ParserStartus implements ParserMain {
         startLinksList.add("https://www.startus.cc/jobs/web");
         startLinksList.add("https://www.startus.cc/jobs/mobile");
 
-        int c =0;
+        int c = 0;
         for (String link : startLinksList) {
             try {
 
@@ -86,14 +84,15 @@ public class ParserStartus implements ParserMain {
                         e.printStackTrace();
                     }
 
-                } while (dateClass.dateChecker(datePublished)) /*&& jobsInforms.size() < (startLinksList.indexOf(link)+1) * 20)*/;
+                }
+                while (dateClass.dateChecker(datePublished) && jobsInforms.size() < (startLinksList.indexOf(link) + 1) * 200);
 
             } catch (IOException e) {
                 e.printStackTrace();
                 c++;
             }
         }
-        if(c == startLinksList.size()){
+        if (c == startLinksList.size()) {
             jobsInforms = null;
         }
     }
@@ -113,7 +112,6 @@ public class ParserStartus implements ParserMain {
             } catch (ParseException e) {
                 System.out.println(e.getMessage());
             }
-
         }
         return datePublished;
     }
@@ -131,75 +129,4 @@ public class ParserStartus implements ParserMain {
             }
         }
     }
-
-    public static JobsInform getDescription(String linkToDescription, JobsInform jobsInform) {
-
-        try {
-            Document document = Jsoup.connect(linkToDescription)
-                    .validateTLSCertificates(false)
-                    .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-                    .timeout(5000)
-                    .get();
-
-            Element tablesHead = document.select("h1").first();
-
-            Elements tablesDescription = document.select(".generic-details-text");
-            if (tablesDescription.size() < 1) {
-                tablesDescription = document.select("[property='schema:description']");
-            } else if (tablesDescription.size() < 1) {
-                tablesDescription = document.select(".iCIMS_JobContent");
-            } else if (tablesDescription.size() < 1) {
-                tablesDescription = document.select("[data-variant='desktop']");
-            } else if (tablesDescription.size() < 1) {
-                tablesDescription = document.select(".custom-copy");
-            } else if (tablesDescription.size() < 1) {
-                tablesDescription = document.select(".jvdescriptionbody");
-            }
-            List<ListImpl> list = new ArrayList<ListImpl>();
-
-            list.add(addHead(tablesHead));
-            if (tablesDescription.size() > 1)
-                list.addAll(new PrintDescription().generateListImpl(tablesDescription));
-
-            list.add(null);
-            jobsInform.setOrder(list);
-
-
-            return jobsInform;
-        } catch (Exception e) {
-            System.out.println("Error : " + e.getMessage() + " " + jobsInform.getPublicationLink());
-            e.printStackTrace();
-            return jobsInform;
-        }
-
-    }
-
-    private static ListImpl addHead(Element element) {
-        ListImpl list = new ListImpl();
-        list.setListHeader(element.text());
-        return list;
-    }
-
-    private static ListImpl addParagraph(Element element) {
-        if (element.select("strong").size() > 0) {
-            return addHead(element.select("strong").first());
-        } else {
-
-
-            ListImpl list = new ListImpl();
-            list.setTextFieldImpl(element.text());
-            return list;
-        }
-    }
-
-    private static ListImpl addList(Element element) {
-        ListImpl list = new ListImpl();
-        List<String> strings = new ArrayList<String>();
-        for (Element e : element.getAllElements()) {
-            strings.add(e.text());
-        }
-        list.setListItem(strings);
-        return list;
-    }
-
 }

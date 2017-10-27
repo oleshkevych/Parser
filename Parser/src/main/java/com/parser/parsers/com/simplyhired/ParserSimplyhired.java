@@ -4,6 +4,7 @@ import com.parser.entity.DateGenerator;
 import com.parser.entity.JobsInform;
 import com.parser.entity.ListImpl;
 import com.parser.entity.ParserMain;
+import com.parser.parsers.util.DateUtil;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -60,7 +61,7 @@ public class ParserSimplyhired implements ParserMain {
                         .get();
 
                 Elements tables2 = doc.select(".jobs .card");
-                runParse(tables2, 0);
+                runParse(tables2);
                 Date datePublished = null;
 
                 int count = 2;
@@ -68,10 +69,12 @@ public class ParserSimplyhired implements ParserMain {
                     try {
                         datePublished = null;
                         doc = Jsoup.connect(link + "&pn=" + count)
-                                .validateTLSCertificates(false).userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36").timeout(5000).get();
+                                .validateTLSCertificates(false).userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
+                                .timeout(5000)
+                                .get();
 
                         Elements tables1 = doc.select(".jobs .card");
-                        datePublished = runParse(tables1, 0);
+                        datePublished = runParse(tables1);
                         count++;
 
                     } catch (IOException e) {
@@ -79,7 +82,7 @@ public class ParserSimplyhired implements ParserMain {
                     }
 
                 }
-                while (dateClass.dateChecker(datePublished) && jobsInforms.size() < (startLinksList.indexOf(link) + 1) * 50);
+                while (dateClass.dateChecker(datePublished) && jobsInforms.size() < (startLinksList.indexOf(link) + 1) * 200);
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -91,32 +94,18 @@ public class ParserSimplyhired implements ParserMain {
         }
     }
 
-    private Date runParse(Elements tables2, int counter) {
+    private Date runParse(Elements tables2) {
         System.out.println("text date : " + tables2.size());
         Date datePublished = null;
-        for (int i = counter; i < tables2.size(); i += 1) {
-            String stringDate = tables2.get(i).select(".jobposting-timestamp").text();
-            if (stringDate.contains("minut") || stringDate.contains("hour")) {
-                datePublished = new Date();
-            } else if (stringDate.contains("1 day")) {
-                datePublished = new Date(new Date().getTime() - 1 * 24 * 3600 * 1000);
-            } else if (stringDate.contains("2 day")) {
-                datePublished = new Date(new Date().getTime() - 2 * 24 * 3600 * 1000);
-            } else if (stringDate.contains("3 day")) {
-                datePublished = new Date(new Date().getTime() - 3 * 24 * 3600 * 1000);
-            } else if (stringDate.contains("4 day")) {
-                datePublished = new Date(new Date().getTime() - 4 * 24 * 3600 * 1000);
-            } else if (stringDate.contains("5 day")) {
-                datePublished = new Date(new Date().getTime() - 5 * 24 * 3600 * 1000);
-            } else if (stringDate.contains("6 day")) {
-                datePublished = new Date(new Date().getTime() - 6 * 24 * 3600 * 1000);
-            }
+        for (Element element : tables2) {
+            String stringDate = element.select(".jobposting-timestamp").text();
+            datePublished = DateUtil.getDate(stringDate);
 
-            objectGenerator(tables2.get(i).select(".jobposting-location").first(),
-                    tables2.get(i).select(".jobposting-title").first(),
-                    tables2.get(i).select(".jobposting-company").first(),
+            objectGenerator(element.select(".jobposting-location").first(),
+                    element.select(".jobposting-title").first(),
+                    element.select(".jobposting-company").first(),
                     datePublished,
-                    tables2.get(i).select(".jobposting-title a").first());
+                    element.select(".jobposting-title a").first());
         }
         return datePublished;
     }
@@ -134,5 +123,4 @@ public class ParserSimplyhired implements ParserMain {
             }
         }
     }
-
 }

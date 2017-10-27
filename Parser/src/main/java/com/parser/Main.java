@@ -73,6 +73,7 @@ public class Main extends Application {
         }
         closeApp();
     }
+
     private void closeApp(){
         if(parserApp.getExecutor().getActiveCount() == 0 && parserApp.getExecutorDB().getActiveCount() == 0){
             jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

@@ -67,13 +67,11 @@ public class ParserRandstad implements ParserMain {
                         .timeout(5000)
                         .get();
                 Elements tables2 = doc.select("article");
-                Date datePublished = runParse(tables2, 0);
+                boolean isContinue = runParse(tables2);
                 int count = 2;
-                while (dateClass.dateChecker(datePublished) && jobsInforms.size() < (startLinksList.indexOf(link) + 1) * 20
-                        && count < 4) {
+                while (isContinue && jobsInforms.size() < (startLinksList.indexOf(link) + 1) * 200) {
                     try {
 
-                        datePublished = null;
 
                         doc = Jsoup.connect(link + "page-" + count + "/")
                                 .validateTLSCertificates(false)
@@ -81,86 +79,52 @@ public class ParserRandstad implements ParserMain {
                                 .timeout(5000)
                                 .get();
                         Elements tables1 = doc.select("article");
-                        datePublished = runParse(tables1, 0);
-                        count += 20;
+                        isContinue = runParse(tables1);
+                        count++;
 
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
 
                 }
-
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    private Date runParse(Elements tables2, int counter) {
+    private boolean runParse(Elements tables2) {
         System.out.println("text date : " + tables2.size());
         Date datePublished = null;
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        for (int i = counter; i < tables2.size(); i += 1) {
-            String stringDate = tables2.get(i).select("time").attr("datetime");
+        int newJobs = 0;
+        for (Element element : tables2) {
+            String stringDate = element.select("time").attr("datetime");
             try {
                 datePublished = formatter.parse(stringDate);
-                objectGenerator(tables2.get(i).select(".job-summary-small-location").first(),
-                        tables2.get(i).select("header").first(),
+                newJobs += objectGenerator(element.select(".job-summary-small-location").first(),
+                        element.select("header").first(),
                         datePublished,
-                        tables2.get(i).select("a").last());
+                        element.select("a").last());
             } catch (ParseException e) {
                 System.out.println(e.getMessage());
             }
 
         }
-        return datePublished;
+        return dateClass.dateChecker(datePublished) && newJobs != 0;
     }
 
-    private void objectGenerator(Element place, Element headPost, Date datePublished, Element linkDescription) {
-        if (dateClass.dateChecker(datePublished)) {
-            JobsInform jobsInform = new JobsInform();
-            jobsInform.setPublishedDate(datePublished);
-            jobsInform.setHeadPublication(headPost.text());
-            jobsInform.setCompanyName("Randstad Technologies");
-            jobsInform.setPlace(place.text());
-            jobsInform.setPublicationLink("https://www.randstad.com" + linkDescription.attr("href"));
-            jobsInform = getDescription("https://www.randstad.com" + linkDescription.attr("href"), jobsInform);
-            if (!jobsInforms.contains(jobsInform)) {
-                jobsInforms.add(jobsInform);
-            }
+    private int objectGenerator(Element place, Element headPost, Date datePublished, Element linkDescription) {
+        JobsInform jobsInform = new JobsInform();
+        jobsInform.setPublishedDate(datePublished);
+        jobsInform.setHeadPublication(headPost.text());
+        jobsInform.setCompanyName("Randstad Technologies");
+        jobsInform.setPlace(place.text());
+        jobsInform.setPublicationLink("https://www.randstad.com" + linkDescription.attr("href"));
+        if (!jobsInforms.contains(jobsInform)) {
+            jobsInforms.add(jobsInform);
+            return 1;
         }
-    }
-
-    public static JobsInform getDescription(String linkToDescription, JobsInform jobsInform) {
-
-        try {
-            Document document = Jsoup.connect(linkToDescription)
-                    .validateTLSCertificates(false)
-                    .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-                    .timeout(5000)
-                    .get();
-            Elements tablesDescription = document.select(".job-desc-section div").first().children();
-            Elements tablesHead = document.select(".job-desc-section h2");
-            List<ListImpl> list = new ArrayList<ListImpl>();
-
-            list.add(addHead(tablesHead.first()));
-            list.addAll(new PrintDescription().generateListImpl(tablesDescription));
-            jobsInform.setOrder(list);
-
-
-            return jobsInform;
-        } catch (Exception e) {
-            System.out.println("Error : " + e.getMessage() + " " + jobsInform.getPublicationLink());
-            e.printStackTrace();
-            return jobsInform;
-        }
-
-    }
-
-    private static ListImpl addHead(Element element) {
-        ListImpl list = new ListImpl();
-        list.setListHeader(element.text());
-        return list;
+        return 0;
     }
 }

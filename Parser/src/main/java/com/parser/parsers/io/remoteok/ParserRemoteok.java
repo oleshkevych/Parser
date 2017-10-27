@@ -45,7 +45,7 @@ public class ParserRemoteok implements ParserMain {
                     .get();
 
             Elements tables2 = doc.select("tbody .job");
-            runParse(tables2, 0);
+            runParse(tables2);
             if (tables2.size() == 0) {
                 jobsInforms = null;
             }
@@ -57,28 +57,27 @@ public class ParserRemoteok implements ParserMain {
 
     }
 
-    private void runParse(Elements tables2, int counter) {
-        for (int i = counter; i < tables2.size() || i < 100; i++) {
+    private void runParse(Elements tables2) {
+        for (Element element : tables2) {
             Date datePublished = null;
-            String stringDate = tables2.get(i).select(".time").text();
+            String stringDate = element.select(".time").text();
             if (stringDate.contains("m") || stringDate.contains("h")) {
                 datePublished = new Date();
-            } else if (stringDate.contains("1d")) {
-                datePublished = new Date(new Date().getTime() - 1 * 24 * 3600 * 1000);
-            } else if (stringDate.contains("2d")) {
-                datePublished = new Date(new Date().getTime() - 2 * 24 * 3600 * 1000);
-            } else if (stringDate.contains("3d")) {
-                datePublished = new Date(new Date().getTime() - 3 * 24 * 3600 * 1000);
-            } else if (stringDate.contains("4d")) {
-                datePublished = new Date(new Date().getTime() - 4 * 24 * 3600 * 1000);
-            } else if (stringDate.contains("5d")) {
-                datePublished = new Date(new Date().getTime() - 5 * 24 * 3600 * 1000);
-            } else if (stringDate.contains("6d")) {
-                datePublished = new Date(new Date().getTime() - 6 * 24 * 3600 * 1000);
+            } else if (stringDate.contains("d")) {
+                String date = stringDate.replaceAll("[^0-9]", "");
+                if (date.length() != 0)
+                    datePublished = new Date(new Date().getTime() - Integer.parseInt(date) * 24 * 3600 * 1000);
+            } else if (stringDate.contains("mo")) {
+                String date = stringDate.replaceAll("[^0-9]", "");
+                if (date.length() != 0)
+                    datePublished = new Date(new Date().getTime() - Integer.parseInt(date) * 30 * 24 * 3600 * 1000);
             }
             try {
-                objectGenerator(tables2.get(i).select(".location").first(), tables2.get(i).select("[itemprop='title']").first(), tables2.get(i).select(".company [itemprop='name']").first(),
-                        datePublished, tables2.get(i).select("[itemprop='url']").first());
+                objectGenerator(element.select(".location").first(),
+                        element.select("[itemprop='title']").first(),
+                        element.select(".company [itemprop='name']").first(),
+                        datePublished,
+                        element.select("[itemprop='url']").first());
             } catch (IndexOutOfBoundsException e) {
                 System.out.println("ParserRemoteok " + e.getMessage());
             }
@@ -87,73 +86,14 @@ public class ParserRemoteok implements ParserMain {
     }
 
     private void objectGenerator(Element place, Element headPost, Element company, Date datePublished, Element linkDescription) {
-        if (dateClass.dateChecker(datePublished) && jobsInforms.size() < 100) {
-            JobsInform jobsInform = new JobsInform();
-            jobsInform.setPublishedDate(datePublished);
-            jobsInform.setHeadPublication(headPost.text());
-            jobsInform.setCompanyName(company.text());
-            jobsInform.setPlace(place.text());
-            jobsInform.setPublicationLink(linkDescription.attr("abs:href"));
-            jobsInform = getDescription(linkDescription.attr("abs:href"), jobsInform);
-            if (!jobsInforms.contains(jobsInform)) {
-                jobsInforms.add(jobsInform);
-            }
+        JobsInform jobsInform = new JobsInform();
+        jobsInform.setPublishedDate(datePublished);
+        jobsInform.setHeadPublication(headPost.text());
+        jobsInform.setCompanyName(company.text());
+        jobsInform.setPlace(place.text());
+        jobsInform.setPublicationLink(linkDescription.attr("abs:href"));
+        if (!jobsInforms.contains(jobsInform)) {
+            jobsInforms.add(jobsInform);
         }
     }
-
-    public static JobsInform getDescription(String linkToDescription, JobsInform jobsInform) {
-
-        try {
-            Document document = Jsoup.connect(linkToDescription)
-                    .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-                    .timeout(5000)
-                    .get();
-            if (document.select(".navbar-brand img").attr("alt").contains("white")) {
-                return ParserWFH.getDescription(linkToDescription, jobsInform);
-            }
-
-            if (document.select(".perma-logo img").attr("alt").contains("Work Remotely")) {
-                return ParserWeworkremotely.getDescription(linkToDescription, jobsInform);
-            }
-
-            if (document.select(".ld-navbar-brand-link .ld-logo-standard").size() > 0) {
-                return ParserLandingJobs.getDescription(linkToDescription, jobsInform);
-            }
-            String locate = document.select(".location").text();
-            if (locate.length() > 0) {
-                jobsInform.setPlace(locate);
-
-            }
-            String company = document.select(".employer").text();
-            if (locate.length() > 0) {
-                jobsInform.setCompanyName(company);
-
-            }
-            Elements tablesDescription = document.select(".description");
-            Elements tablesHeaders = document.select("[itemprop='title']");
-            List<ListImpl> list = new ArrayList<ListImpl>();
-
-            list.add(addHead(tablesHeaders.first()));
-
-            list.addAll(new PrintDescription().generateListImpl(tablesDescription));
-            list.add(null);
-            jobsInform.setOrder(list);
-
-
-            return jobsInform;
-        } catch (Exception e) {
-            System.out.println("Error : " + e.getMessage() + " " + jobsInform.getPublicationLink());
-            e.printStackTrace();
-            return jobsInform;
-        }
-
-    }
-
-    private static ListImpl addHead(Element element) {
-        ListImpl list = new ListImpl();
-        list.setListHeader(element.text());
-        return list;
-    }
-
-
 }

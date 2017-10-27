@@ -46,7 +46,6 @@ public class ParserJobspresso implements ParserMain {
     private void parser() {
 
         try {
-
             String urlS = ("https://jobspresso.co/jm-ajax/get_listings/");
             URL url = new URL(urlS);
             BufferedReader r = new BufferedReader(new InputStreamReader(
@@ -59,13 +58,12 @@ public class ParserJobspresso implements ParserMain {
             JsonObject jsonObject = jsonElement.getAsJsonObject();
             doc = Jsoup.parse(jsonObject.get("html").getAsString());
             Elements tables3 = doc.select(".job_listing");
-            runParse(tables3,/* jobsInforms.size()*/0);
+            runParse(tables3, 0);
 
         } catch (IOException e) {
             e.printStackTrace();
             jobsInforms = null;
         }
-
     }
 
     private Date runParse(Elements tables2, int counter) {
@@ -98,76 +96,9 @@ public class ParserJobspresso implements ParserMain {
             jobsInform.setCompanyName(company.ownText());
             jobsInform.setPlace(place.text());
             jobsInform.setPublicationLink(linkDescription.attr("href"));
-            jobsInform = getDescription(linkDescription.attr("href"), jobsInform);
             if (!jobsInforms.contains(jobsInform)) {
                 jobsInforms.add(jobsInform);
             }
         }
-    }
-
-    public static JobsInform getDescription(String linkToDescription, JobsInform jobsInform) {
-
-        try {
-            Document document = Jsoup.connect(linkToDescription)
-                    .validateTLSCertificates(true)
-                    .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-                    .timeout(5000)
-                    .get();
-
-            Elements tablesDescription = document.select(".job_listing-description").first().children();
-            Elements tablesHead = document.select(".page-title");
-            List<ListImpl> list = new ArrayList<ListImpl>();
-
-
-            list.add(addHead(tablesHead.first()));
-            for (int i = 0; i < tablesDescription.size(); i++) {
-                if (tablesDescription.get(i).tagName().equals("p")) {
-                    list.add(addParagraph(tablesDescription.get(i)));
-                } else if (tablesDescription.get(i).tagName().equals("ul")) {
-                    list.add(addList(tablesDescription.get(i)));
-                } else if (tablesDescription.get(i).tagName().contains("h")) {
-                    list.add(addHead(tablesDescription.get(i)));
-                }
-            }
-
-            list.add(null);
-            jobsInform.setOrder(list);
-
-
-            return jobsInform;
-        } catch (Exception e) {
-            System.out.println("Error : " + e.getMessage() + " " + jobsInform.getPublicationLink());
-            e.printStackTrace();
-            return jobsInform;
-        }
-
-    }
-
-    private static ListImpl addHead(Element element) {
-        ListImpl list = new ListImpl();
-        list.setListHeader(element.text());
-        return list;
-    }
-
-    private static ListImpl addParagraph(Element element) {
-        if (element.select("strong").size() > 0) {
-            return addHead(element.select("strong").first());
-        } else {
-
-
-            ListImpl list = new ListImpl();
-            list.setTextFieldImpl(element.text());
-            return list;
-        }
-    }
-
-    private static ListImpl addList(Element element) {
-        ListImpl list = new ListImpl();
-        List<String> strings = new ArrayList<String>();
-        for (Element e : element.getAllElements()) {
-            strings.add(e.text());
-        }
-        list.setListItem(strings);
-        return list;
     }
 }

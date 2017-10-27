@@ -51,8 +51,8 @@ public class ParserWorkingnomads implements ParserMain {
         Date datePublished = null;
         int count = 0;
 
-            try {
-                do {
+        try {
+            do {
                 datePublished = null;
                 String urlS = "https://www.workingnomads.co/jobsapi/job/_search?sort=premium:desc,pub_date:desc&_source=company,category_name,description,instructions,id,external_id,slug,title,pub_date,tags,source,apply_url,premium&size=20&from=" + count;
                 URL url = new URL(urlS);
@@ -74,79 +74,24 @@ public class ParserWorkingnomads implements ParserMain {
                         String stringDate = jobJson.get("pub_date").getAsString().substring(0, 10);
 
                         datePublished = formatter.parse(stringDate);
-                        if (dateClass.dateChecker(datePublished) && jobsInforms.size() < 100) {
-                            String description = jobJson.get("description").getAsString();
-                            doc = Jsoup.parse(description);
-                            Elements tablesDescription = doc.getAllElements();
+//                        if (dateClass.dateChecker(datePublished) && jobsInforms.size() < 100) {
                             JobsInform jobsInform = new JobsInform();
                             jobsInform.setPublishedDate(datePublished);
                             jobsInform.setHeadPublication(title);
                             jobsInform.setCompanyName(company);
                             jobsInform.setPlace("");
                             jobsInform.setPublicationLink(link);
-                            List<ListImpl> list = new ArrayList<>();
-                            ListImpl list1 = new ListImpl();
-                            list1.setListHeader(title);
-                            list.add(list1);
-                            for (Element element : tablesDescription) {
-                                if (element.tagName().equals("p")) {
-                                    list.add(addParagraph(element));
-                                } else if (element.tagName().equals("ul")) {
-                                    list.add(addList(element));
-                                } else if (element.tagName().contains("h")) {
-                                    list.add(addHead(element));
-                                }
-                            }
-                            if (list.size() < 3) {
-                                ListImpl list2 = new ListImpl();
-                                list2.setTextFieldImpl(tablesDescription.text());
-                                list.add(list2);
-                            }
-                            list.add(null);
-
-                            jobsInform.setOrder(list);
                             jobsInforms.add(jobsInform);
-                        }
+//                        }
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
                 }
                 count += 20;
-                } while (dateClass.dateChecker(datePublished) && jobsInforms.size() < 100);
-            } catch (IOException e) {
-                e.printStackTrace();
-                jobsInforms = null;
-            }
-
-
-
-    }
-
-    private static ListImpl addHead(Element element) {
-        ListImpl list = new ListImpl();
-        list.setListHeader(element.text());
-        return list;
-    }
-
-    private static ListImpl addParagraph(Element element) {
-        if (element.select("strong").size() > 0) {
-            return addHead(element.select("strong").first());
-        } else {
-
-
-            ListImpl list = new ListImpl();
-            list.setTextFieldImpl(element.text());
-            return list;
+            } while (dateClass.dateChecker(datePublished) && jobsInforms.size() < 100);
+        } catch (IOException e) {
+            e.printStackTrace();
+            jobsInforms = null;
         }
-    }
-
-    private static ListImpl addList(Element element) {
-        ListImpl list = new ListImpl();
-        List<String> strings = new ArrayList<String>();
-        for (Element e : element.getAllElements()) {
-            strings.add(e.text());
-        }
-        list.setListItem(strings);
-        return list;
     }
 }

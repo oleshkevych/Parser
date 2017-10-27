@@ -59,7 +59,6 @@ public class ParserAuthenticjobs implements ParserMain {
         startLinksList.add("https://authenticjobs.com/filter?page=1&query=iOS");
         startLinksList.add("https://authenticjobs.com/filter?page=1&query=mobile");
 
-
         int c = 0;
         for (String linkS : startLinksList) {
 
@@ -68,10 +67,8 @@ public class ParserAuthenticjobs implements ParserMain {
             SimpleDateFormat formatter = new SimpleDateFormat("MMM dd yyyy");
 
             do
-
                 try {
 
-//            System.out.println("text date : ParserJobspresso" + jobsInforms.size());
                     String urlS = (linkS /*+ counter*/);
                     URL url = new URL(urlS);
                     BufferedReader r = new BufferedReader(new InputStreamReader(
@@ -87,7 +84,7 @@ public class ParserAuthenticjobs implements ParserMain {
                     JsonObject jobJson;
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTime(new Date());
-                    if(jArray.size() == 0){
+                    if (jArray.size() == 0) {
                         c++;
                     }
                     for (int i = 0; i < jArray.size(); i++) {
@@ -106,15 +103,14 @@ public class ParserAuthenticjobs implements ParserMain {
                             datePublished = formatter.parse(stringDate + " " + calendar.get(Calendar.YEAR));
                             Calendar calendarPublished = Calendar.getInstance();
                             calendarPublished.setTime(datePublished);
-                            if(calendar.get(Calendar.MONTH)<calendarPublished.get(Calendar.MONTH)){
-                                stringDate = stringDate +" "+ (calendar.get(Calendar.YEAR)-1);
+                            if (calendar.get(Calendar.MONTH) < calendarPublished.get(Calendar.MONTH)) {
+                                stringDate = stringDate + " " + (calendar.get(Calendar.YEAR) - 1);
                                 datePublished = formatter.parse(stringDate);
                             }
                         }
-//                        System.out.println("text date : Parser" + datePublished);
                         counter++;
 
-                        if (dateClass.dateChecker(datePublished) && jobsInforms.size() < startLinksList.indexOf(linkS) * 20) {
+                        if (dateClass.dateChecker(datePublished) && jobsInforms.size() < startLinksList.indexOf(linkS) * 200) {
                             String content = "";
                             try {
                                 URL url1 = new URL(link);
@@ -126,7 +122,7 @@ public class ParserAuthenticjobs implements ParserMain {
                                 }
 
                                 r1.close();
-                            }catch(Exception e){
+                            } catch (Exception e) {
                                 datePublished = null;
                             }
                             doc = Jsoup.parse(content);
@@ -136,7 +132,6 @@ public class ParserAuthenticjobs implements ParserMain {
                             jobsInform.setPlace(place);
                             jobsInform.setHeadPublication(title);
                             jobsInform.setPublicationLink(link);
-                            jobsInform = getDescription(content, jobsInform);
                             if (!jobsInforms.contains(jobsInform)) {
                                 jobsInforms.add(jobsInform);
                             }
@@ -147,70 +142,10 @@ public class ParserAuthenticjobs implements ParserMain {
                     e.printStackTrace();
                     c++;
                 }
-            while (dateClass.dateChecker(datePublished) && jobsInforms.size() < startLinksList.indexOf(linkS) * 20 && counter<5);
+            while (dateClass.dateChecker(datePublished) && jobsInforms.size() < startLinksList.indexOf(linkS) * 200 && counter < 5);
         }
-        if(c == startLinksList.size()){
+        if (c == startLinksList.size()) {
             jobsInforms = null;
         }
-    }
-
-    public static JobsInform getDescription(String description, JobsInform jobsInform) {
-
-        try {
-            Document document = Jsoup.parse(description);
-
-            Elements tablesDescription = document.select(".description");
-//            if (tablesDescription.size() > 0) {
-//                tablesDescription = tablesDescription.first().children();
-//
-//            }
-            Elements tablesHead = document.select("h1");
-            List<ListImpl> list = new ArrayList<ListImpl>();
-
-
-            if (tablesHead.first() != null) {
-                list.add(addHead(tablesHead.first()));
-            }
-
-            list.addAll(new PrintDescription().generateListImpl(tablesDescription));
-            list.add(null);
-            jobsInform.setOrder(list);
-
-
-            return jobsInform;
-        } catch (Exception e) {
-            System.out.println("Error : " + e.getMessage() + " " + jobsInform.getPublicationLink());
-            e.printStackTrace();
-            return jobsInform;
-        }
-
-    }
-
-    private static ListImpl addHead(Element element) {
-        ListImpl list = new ListImpl();
-        list.setListHeader(element.text());
-        return list;
-    }
-
-    private static ListImpl addParagraph(Element element) {
-        if (element.select("strong").size() > 0) {
-            return addHead(element.select("strong").first());
-        } else {
-
-
-            ListImpl list = new ListImpl();
-            list.setTextFieldImpl(element.text());
-            return list;
-        }
-    }
-
-    private static ListImpl addList(Element element) {
-        ListImpl list = new ListImpl();
-        List<String> strings = new ArrayList<String>();
-        for (Element e : element.getAllElements()) {
-            strings.add(e.text());
-        }
-        list.setListItem(strings);
-        return list;
     }
 }

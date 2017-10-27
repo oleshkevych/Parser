@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.parser.ParserApp">
-  <grid id="27dc6" binding="panelMain" layout-manager="GridLayoutManager" row-count="2" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="30">
+  <grid id="27dc6" binding="panelMain" layout-manager="GridLayoutManager" row-count="3" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="30">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
       <xy x="20" y="20" width="1150" height="1514"/>
@@ -11,9 +11,9 @@
       <enabled value="true"/>
       <focusable value="false"/>
       <inheritsPopupMenu value="false"/>
-      <maximumSize width="900" height="682"/>
-      <minimumSize width="900" height="682"/>
-      <preferredSize width="900" height="682"/>
+      <maximumSize width="900" height="712"/>
+      <minimumSize width="900" height="712"/>
+      <preferredSize width="900" height="712"/>
       <visible value="true"/>
     </properties>
     <border type="empty" title="ParserApp" title-justification="2">
@@ -23,7 +23,7 @@
     <children>
       <grid id="52ecf" binding="jobPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
         <constraints>
-          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="0" indent="0" use-parent-layout="false">
+          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="0" indent="0" use-parent-layout="false">
             <minimum-size width="600" height="500"/>
             <preferred-size width="600" height="530"/>
             <maximum-size width="600" height="530"/>
@@ -77,6 +77,25 @@
         </properties>
         <border type="none"/>
         <children>
+          <component id="c3ad1" class="javax.swing.JButton" binding="backButton">
+            <constraints/>
+            <properties>
+              <background color="-2960187"/>
+              <borderPainted value="true"/>
+              <contentAreaFilled value="true"/>
+              <foreground color="-11579315"/>
+              <hideActionText value="false"/>
+              <horizontalAlignment value="0"/>
+              <horizontalTextPosition value="0"/>
+              <label value="Back"/>
+              <maximumSize width="100" height="36"/>
+              <minimumSize width="100" height="36"/>
+              <preferredSize width="100" height="36"/>
+              <requestFocusEnabled value="true"/>
+              <text value="Back"/>
+              <visible value="false"/>
+            </properties>
+          </component>
           <component id="42c0d" class="javax.swing.JButton" binding="openSearchInSelected">
             <constraints/>
             <properties>
@@ -91,7 +110,7 @@
               <visible value="false"/>
             </properties>
           </component>
-          <component id="a1180" class="javax.swing.JButton" binding="openSearchButton">
+          <component id="a1180" class="javax.swing.JButton" binding="openWorkSearchButton">
             <constraints/>
             <properties>
               <background color="-2960187"/>
@@ -101,10 +120,11 @@
               <hideActionText value="false"/>
               <horizontalAlignment value="0"/>
               <horizontalTextPosition value="0"/>
+              <label value="Open Global Work Search"/>
               <maximumSize width="300" height="36"/>
               <minimumSize width="300" height="36"/>
               <preferredSize width="300" height="36"/>
-              <text value="Open Global Search"/>
+              <text value="Open Global Work Search"/>
               <visible value="true"/>
             </properties>
           </component>
@@ -145,11 +165,47 @@
               <visible value="false"/>
             </properties>
           </component>
+          <component id="2e475" class="javax.swing.JButton" binding="openCountrySearchButton">
+            <constraints/>
+            <properties>
+              <background color="-2960187"/>
+              <borderPainted value="true"/>
+              <contentAreaFilled value="true"/>
+              <foreground color="-11579315"/>
+              <hideActionText value="false"/>
+              <horizontalAlignment value="0"/>
+              <horizontalTextPosition value="0"/>
+              <label value="Open Global Country Search"/>
+              <maximumSize width="300" height="36"/>
+              <minimumSize width="300" height="36"/>
+              <preferredSize width="300" height="36"/>
+              <text value="Open Global Country Search"/>
+              <visible value="true"/>
+            </properties>
+          </component>
+          <component id="8c514" class="javax.swing.JButton" binding="openCompanySearchButton">
+            <constraints/>
+            <properties>
+              <background color="-2960187"/>
+              <borderPainted value="true"/>
+              <contentAreaFilled value="true"/>
+              <foreground color="-11579315"/>
+              <hideActionText value="false"/>
+              <horizontalAlignment value="0"/>
+              <horizontalTextPosition value="0"/>
+              <label value="Open Global Company Search"/>
+              <maximumSize width="300" height="36"/>
+              <minimumSize width="300" height="36"/>
+              <preferredSize width="300" height="36"/>
+              <text value="Open Global Company Search"/>
+              <visible value="true"/>
+            </properties>
+          </component>
         </children>
       </grid>
       <scrollpane id="ad4ac" binding="linkScrollPane">
         <constraints>
-          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false">
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false">
             <minimum-size width="280" height="530"/>
             <preferred-size width="280" height="530"/>
             <maximum-size width="280" height="530"/>
@@ -1348,45 +1404,6 @@
                   </component>
                 </children>
               </grid>
-              <grid id="e5890" binding="careerbuilderLabelPanel" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
-                <constraints/>
-                <properties>
-                  <alignmentX value="0.0"/>
-                  <alignmentY value="0.0"/>
-                  <autoscrolls value="true"/>
-                  <background color="-721665"/>
-                  <maximumSize width="240" height="30"/>
-                  <minimumSize width="240" height="30"/>
-                  <preferredSize width="240" height="30"/>
-                </properties>
-                <border type="empty" title-position="1">
-                  <title-color color="-16777216"/>
-                </border>
-                <children>
-                  <component id="8b264" class="javax.swing.JLabel" binding="careerbuilderLabel">
-                    <constraints/>
-                    <properties>
-                      <autoscrolls value="false"/>
-                      <enabled value="true"/>
-                      <focusable value="false"/>
-                      <font name="Times New Roman" size="12"/>
-                      <foreground color="-16777216"/>
-                      <horizontalAlignment value="2"/>
-                      <horizontalTextPosition value="2"/>
-                      <maximumSize width="170" height="30"/>
-                      <minimumSize width="-1" height="-1"/>
-                      <opaque value="false"/>
-                      <preferredSize width="170" height="30"/>
-                      <text value="careerbuilder.com"/>
-                      <toolTipText value="http://www.careerbuilder.com"/>
-                      <verifyInputWhenFocusTarget value="false"/>
-                    </properties>
-                    <clientProperties>
-                      <html.disable class="java.lang.Boolean" value="true"/>
-                    </clientProperties>
-                  </component>
-                </children>
-              </grid>
               <grid id="10ac2" binding="webentwicklerJobsLabelPanel" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
                 <constraints/>
                 <properties>
@@ -1652,45 +1669,6 @@
                       <preferredSize width="170" height="30"/>
                       <text value="canadajobs.com"/>
                       <toolTipText value="http://www.canadajobs.com"/>
-                      <verifyInputWhenFocusTarget value="false"/>
-                    </properties>
-                    <clientProperties>
-                      <html.disable class="java.lang.Boolean" value="true"/>
-                    </clientProperties>
-                  </component>
-                </children>
-              </grid>
-              <grid id="4fc35" binding="drupalOrgUkLabelParser" layout-manager="FlowLayout" hgap="8" vgap="0" flow-align="0">
-                <constraints/>
-                <properties>
-                  <alignmentX value="0.0"/>
-                  <alignmentY value="0.0"/>
-                  <autoscrolls value="true"/>
-                  <background color="-721665"/>
-                  <maximumSize width="240" height="30"/>
-                  <minimumSize width="240" height="30"/>
-                  <preferredSize width="240" height="30"/>
-                </properties>
-                <border type="empty" title-position="1">
-                  <title-color color="-16777216"/>
-                </border>
-                <children>
-                  <component id="fc1a5" class="javax.swing.JLabel" binding="drupalOrgUkLabel">
-                    <constraints/>
-                    <properties>
-                      <autoscrolls value="false"/>
-                      <enabled value="true"/>
-                      <focusable value="false"/>
-                      <font name="Times New Roman" size="12"/>
-                      <foreground color="-16777216"/>
-                      <horizontalAlignment value="2"/>
-                      <horizontalTextPosition value="2"/>
-                      <maximumSize width="170" height="30"/>
-                      <minimumSize width="-1" height="-1"/>
-                      <opaque value="false"/>
-                      <preferredSize width="170" height="30"/>
-                      <text value="drupal.org.uk"/>
-                      <toolTipText value="http://www.drupal.org.uk"/>
                       <verifyInputWhenFocusTarget value="false"/>
                     </properties>
                     <clientProperties>
@@ -2054,6 +2032,38 @@
           </grid>
         </children>
       </scrollpane>
+      <grid id="e00bd" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="2">
+        <constraints>
+          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+            <preferred-size width="300" height="60"/>
+          </grid>
+        </constraints>
+        <properties>
+          <background color="-7631989"/>
+        </properties>
+        <border type="none"/>
+        <children>
+          <component id="842b" class="javax.swing.JButton" binding="startGlobalParsing">
+            <constraints/>
+            <properties>
+              <background color="-2960187"/>
+              <borderPainted value="true"/>
+              <contentAreaFilled value="true"/>
+              <foreground color="-11579315"/>
+              <hideActionText value="false"/>
+              <horizontalAlignment value="0"/>
+              <horizontalTextPosition value="0"/>
+              <label value="Start Global Parsing"/>
+              <margin top="0" left="14" bottom="0" right="14"/>
+              <maximumSize width="300" height="36"/>
+              <minimumSize width="300" height="36"/>
+              <preferredSize width="300" height="36"/>
+              <text value="Start Global Parsing"/>
+              <visible value="true"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
     </children>
   </grid>
 </form>

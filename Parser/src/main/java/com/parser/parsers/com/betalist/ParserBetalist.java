@@ -21,27 +21,36 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.parser.parsers.PhantomJSStarter.startPhantom;
+
 /**
  * Created by rolique_pc on 12/26/2016.
  */
 public class ParserBetalist implements ParserMain {
 
-    //    private String startLink = "http://www.builtinaustin.com/jobs#/jobs?f[]=tags%3ATTTTT%7Cim_job_categories%3A7110%3Aterm";
     private List<JobsInform> jobsInforms = new ArrayList<JobsInform>();
-    private Document doc;
-    private DateGenerator dateClass;
     private WebDriver ghostDriver;
 
     public ParserBetalist() {
     }
 
     public List<JobsInform> startParse() {
-        dateClass = new DateGenerator();
-        parser();
-
+        try {
+            parser();
+        } finally {
+            ghostDriver.close();
+            ghostDriver.quit();
+        }
         return jobsInforms;
     }
 
+    private Document startGhost(String link) {
+
+        if (ghostDriver == null) ghostDriver = startPhantom();
+        ghostDriver.get(link);
+        new WebDriverWait(ghostDriver, 15);
+        return Jsoup.parse(ghostDriver.getPageSource());
+    }
 
     private void parser() {
         List<String> stringCat = new ArrayList<>();
@@ -57,23 +66,28 @@ public class ParserBetalist implements ParserMain {
 
         String startLink = "https://betalist.com/jobs?q=";
         for (String category : stringCat) {
-            try {
-
-                doc = PhantomJSStarter.startGhost(startLink + category);
-                Elements tables2 = doc.select(".content-wrapper .ais-hits .ais-hits--item");
-                runParse(tables2, 0);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            int count = 0;
+            int jobsCount = 0;
+            do
+                try {
+                    Document doc = startGhost(startLink + category + "&p=" + count);
+                    Elements tables2 = doc.select(".content-wrapper .ais-hits .ais-hits--item");
+                    jobsCount = tables2.size();
+                    runParse(tables2);
+                    count++;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    System.out.println("owerhfoif" + jobsCount);
+                } while (count < 7 && jobsCount != 0);
         }
     }
 
-    private void runParse(Elements tables2, int counter) {
-//        System.out.println("text date : " + tables2.size());
-        for (int i = counter; i < tables2.size(); i++) {
-            objectGenerator(tables2.get(i).select(".jobCard__details__location").first(), tables2.get(i).select(".jobCard__details__title").first(),
-                    tables2.get(i).select(".jobCard__details__company").first(), tables2.get(i).select(".jobCard__details__title").first());
+    private void runParse(Elements tables2) {
+        for (Element aTables2 : tables2) {
+            objectGenerator(aTables2.select(".jobCard__details__location").first(),
+                    aTables2.select(".jobCard__details__title").first(),
+                    aTables2.select(".jobCard__details__company").first(),
+                    aTables2.select(".jobCard__details__title").first());
         }
     }
 
@@ -84,47 +98,8 @@ public class ParserBetalist implements ParserMain {
         jobsInform.setCompanyName(company.text());
         jobsInform.setPlace(place.text());
         jobsInform.setPublicationLink("http://betalist.com" + linkDescription.attr("href"));
-        jobsInform = getDescription("http://betalist.com" + linkDescription.attr("href"), jobsInform);
         if (!jobsInforms.contains(jobsInform)) {
             jobsInforms.add(jobsInform);
         }
-
     }
-
-    public static JobsInform getDescription(String linkToDescription, JobsInform jobsInform) {
-
-        try {
-            Document document = Jsoup
-                    .connect(linkToDescription)
-                    .timeout(6000)
-                    .method(Connection.Method.GET)
-                    .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
-                    .execute()
-                    .parse();
-
-            Elements tablesDescription = document.select(".jobListing__main__text");
-            Elements tablesHead = document.select(".visualHeader__title");
-            List<ListImpl> list = new ArrayList<ListImpl>();
-
-            list.add(addHead(tablesHead.first()));
-            list.addAll(new PrintDescription().generateListImpl(tablesDescription));
-            list.add(null);
-            jobsInform.setOrder(list);
-
-
-            return jobsInform;
-        } catch (Exception e) {
-            System.out.println("Error : " + e.getMessage() + " " + jobsInform.getPublicationLink());
-            e.printStackTrace();
-            return jobsInform;
-        }
-
-    }
-
-    private static ListImpl addHead(Element element) {
-        ListImpl list = new ListImpl();
-        list.setListHeader(element.text());
-        return list;
-    }
-
 }
