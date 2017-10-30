@@ -224,9 +224,9 @@
               <enabled value="true"/>
               <focusable value="false"/>
               <font name="Times New Roman" size="12"/>
-              <maximumSize width="280" height="1730"/>
-              <minimumSize width="280" height="1730"/>
-              <preferredSize width="280" height="1730"/>
+              <maximumSize width="280" height="1670"/>
+              <minimumSize width="280" height="1670"/>
+              <preferredSize width="280" height="1670"/>
             </properties>
             <border type="empty" title="Links" title-justification="2" title-position="1">
               <font name="DialogInput" size="18" style="1"/>
@@ -2053,12 +2053,12 @@
               <hideActionText value="false"/>
               <horizontalAlignment value="0"/>
               <horizontalTextPosition value="0"/>
-              <label value="Start Global Parsing"/>
+              <label value="Start Global Reparsing"/>
               <margin top="0" left="14" bottom="0" right="14"/>
               <maximumSize width="300" height="36"/>
               <minimumSize width="300" height="36"/>
               <preferredSize width="300" height="36"/>
-              <text value="Start Global Parsing"/>
+              <text value="Start Global Reparsing"/>
               <visible value="true"/>
             </properties>
           </component>

@@ -60,12 +60,10 @@ public class ParserJuju implements ParserMain {
                 Elements tables2 = doc.select(".article .job");
                 runParse(tables2);
 
-                Date datePublished = null;
+                boolean isContinue = false;
                 int count = 2;
                 do {
                     try {
-
-                        datePublished = null;
                         // need http protocol
                         doc = Jsoup.connect(link + "&page=" + count)
                                 .validateTLSCertificates(false)
@@ -74,7 +72,7 @@ public class ParserJuju implements ParserMain {
                                 .get();
 
                         Elements tables1 = doc.select(".article .job");
-                        datePublished = runParse(tables1);
+                        isContinue = runParse(tables1);
                         count++;
 
                     } catch (IOException e) {
@@ -82,7 +80,7 @@ public class ParserJuju implements ParserMain {
                     }
 
                 }
-                while (dateClass.dateChecker(datePublished) && jobsInforms.size() < (startLinksList.indexOf(link) + 1) * 200);
+                while (isContinue && jobsInforms.size() < (startLinksList.indexOf(link) + 1) * 200);
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -90,16 +88,17 @@ public class ParserJuju implements ParserMain {
         }
     }
 
-    private Date runParse(Elements tables2) {
-        System.out.println("text date1 : " + tables2.size());
+    private boolean runParse(Elements tables2) {
+        System.out.println("text date1 : " + jobsInforms.size());
         Date datePublished = null;
         SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yy");
+        int newJobsCount = 0;
         for (Element element : tables2) {
             String stringDate = element.select(".options .source").text();
             try {
                 datePublished = formatter.parse(stringDate.substring(stringDate.indexOf("(") + 1, stringDate.indexOf(")")));
 
-                objectGenerator(element.select(".company span").first(),
+                newJobsCount += objectGenerator(element.select(".company span").first(),
                         element.select(".result").first(),
                         element.select(".company").first(),
                         datePublished,
@@ -108,11 +107,10 @@ public class ParserJuju implements ParserMain {
                 System.out.println(e.getMessage());
             }
         }
-        return datePublished;
+        return dateClass.dateChecker(datePublished) && newJobsCount != 0;
     }
 
-    private void objectGenerator(Element place, Element headPost, Element company, Date datePublished, Element linkDescription) {
-        if (dateClass.dateChecker(datePublished)) {
+    private int objectGenerator(Element place, Element headPost, Element company, Date datePublished, Element linkDescription) {
             JobsInform jobsInform = new JobsInform();
             jobsInform.setPublishedDate(datePublished);
             jobsInform.setHeadPublication(headPost.text());
@@ -121,7 +119,8 @@ public class ParserJuju implements ParserMain {
             jobsInform.setPublicationLink(linkDescription.attr("href"));
             if (!jobsInforms.contains(jobsInform)) {
                 jobsInforms.add(jobsInform);
+                return 1;
             }
+            return 0;
         }
-    }
 }

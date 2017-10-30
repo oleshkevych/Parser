@@ -94,7 +94,7 @@ public class ParserRandstad implements ParserMain {
     }
 
     private boolean runParse(Elements tables2) {
-        System.out.println("text date : " + tables2.size());
+        System.out.println("text date : " + jobsInforms.size());
         Date datePublished = null;
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         int newJobs = 0;

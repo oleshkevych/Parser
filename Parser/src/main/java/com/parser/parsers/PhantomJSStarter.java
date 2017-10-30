@@ -13,6 +13,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Created by rolique_pc on 12/29/2016.
@@ -76,10 +77,17 @@ public class PhantomJSStarter {
     }
 
     public static PhantomJSDriver startPhantom() {
-        String path = Main.class.getProtectionDomain().getCodeSource().getLocation().getPath().substring(1);
-        path = path.substring(0, path.lastIndexOf("/")) + File.separator + "lib" + File.separator + "phantomjs" + File.separator + "phantomjs.exe";
-
-        path = path.replaceAll("%20", " ");
+//        String path = Main.class.getProtectionDomain().getCodeSource().getLocation().getPath().substring(1);
+//        path = /*path.substring(0, path.lastIndexOf("/")) + File.separator + */"lib" + File.separator + "phantomjs" + File.separator + "phantomjsOS";
+        String path = getLibPath();
+        path = path + File.separator + "lib" + File.separator + "phantomjs" + File.separator + "phantomjsOS";
+//        path = path.replaceAll("%20", " ");
+        if (!new File(path).exists())
+            try {
+                System.out.println("is exsists " + new File(path + File.separator + "testingFile.txt").createNewFile());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         DesiredCapabilities caps = new DesiredCapabilities();
         caps.setJavascriptEnabled(true);
         caps.setCapability("takesScreenshot", false);
@@ -93,5 +101,14 @@ public class PhantomJSStarter {
 //        });
         return new PhantomJSDriver(caps);
 
+    }
+
+    public static String getLibPath() {
+        String path = Main.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        path = path.substring(0, path.lastIndexOf(File.separator));
+        System.out.println("path " + path);
+        if (path.contains("%20"))
+            path = path.replaceAll("%20", " ");
+        return path;
     }
 }

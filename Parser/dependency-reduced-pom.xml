@@ -16,6 +16,16 @@
               <goal>shade</goal>
             </goals>
             <configuration>
+              <filters>
+                <filter>
+                  <artifact>*:*</artifact>
+                  <excludes>
+                    <exclude>META-INF/*.SF</exclude>
+                    <exclude>META-INF/*.DSA</exclude>
+                    <exclude>META-INF/*.RSA</exclude>
+                  </excludes>
+                </filter>
+              </filters>
               <transformers>
                 <transformer>
                   <manifestEntries>
@@ -78,6 +88,23 @@
             </configuration>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>sh.tak.appbundler</groupId>
+        <artifactId>appbundle-maven-plugin</artifactId>
+        <version>1.2.0</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>bundle</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <mainClass>com.parser.Main</mainClass>
+          <jrePath>/Library/Java/JavaVirtualMachines/jdk1.8.0_77.jdk/</jrePath>
+        </configuration>
       </plugin>
     </plugins>
   </build>
