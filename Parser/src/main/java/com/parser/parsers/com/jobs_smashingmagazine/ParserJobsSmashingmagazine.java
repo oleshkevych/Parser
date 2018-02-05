@@ -50,7 +50,7 @@ public class ParserJobsSmashingmagazine implements ParserMain {
 
     private void parser() {
         Document doc = startGhost(START_LINK);
-        Elements tables2 = doc.select(".entry-list").first().children();
+        Elements tables2 = doc.select(".jobs__list").first().children();
         runParse(tables2);
     }
 
@@ -58,9 +58,10 @@ public class ParserJobsSmashingmagazine implements ParserMain {
         try {
             System.out.println("text date : " + tables2.size());
             for (Element aTables2 : tables2) {
-                objectGenerator(aTables2.select(".entry-company").first(),
-                        aTables2.select(".entry").first().child(0),
-                        aTables2.select(".entry-company strong").first(),
+                if (aTables2.hasClass("hidden")) continue;
+                objectGenerator(aTables2.select(".job__location").first(),
+                        aTables2.select(".job__title").first(),
+                        aTables2.select(".job__title").first(),
                         aTables2.select("a").first());
             }
         } finally {
@@ -73,9 +74,9 @@ public class ParserJobsSmashingmagazine implements ParserMain {
 
         JobsInform jobsInform = new JobsInform();
         jobsInform.setHeadPublication(headPost.text());
-        jobsInform.setCompanyName(company.text());
+        jobsInform.setCompanyName("");
         jobsInform.setPlace(place.ownText());
-        jobsInform.setPublicationLink(linkDescription.attr("href"));
+        jobsInform.setPublicationLink(START_LINK + linkDescription.attr("href"));
         if (!jobsInforms.contains(jobsInform)) {
             jobsInforms.add(jobsInform);
         }

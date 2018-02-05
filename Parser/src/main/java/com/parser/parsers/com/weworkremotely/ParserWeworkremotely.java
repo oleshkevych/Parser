@@ -21,8 +21,8 @@ import java.util.List;
  */
 public class ParserWeworkremotely implements ParserMain {
 
-    private static final String START_LINK_1 = "https://weworkremotely.com/categories/6-devops-sysadmin/jobs#intro";
-    private static final String START_LINK_2 = "https://weworkremotely.com/categories/2-programming/jobs#intro";
+    private static final String START_LINK_1 = "https://weworkremotely.com/categories/remote-devops-sysadmin-jobs";
+    private static final String START_LINK_2 = "https://weworkremotely.com/categories/remote-programming-jobs";
     private List<JobsInform> jobsInforms = new ArrayList<JobsInform>();
 
     public ParserWeworkremotely() {

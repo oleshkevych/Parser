@@ -51,7 +51,7 @@ public class ParserMonsterDe implements ParserMain {
             try {
 
                 Document doc = Jsoup.connect(link)
-                        .validateTLSCertificates(false)
+                        .validateTLSCertificates(true)
                         .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
                         .timeout(5000)
                         .get();
@@ -66,7 +66,7 @@ public class ParserMonsterDe implements ParserMain {
 
                         datePublished = null;
                         doc = Jsoup.connect(link + "&page=" + count)
-                                .validateTLSCertificates(false)
+                                .validateTLSCertificates(true)
                                 .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
                                 .timeout(5000)
                                 .get();

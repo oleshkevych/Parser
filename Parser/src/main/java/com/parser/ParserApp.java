@@ -110,7 +110,6 @@ public class ParserApp implements MouseListener {
     private JLabel jobsSmashingmagazineLabel;
     private JLabel themuseLabel;
     private JLabel techjobsLabel;
-    private JLabel careerbuilderLabel;
     private JLabel webentwicklerJobsLabel;
     private JLabel uberjobsLabel;
     private JLabel guruLabel;
@@ -118,7 +117,6 @@ public class ParserApp implements MouseListener {
     private JLabel eurojobsLabel;
     private JLabel technojobsCoUaLabel;
     private JLabel canadajobsLabel;
-    private JLabel drupalOrgUkLabel;
     private JLabel ziprecruiterLabel;
     private JLabel drupalcenterLabel;
     private JLabel indeedLabel;
